@@ -32,7 +32,7 @@ function init() {
 
     // add a cube
     const geometry = new THREE.BoxGeometry( 5, 5, 5 );
-    const material = new THREE.MeshBasicMaterial( { color: 0x000000, transparent: false } );
+    const material = new THREE.MeshBasicMaterial( { color: 0x83f52c, transparent: false } );
     const mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
@@ -53,6 +53,25 @@ function init() {
     controls.enablePan=false;
     controls.autoRotate=true;
     controls.autoRotateSpeed=1;
+
+    //lighting
+
+    //ambientlight
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.AmbientLight(color, intensity);
+    scene.add(light);
+    
+
+    //directional light
+    const colorD = 0xFFFFFF;
+    const intensityD = 1;
+    const lightD = new THREE.DirectionalLight(colorD, intensityD);
+    lightD.position.set(0, 10, 0);
+    lightD.target.position.set(-5, 0, 0);
+    scene.add(lightD);
+    scene.add(lightD.target);
+
 }
 
 function onWindowResize() {
