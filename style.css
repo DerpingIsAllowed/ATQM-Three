@@ -1,0 +1,10 @@
+@import url(https://use.typekit.net/xsd6tgi.css);
+
+h1 {
+    color: magenta;
+    text-align: center;
+    font-family: bebas-neue-pro, sans-serif;
+    font-style: normal;
+    font-weight: 1000;
+    font-size: 100px;
+}
