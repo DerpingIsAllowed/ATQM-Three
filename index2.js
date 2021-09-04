@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, QuadraticBezierCurve, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, PlaneHelper, QuadraticBezierCurve, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 
@@ -22,10 +22,10 @@ function init() {
     */
 
     //boleans and stuff for in the UI and easy acces    
-    EnableHelpers = false;
+    EnableHelpers = true;
     camerazoom = 1.5;
     BackgroundColor = 0xffffff;
-    EnableClipping = false;
+    EnableClipping = true;
 
     //define a scene
     scene = new THREE.Scene();
@@ -44,7 +44,8 @@ function init() {
 
     //clipping in renderer
     if (EnableClipping) {
-    
+        
+        //add in the three clipping planes that make-up the box
         clipPlanes = [
             new THREE.Plane( new THREE.Vector3( 1, 0, 0 ), 0 ),
             new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), 0 ),
@@ -53,7 +54,7 @@ function init() {
         renderer.localClippingEnabled = true;
     }
 
-    // add a sphere
+    // add an inner sphere
     const geometry = new THREE.SphereGeometry( .5, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
     {   
@@ -68,6 +69,7 @@ function init() {
     const mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
+    //add outer sphere
     const geometry2 = new THREE.SphereGeometry( 5, 20, 20 );
     const material2 = new THREE.MeshStandardMaterial( 
     {   
@@ -132,20 +134,32 @@ function init() {
 
     if (EnableHelpers == true)
     {   //light visualizers
-        const helper = new THREE.BoxHelper(lightD.target, 0xf00000 );
+        const helper = new THREE.BoxHelper(lightD.target, 0xFF0000 );
         scene.add(helper);
 
 
-        const helperd2 = new THREE.BoxHelper(lightD2.target, 0xf00000 );
+        const helperd2 = new THREE.BoxHelper(lightD2.target, 0xFF0000 );
         scene.add(helperd2);
 
 
-        const helperD = new THREE.DirectionalLightHelper( lightD, 5 );
+        const helperD = new THREE.DirectionalLightHelper( lightD, 5, 0xFF0000 );
         scene.add(helperD);
 
 
-        const helperD2 = new THREE.DirectionalLightHelper( lightD2, 5 );
+        const helperD2 = new THREE.DirectionalLightHelper( lightD2, 5, 0xFF0000 );
         scene.add(helperD2);
+
+
+        //clippingplane helpers
+        const planehelpers= [
+            new PlaneHelper(clipPlanes[0], 10 ,0xFF0000),
+            new PlaneHelper(clipPlanes[1], 10 ,0xFF0000),
+            new PlaneHelper(clipPlanes[2], 10 ,0xFF0000)
+        ];
+        
+        scene.add(planehelpers[0]);
+        scene.add(planehelpers[1]);
+        scene.add(planehelpers[2]);
     }
     
 
