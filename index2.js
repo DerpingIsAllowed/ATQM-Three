@@ -26,7 +26,6 @@ function init() {
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
     camerazoom = 1.5;
-    BackgroundColor = 0xffffff;
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
@@ -34,11 +33,11 @@ function init() {
 
     //renderer configure
     renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div), alpha: true}); //the renderer itself its complex go read the docs
-    renderer.setClearColor( BackgroundColor, 1); //background define-able above
-    
+
     //define a scene
     scene = new THREE.Scene();
-    
+    scene.background = null
+
     //inintialize camera
     camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
 
