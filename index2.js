@@ -22,31 +22,35 @@ function init() {
     Declare variables in de "Let"
     */
 
-    //boleans and stuff for in the UI and easy acces    
+    //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
     camerazoom = 1.5;
     BackgroundColor = 0xffffff;
     EnableClipping = true;
     ClippingPlaneOfset = 0;
-    Div=document.getElementById('DivJS');
+    Div="canvas";
+    //#endregion
 
+    //renderer configure
+    renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div)}); //the renderer itself its complex go read the docs
+    renderer.setClearColor( BackgroundColor, 1); //background define-able above
+    
+    /* renderer.setPixelRatio( Div.devicePixelRatio );
+    renderer.setSize( Div.innerWidth, Div.innerHeight );
+    document.body.appendChild( renderer.domElement ); //html placement
+    */
     //define a scene
     scene = new THREE.Scene();
     
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, Div.innerWidth / Div.innerHeight, 1, 1000); 
+    camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
+
     camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
     camera.lookAt( scene.position );
 
-    //renderer configure
-    renderer = new THREE.WebGLRenderer({antialias:true}); //the renderer itself its complex go read the docs
-    renderer.setPixelRatio( Div.devicePixelRatio );
-    renderer.setSize( Div.innerWidth, Div.innerHeight );
-    renderer.setClearColor( BackgroundColor, 1); //background define-able above
-    document.body.appendChild( renderer.domElement ); //html placement
 
-    //clipping in renderer
+    //#region clipping in renderer
     if (EnableClipping) {
         
         //add in the three clipping planes that make-up the box
@@ -57,7 +61,9 @@ function init() {
         ];
         renderer.localClippingEnabled = true;
     }
+    //#endregion
 
+    //#region geometry
     // add an inner sphere
     const geometry = new THREE.SphereGeometry( .5, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
@@ -87,11 +93,12 @@ function init() {
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
     scene.add( mesh2 );
-
+    //#endregion
 
     // add a listener so when we resize the window it updates the scene camera
     window.addEventListener( 'resize', onWindowResize );
 
+    //#region controlls
     //controls
     controls = new OrbitControls( camera, renderer.domElement );
     controls.listenToKeyEvents( window );
@@ -108,8 +115,9 @@ function init() {
     //automagically rotate
     controls.autoRotate=true;
     controls.autoRotateSpeed=0;
+    //#endregion
 
-    //lighting
+    //#region lighting
     // enable helpers at the top to see what you're doing!
 
     //ambientlight
@@ -135,7 +143,9 @@ function init() {
     lightD.target.position.set(-5, -5, -5);
     scene.add(lightD);
     scene.add(lightD.target);
+    //#endregion
 
+    //#region helpers
     if (EnableLightHelpers == true)
     {   //light visualizers
         const helper = new THREE.BoxHelper(lightD.target, 0xFF0000 );
@@ -166,16 +176,30 @@ function init() {
         scene.add(planehelpers[1]);
         scene.add(planehelpers[2]);
     }
-    
+    //#endregion
 
 }
+function resizeCanvasToDisplaySize() {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    if (canvas.width !== width ||canvas.height !== height) {
+      // you must pass false here or three.js sadly fights the browser
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+  
+      // set render target sizes here
+    }
+  }
+  
 
 function onWindowResize() {
     //make sure your window doesnt get al wonky
-    camera.aspect = Div.innerWidth / Div.innerHeight;
+    //camera.aspect = Div.innerWidth / Div.innerHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( Div.innerWidth, Div.innerHeight );
+    //renderer.setSize( Div.innerWidth, Div.innerHeight );
 }
 
 function animate() {
@@ -184,6 +208,7 @@ function animate() {
 
     //for controls if you edit it through script
     controls.update();
+    resizeCanvasToDisplaySize();
 
     //render the scene
     renderer.render( scene, camera );
