@@ -1,16 +1,16 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, PlaneHelper, QuadraticBezierCurve, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
-
 
 //initiate some variables
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
-let geometry, vertices;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div;
+
+
 init();
 animate();
 
@@ -25,50 +25,26 @@ function init() {
     //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
-    EnableClipping = false;
+    camerazoom = 1.5;
+    BackgroundColor = 0xffffff;
+    EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
-
-    // quantummechanische waardes! 
-    bohrRadius=0.529177210903;
-    quantumN=4;
-    quantumL=3;
-    quantumM=2;
-    //de maximale radius(niet aan zitten)
-    RadiusOfDistribution = 8 * quantumN;
-
-    //aantal keer dat je een random punt kiest en de berekening uitvoert
-    // if (quantumN<=4&&quantumL!=3) {
-    Trials = 1000000 * quantumN ** 3;
-    // }else{
-    //     Trials=1000000*quantumN;
-    //     console.log("else " + Trials)
-    // }
-    
-    // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
-    // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
-    // maar een stuk makkelijker voor je computer is om te hendelen.
-    // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpensiveTrials= 1000;
-    
-    // camera zoom variabelen
-    camerazoom = 2.5 / quantumN;
-    let cameramin=1;
-    let cameramax=1000000;
-
-    UpdateOnFrames=4;
-    Frame=0;
     //#endregion
 
     //renderer configure
-    renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div), alpha: true}); //the renderer itself its complex go read the docs
-
+    renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div)}); //the renderer itself its complex go read the docs
+    renderer.setClearColor( BackgroundColor, 1); //background define-able above
+    
+    /* renderer.setPixelRatio( Div.devicePixelRatio );
+    renderer.setSize( Div.innerWidth, Div.innerHeight );
+    document.body.appendChild( renderer.domElement ); //html placement
+    */
     //define a scene
     scene = new THREE.Scene();
-    scene.background = null
-
+    
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, 2 / 1, cameramin, cameramax); 
+    camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
 
     camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
     camera.lookAt( scene.position );
@@ -89,21 +65,22 @@ function init() {
 
     //#region geometry
     // add an inner sphere
-    const geometry = new THREE.SphereGeometry( .1, 40, 20 );
+    const geometry = new THREE.SphereGeometry( .5, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
     {   
-        color: 0x00FF00, 
+        color: 0xFF0000, 
         transparent: false, 
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
+        clipShadows: EnableClipping
     } );
     
     const mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
     //add outer sphere
-    const geometry2 = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
+    const geometry2 = new THREE.SphereGeometry( 5, 20, 20 );
     const material2 = new THREE.MeshStandardMaterial( 
     {   
         color: 0x000000, 
@@ -111,11 +88,11 @@ function init() {
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
+        clipShadows: EnableClipping,
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
-    //scene.add( mesh2 );
-
+    scene.add( mesh2 );
     //#endregion
 
     // add a listener so when we resize the window it updates the scene camera
@@ -137,14 +114,14 @@ function init() {
     controls.enablePan=false;
     //automagically rotate
     controls.autoRotate=true;
-    controls.autoRotateSpeed=0.3;
+    controls.autoRotateSpeed=0;
     //#endregion
 
     //#region lighting
     // enable helpers at the top to see what you're doing!
 
     //ambientlight
-    const color = 0xffffff;
+    const color = 0xFFFFFF;
     const intensity = .5;
     const light = new THREE.AmbientLight(color, intensity);
     scene.add(light);
@@ -174,11 +151,14 @@ function init() {
         const helper = new THREE.BoxHelper(lightD.target, 0xFF0000 );
         scene.add(helper);
 
+
         const helperd2 = new THREE.BoxHelper(lightD2.target, 0xFF0000 );
         scene.add(helperd2);
 
+
         const helperD = new THREE.DirectionalLightHelper( lightD, 5, 0xFF0000 );
         scene.add(helperD);
+
 
         const helperD2 = new THREE.DirectionalLightHelper( lightD2, 5, 0xFF0000 );
         scene.add(helperD2);
@@ -198,11 +178,7 @@ function init() {
     }
     //#endregion
 
-    spawnOrbsRParticles();
-    console.log (SphericalHarmonics(2, 2, 1));
-    x=0;
 }
-
 function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -211,12 +187,13 @@ function resizeCanvasToDisplaySize() {
       // you must pass false here or three.js sadly fights the browser
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
-      camera.setViewOffset(width,height,-width/6,0,width,height,0 );
       camera.updateProjectionMatrix();
+  
       // set render target sizes here
     }
   }
   
+
 function onWindowResize() {
     //make sure your window doesnt get al wonky
     //camera.aspect = Div.innerWidth / Div.innerHeight;
@@ -224,7 +201,6 @@ function onWindowResize() {
 
     //renderer.setSize( Div.innerWidth, Div.innerHeight );
 }
-
 
 function animate() {
     //do this for animations
@@ -236,174 +212,5 @@ function animate() {
 
     //render the scene
     renderer.render( scene, camera );
-    // renderer.shadowMap.autoUpdate = false;
-
-    var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
-        
-
-    if (x < Trials) {
-        CalcVertices(atbohr);
-        }
-    
-    
-    if (x < Trials-100&&Frame==UpdateOnFrames) {
-        UpdateGeometry();
-        Frame=0;
-    }
-    Frame++
+    renderer.shadowMap.autoUpdate =true;
 }
-
-async function CalcVertices(atbohr){
-    for (let I = 0; I < 50000; I++) {   
-        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-    
-    
-        if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-            const v=new Vector3()
-            v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
-            vertices.push(v.x, v.y, v.z); 
-        }
-        x++;
-    }
-}
-
-async function UpdateGeometry(){
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.update;
-}
-
-
-// function spawnOrbsR() {
-//     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
-//     const mat = new THREE.MeshStandardMaterial(
-//             {
-//                 color: 0xFF0000,
-//                 transparent: false,
-//                 // side: THREE.DoubleSide,
-//                 clippingPlanes: clipPlanes,
-//                 clipIntersection: true,
-//                 // clipShadows: EnableClipping
-//             }
-//         );
-    
-//     let quantumN=3;
-//     let quantumL=1;
-//     let quantumM=0;
-//     let bohrRadius=0.529177210903;
-
-//     // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
-
-//     for (let X = 0; X < 100000; X++) {
-        
-//         var sphericalTheta = Math.random() * 2.0 * Math.PI;
-//         var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-//         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-        
-        
-//         if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-//             meshIndex[x] = new THREE.Mesh(geometry,mat);
-//             meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
-            
-//             scene.add(meshIndex[x]); 
-//         }
-        
-
-//     }
-    
-// }
-
-
-function spawnOrbsRParticles() {
-    geometry = new THREE.BufferGeometry();
-    const texture = new THREE.TextureLoader().load( '/ball.png' );
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
-    const particles = new THREE.Points( geometry, material );
-    vertices = [0,0,0];
-
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-    scene.add( particles );
-
-    // let bohrRadius=0.529177210903;
-
-
-    // var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
-    // console.log(atbohr)
-    // console.log(quantumN + " " + quantumL + " " + quantumM + " " )
-
-    // for (let X = 0; X < Trials; X++) {
-        
-    //     var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-    //     var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-    //     var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-
-
-    //     if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-    //         const v=new Vector3(1,1,1)
-    //         v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
-    //         vertices.push(v.x,v.y,v.z); 
-    //     }
-    // }
-
-    // geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-}
-
-//#region Hydrogen wave function 
-
-function factorial(n) {
-    if (n < 0) return;
-    if (n < 2) return 1;
-    return n * factorial(n - 1);
-}
-
-function doubleFactorial(n) {
-    if (n < 2)
-        return 1;            
-        return n * doubleFactorial(n - 2);
-}
-
-function Laguerre(laguerreAlpha, laguerreK, laguerreX){
-    
-    let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
-
-    for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
-        LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
-    }
-    return LaguerreValues[laguerreK]; 
-}
-
-function Legendre(LegendreL, LegendreM, LegendreX){
-
-    let LegendreValues = [doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
-    LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
-
-    for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
-        LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
-    }
-    return LegendreValues[LegendreL - LegendreM];   
-
-}
-
-function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
-
-    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
-
-}
-
-function Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius) {
-
-    return  Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL
-
-}
-
-function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) {
-
-    return  (Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius)
-            * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))
-            * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta)) ** 2;
-
-}
-//#endregion
