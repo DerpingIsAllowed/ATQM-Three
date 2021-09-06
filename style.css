@@ -13,8 +13,19 @@ h1 {
     margin-left: 0px;
 }
 
-.container {
-    position: relative;
+.container1 {
+  position: fixed;
+  width: 30%;
+  background-color: lightblue;
+  height: 100%;
+  margin-right: 0px;
+}
+
+.container2 {
+    position: fixed;
+    width: 70%;
+    height: 100%;
+    margin-right: 0px;
 }
 
 .test {  
@@ -47,3 +58,11 @@ h1 {
     }
 }
 
+.FrameJS{
+  
+}
+
+.Divers{ 
+  width: auto;
+  height: auto;
+}
