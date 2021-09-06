@@ -8,7 +8,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div;
 
 
 init();
@@ -29,19 +29,20 @@ function init() {
     BackgroundColor = 0xffffff;
     EnableClipping = true;
     ClippingPlaneOfset = 0;
+    Div=document.getElementById('DivJS');
 
     //define a scene
     scene = new THREE.Scene();
     
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000); 
+    camera = new THREE.PerspectiveCamera(20, Div.innerWidth / Div.innerHeight, 1, 1000); 
     camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
     camera.lookAt( scene.position );
 
     //renderer configure
     renderer = new THREE.WebGLRenderer({antialias:true}); //the renderer itself its complex go read the docs
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setPixelRatio( Div.devicePixelRatio );
+    renderer.setSize( Div.innerWidth, Div.innerHeight );
     renderer.setClearColor( BackgroundColor, 1); //background define-able above
     document.body.appendChild( renderer.domElement ); //html placement
 
@@ -171,10 +172,10 @@ function init() {
 
 function onWindowResize() {
     //make sure your window doesnt get al wonky
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = Div.innerWidth / Div.innerHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( Div.innerWidth, Div.innerHeight );
 }
 
 function animate() {
