@@ -13,6 +13,19 @@ h1 {
     margin-left: 0px;
 }
 
+p{
+  color: black;
+  text-align: center;
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
 .container1 {
   position: fixed;
   width: 30%;
@@ -58,11 +71,15 @@ h1 {
     }
 }
 
-.FrameJS{
-  
+.p-inl-extra{
+  margin-top: 20px;
 }
 
-.Divers{ 
+.DivJS{
+ 
+}
+
+.DivMain{ 
   width: auto;
   height: auto;
 }
