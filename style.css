@@ -26,6 +26,28 @@ p{
   margin-left: 10px;
 }
 
+.aspilltext{
+  grid-area: overlap;
+  width: 50vw;
+  height: 100%;
+  z-index: 10;
+  pointer-events:none;
+}
+
+.background{
+  grid-area: overlap;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+}
+
+.container{
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows:1fr;
+  grid-template-areas:"Overlap";
+}
+
 .container1 {
   position: fixed;
   width: 30%;
@@ -51,25 +73,6 @@ p{
     margin-left: 0px;
 }
 
-
-@media screen and (max-width: 600px) {
-    h1 {
-      font-size: 30px;
-    }
-}
-
-@media screen and (min-width: 600px) {
-    h1 {
-      font-size: 4.8vw;
-    }
-}
-
-@media screen and (min-width: 1250px) {
-    h1 {
-      font-size: 60px;
-    }
-}
-
 .p-inl-extra{
   margin-top: 20px;
 }
@@ -83,4 +86,25 @@ p{
 .DivMain{ 
   width: auto;
   height: 100vh;
+}
+
+/*Breakpoints*/
+
+
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 30px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  h1 {
+    font-size: 4.8vw;
+  }
+}
+
+@media screen and (min-width: 1250px) {
+  h1 {
+    font-size: 60px;
+  }
 }

@@ -33,13 +33,9 @@ function init() {
     //#endregion
 
     //renderer configure
-    renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div)}); //the renderer itself its complex go read the docs
+    renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div), alpha: true}); //the renderer itself its complex go read the docs
     renderer.setClearColor( BackgroundColor, 1); //background define-able above
     
-    /* renderer.setPixelRatio( Div.devicePixelRatio );
-    renderer.setSize( Div.innerWidth, Div.innerHeight );
-    document.body.appendChild( renderer.domElement ); //html placement
-    */
     //define a scene
     scene = new THREE.Scene();
     

@@ -2,6 +2,8 @@
 <html lang="en">
 <link rel="stylesheet" href="style.css">
 <head>
+    <!-- deze moet bovenaan blijven want hij moet als eerste laden \/ (en dan raken we hem niet kwijt lol) -->
+    <script type="module" src="index2.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,17 +18,19 @@
 </head>
 <body>
     <div class="DivMain">
-        
-        <section class="container1">
-            <h1>The Accessible Truthful Quantum Model</h1>
-            <p class="p-inl-extra">Welcome to The Accessible Truthful Quantum Model of the H atom. Take a look at what happen on the in and outside.</p>
-            <p>For questions about us or the atom model, please have a visit on wikipedia ;)</p>
-        </section>
-
-        <!-- deze moet bovenaan blijven want hij moet als eerste laden \/ (en dan raken we hem niet kwijt lol) -->
-        <script type ="module" src="index2.js"></script>  
-        <canvas class="FrameJS"></canvas>
-
+        <div class=container>
+            <div class=background>
+                <section class="container1">
+                   
+                </section>
+                <canvas class="FrameJS"></canvas>
+            </div>
+            <div class=aspilltext> <h1>The Accessible Truthful Quantum Model</h1>
+                <p class="p-inl-extra">Welcome to The Accessible Truthful Quantum Model of the H atom. Take a look at
+                    what happen on the in and outside.</p>
+                <p>For questions about us or the atom model, please have a visit on wikipedia ;)</p>
+            </div>
+        </div>
     </div>
     
 </body>
