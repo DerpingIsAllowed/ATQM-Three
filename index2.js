@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, PlaneHelper, QuadraticBezierCurve, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, PlaneHelper, QuadraticBezierCurve, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -8,7 +8,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta;
 
 
 init();
@@ -29,6 +29,9 @@ function init() {
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
+    sphericalRadius = 5;
+    sphericalPhi = 2;
+    sphericalTheta = 3;
     //#endregion
 
     //renderer configure
@@ -88,6 +91,22 @@ function init() {
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
     scene.add( mesh2 );
+
+    //add outer orb
+    const geometry3 = new THREE.SphereGeometry( .5, 40, 20 );
+    const material3 = new THREE.MeshStandardMaterial( 
+    {   
+        color: 0xFF0000, 
+        transparent: false, 
+        side: THREE.DoubleSide,
+        clippingPlanes: clipPlanes,
+        clipIntersection: true,
+        clipShadows: EnableClipping
+    } );
+    
+    const mesh3 = new THREE.Mesh( geometry3, material3 );
+    scene.add( mesh3 );
+    mesh.position.setFromSpherical(new Spherical( sphericalRadius, sphericalPhi, sphericalTheta ));
     //#endregion
 
     // add a listener so when we resize the window it updates the scene camera
