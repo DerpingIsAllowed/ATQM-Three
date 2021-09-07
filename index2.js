@@ -30,8 +30,8 @@ function init() {
     ClippingPlaneOfset = 0;
     Div="canvas";
     sphericalRadius = 5;
-    sphericalPhi = 2;
-    sphericalTheta = 3;
+    sphericalPhi = 1.6;
+    sphericalTheta = .6;
     //#endregion
 
     //renderer configure
