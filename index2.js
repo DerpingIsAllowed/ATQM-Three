@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, PlaneHelper, QuadraticBezierCurve, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, Particle, PlaneHelper, QuadraticBezierCurve, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -8,7 +8,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], x;
 
 
 init();
@@ -53,9 +53,9 @@ function init() {
         
         //add in the three clipping planes that make-up the box
         clipPlanes = [
-            new THREE.Plane( new THREE.Vector3( -1, 0, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), ClippingPlaneOfset )
+            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset ),
+            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset ),
+            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset )
         ];
         renderer.localClippingEnabled = true;
     }
@@ -92,21 +92,6 @@ function init() {
     const mesh2 = new THREE.Mesh( geometry2, material2 );
     scene.add( mesh2 );
 
-    //add outer orb
-    const geometry3 = new THREE.SphereGeometry( .5, 40, 20 );
-    const material3 = new THREE.MeshStandardMaterial( 
-    {   
-        color: 0xFF0000, 
-        transparent: false, 
-        side: THREE.DoubleSide,
-        clippingPlanes: clipPlanes,
-        clipIntersection: true,
-        clipShadows: EnableClipping
-    } );
-    
-    const mesh3 = new THREE.Mesh( geometry3, material3 );
-    scene.add( mesh3 );
-    mesh.position.setFromSpherical(new Spherical( sphericalRadius, sphericalPhi, sphericalTheta ));
     //#endregion
 
     // add a listener so when we resize the window it updates the scene camera
@@ -192,6 +177,8 @@ function init() {
     }
     //#endregion
 
+    spawnOrbs()
+
 }
 function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
@@ -228,3 +215,44 @@ function animate() {
     renderer.render( scene, camera );
     renderer.shadowMap.autoUpdate =true;
 }
+
+//spawning a butt ton of orbs
+function spawnOrbs() {
+
+    x = 0;
+   
+   for(sphericalRadius = 0; sphericalRadius < 10; sphericalRadius++){ 
+    //Radius
+
+        for(sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI/10){ 
+        //Phi
+
+            for(sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI/10){ 
+            //Theta
+
+                meshIndex[x] = 
+                    new THREE.Mesh( new THREE.SphereGeometry( 0.1, 5, 5 ),
+                                    new THREE.MeshStandardMaterial( 
+                                        {   
+                                            color: 0xFF0000, 
+                                            transparent: false, 
+                                            side: THREE.DoubleSide,
+                                            clippingPlanes: clipPlanes,
+                                            clipIntersection: true,
+                                            clipShadows: EnableClipping
+                                        } 
+                                    ) 
+                                );
+                scene.add( meshIndex[x] ); //adding new orb
+                meshIndex[x].position.setFromSpherical(new Spherical( sphericalRadius, sphericalPhi, sphericalTheta )); //spherical coords
+                x++;
+
+
+            }
+
+        }
+
+   }
+
+}
+
