@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -53,9 +53,9 @@ function init() {
         
         //add in the three clipping planes that make-up the box
         clipPlanes = [
-            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), ClippingPlaneOfset )
+            new THREE.Plane( new THREE.Vector3( -1, 0, 0 ), ClippingPlaneOfset ),
+            new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
+            new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), ClippingPlaneOfset )
         ];
         renderer.localClippingEnabled = true;
     }
@@ -66,7 +66,7 @@ function init() {
     const geometry = new THREE.SphereGeometry( .5, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
     {   
-        color: 0xFF0000, 
+        color: 0x00FF00, 
         transparent: false, 
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
@@ -219,7 +219,7 @@ function animate() {
 
 //spawning a butt ton of orbs
 function spawnOrbs() {
-    const geometry = new THREE.SphereBufferGeometry(0.1, 5, 5);
+    const geometry = new THREE.SphereBufferGeometry(0.2, 5, 5);
     const mat = new THREE.MeshStandardMaterial(
             {
                 color: 0xFF0000,
@@ -232,7 +232,7 @@ function spawnOrbs() {
         );
 
     x = 0;
-    let randomizer=0.3;
+    let randomizer=0.2;
 
     for (sphericalRadius = 0.2; sphericalRadius < 5; sphericalRadius++) {
         //Radius
@@ -250,7 +250,7 @@ function spawnOrbs() {
                 scene.add(meshIndex[x]); //adding new orb
                 meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadiusA, sphericalPhiA, sphericalThetaA)); //spherical coords
                 x++;
-                
+
             }
         }
     }
@@ -273,16 +273,56 @@ function spawnOrbsR() {
                 clipShadows: EnableClipping
             }
         );
-
-    for (let X = 0; X < 4000; X++) {
+    
+    for (let X = 0; X < 10000; X++) {
         
         sphericalRadius = MathUtils.randFloat(0, 10)
         sphericalPhi = MathUtils.randFloat(0, 2 * Math.PI)
         sphericalTheta = MathUtils.randFloat(0, Math.PI)
 
-        meshIndex[x] = new THREE.Mesh(mesh,geometry);
+        meshIndex[x] = new THREE.Mesh(geometry,mat);
         meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
         
         scene.add(meshIndex[x]); //adding new orb
     }
+    
+}
+
+
+function spawnOrbsRParticles() {
+
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+
+    x = 0;
+    let randomizer=0.3;
+
+    for (sphericalRadius = 0.2; sphericalRadius < 5; sphericalRadius++) {
+        //Radius
+
+        for (sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI / 10) {
+            //Phi
+
+            for (sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI / 10) {
+                //Theta
+                const sphericalRadiusA = MathUtils.randFloat(0, randomizer*2) +sphericalRadius;
+                const sphericalPhiA = MathUtils.randFloat(0, randomizer) + sphericalPhi ;
+                const sphericalThetaA = MathUtils.randFloat(0,randomizer) + sphericalTheta ;
+                
+                
+                const v=new Vector3(1,1,1)
+                v.setFromSpherical(new Spherical(sphericalRadiusA, sphericalPhiA, sphericalThetaA));
+                
+                vertices.push(v.x,v.y,v.z);
+            }
+        }
+    }
+
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+    
+    const material = new THREE.PointsMaterial( { size: 3.5, sizeAttenuation: true, transparent: true, color: 0x888888, } );
+
+    const particles = new THREE.Points( geometry, material );
+    scene.add( particles );
 }
