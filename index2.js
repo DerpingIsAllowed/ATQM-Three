@@ -180,6 +180,7 @@ function init() {
     spawnOrbs()
 
 }
+
 function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -249,10 +250,7 @@ function spawnOrbs() {
 
 
             }
-
         }
-
-   }
-
+    }
 }
 
