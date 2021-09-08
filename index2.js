@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, Particle, PlaneHelper, QuadraticBezierCurve, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -8,7 +8,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, BackgroundColor, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], x;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], x;
 
 
 init();
@@ -90,7 +90,7 @@ function init() {
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
-    scene.add( mesh2 );
+    //scene.add( mesh2 );
 
     //#endregion
 
@@ -219,38 +219,70 @@ function animate() {
 
 //spawning a butt ton of orbs
 function spawnOrbs() {
+    const geometry = new THREE.SphereBufferGeometry(0.1, 5, 5);
+    const mat = new THREE.MeshStandardMaterial(
+            {
+                color: 0xFF0000,
+                transparent: false,
+                side: THREE.DoubleSide,
+                clippingPlanes: clipPlanes,
+                clipIntersection: true,
+                clipShadows: EnableClipping
+            }
+        );
 
     x = 0;
-   
-   for(sphericalRadius = 0; sphericalRadius < 10; sphericalRadius++){ 
-    //Radius
+    let randomizer=0.3;
 
-        for(sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI/10){ 
-        //Phi
+    for (sphericalRadius = 0.2; sphericalRadius < 5; sphericalRadius++) {
+        //Radius
 
-            for(sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI/10){ 
-            //Theta
+        for (sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI / 10) {
+            //Phi
 
-                meshIndex[x] = 
-                    new THREE.Mesh( new THREE.SphereGeometry( 0.1, 5, 5 ),
-                                    new THREE.MeshStandardMaterial( 
-                                        {   
-                                            color: 0xFF0000, 
-                                            transparent: false, 
-                                            side: THREE.DoubleSide,
-                                            clippingPlanes: clipPlanes,
-                                            clipIntersection: true,
-                                            clipShadows: EnableClipping
-                                        } 
-                                    ) 
-                                );
-                scene.add( meshIndex[x] ); //adding new orb
-                meshIndex[x].position.setFromSpherical(new Spherical( sphericalRadius, sphericalPhi, sphericalTheta )); //spherical coords
+            for (sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI / 10) {
+                //Theta
+                const sphericalRadiusA = MathUtils.randFloat(0, randomizer*2) +sphericalRadius;
+                const sphericalPhiA = MathUtils.randFloat(0, randomizer) + sphericalPhi ;
+                const sphericalThetaA = MathUtils.randFloat(0,randomizer) + sphericalTheta ;
+
+                meshIndex[x] = new THREE.Mesh(geometry,mat);
+                scene.add(meshIndex[x]); //adding new orb
+                meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadiusA, sphericalPhiA, sphericalThetaA)); //spherical coords
                 x++;
-
-
+                
             }
         }
     }
 }
 
+
+
+
+
+
+function spawnOrbsR() {
+    const geometry = new THREE.SphereBufferGeometry(0.1, 5, 5);
+    const mat = new THREE.MeshStandardMaterial(
+            {
+                color: 0xFF0000,
+                transparent: false,
+                side: THREE.DoubleSide,
+                clippingPlanes: clipPlanes,
+                clipIntersection: true,
+                clipShadows: EnableClipping
+            }
+        );
+
+    for (let X = 0; X < 4000; X++) {
+        
+        sphericalRadius = MathUtils.randFloat(0, 10)
+        sphericalPhi = MathUtils.randFloat(0, 2 * Math.PI)
+        sphericalTheta = MathUtils.randFloat(0, Math.PI)
+
+        meshIndex[x] = new THREE.Mesh(mesh,geometry);
+        meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
+        
+        scene.add(meshIndex[x]); //adding new orb
+    }
+}
