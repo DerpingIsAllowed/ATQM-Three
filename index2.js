@@ -25,7 +25,7 @@ function init() {
     //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
-    camerazoom = 1.5;
+    camerazoom = 2.5;
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
@@ -121,7 +121,7 @@ function init() {
     // enable helpers at the top to see what you're doing!
 
     //ambientlight
-    const color = 0xFFFFFF;
+    const color = 0xffffff;
     const intensity = .5;
     const light = new THREE.AmbientLight(color, intensity);
     scene.add(light);
@@ -179,7 +179,7 @@ function init() {
     //#endregion
 
 
-    spawnOrbsR()
+    spawnOrbsRParticles()
 
 }
 
@@ -266,7 +266,7 @@ function spawnOrbs() {
 
 
 function spawnOrbsR() {
-    const geometry = new THREE.SphereBufferGeometry(0.1, 5, 5);
+    const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
     const mat = new THREE.MeshStandardMaterial(
             {
                 color: 0xFF0000,
@@ -277,19 +277,9 @@ function spawnOrbsR() {
                 clipShadows: EnableClipping
             }
         );
-        mat.onBeforeCompile = function( shader ) {
-
-            shader.fragmentShader = shader.fragmentShader.replace(
-        
-                `gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
-        
-                `gl_FragColor = ( gl_FrontFacing ) ? vec4( outgoingLight, diffuseColor.a ) : vec4( diffuse, opacity );`
-        
-            );
-        };
     
     
-    for (let X = 0; X < 1000; X++) {
+    for (let X = 0; X < 10000; X++) {
         
         sphericalTheta = Math.random() * 2.0 * Math.PI;
         sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
@@ -309,7 +299,7 @@ function spawnOrbsRParticles() {
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
     
-    for (let X = 0; X < 10000; X++) {
+    for (let X = 0; X < 100000; X++) {
     
         sphericalTheta = Math.random() * 2.0 * Math.PI;
         sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
@@ -324,7 +314,7 @@ function spawnOrbsRParticles() {
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
     
-    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, } );
+    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true,alpha:0.5 } );
 
     const particles = new THREE.Points( geometry, material );
     scene.add( particles );
