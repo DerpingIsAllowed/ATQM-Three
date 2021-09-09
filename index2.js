@@ -8,7 +8,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], x;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], RadiusOfDistribution, x;
 
 
 init();
@@ -32,6 +32,7 @@ function init() {
     sphericalRadius = 5;
     sphericalPhi = 1.6;
     sphericalTheta = .6;
+    RadiusOfDistribution=3;
     //#endregion
 
     //renderer configure
@@ -177,7 +178,8 @@ function init() {
     }
     //#endregion
 
-    spawnOrbs()
+
+    spawnOrbsR()
 
 }
 
@@ -216,6 +218,8 @@ function animate() {
     renderer.render( scene, camera );
     renderer.shadowMap.autoUpdate =true;
 }
+
+
 
 //spawning a butt ton of orbs
 function spawnOrbs() {
@@ -273,12 +277,23 @@ function spawnOrbsR() {
                 clipShadows: EnableClipping
             }
         );
-    
-    for (let X = 0; X < 10000; X++) {
+        mat.onBeforeCompile = function( shader ) {
+
+            shader.fragmentShader = shader.fragmentShader.replace(
         
-        sphericalRadius = MathUtils.randFloat(0, 10)
-        sphericalPhi = MathUtils.randFloat(0, 2 * Math.PI)
-        sphericalTheta = MathUtils.randFloat(0, Math.PI)
+                `gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
+        
+                `gl_FragColor = ( gl_FrontFacing ) ? vec4( outgoingLight, diffuseColor.a ) : vec4( diffuse, opacity );`
+        
+            );
+        };
+    
+    
+    for (let X = 0; X < 1000; X++) {
+        
+        sphericalTheta = Math.random() * 2.0 * Math.PI;
+        sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
+        sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
 
         meshIndex[x] = new THREE.Mesh(geometry,mat);
         meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
@@ -293,35 +308,23 @@ function spawnOrbsRParticles() {
 
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
+    
+    for (let X = 0; X < 10000; X++) {
+    
+        sphericalTheta = Math.random() * 2.0 * Math.PI;
+        sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
+        sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
 
-    x = 0;
-    let randomizer=0.3;
-
-    for (sphericalRadius = 0.2; sphericalRadius < 5; sphericalRadius++) {
-        //Radius
-
-        for (sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI / 10) {
-            //Phi
-
-            for (sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI / 10) {
-                //Theta
-                const sphericalRadiusA = MathUtils.randFloat(0, randomizer*2) +sphericalRadius;
-                const sphericalPhiA = MathUtils.randFloat(0, randomizer) + sphericalPhi ;
-                const sphericalThetaA = MathUtils.randFloat(0,randomizer) + sphericalTheta ;
-                
-                
-                const v=new Vector3(1,1,1)
-                v.setFromSpherical(new Spherical(sphericalRadiusA, sphericalPhiA, sphericalThetaA));
-                
-                vertices.push(v.x,v.y,v.z);
-            }
+        const v=new Vector3(1,1,1)
+        v.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta));
+    
+        vertices.push(v.x,v.y,v.z); 
         }
-    }
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
     
-    const material = new THREE.PointsMaterial( { size: 3.5, sizeAttenuation: true, transparent: true, color: 0x888888, } );
+    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, } );
 
     const particles = new THREE.Points( geometry, material );
     scene.add( particles );
