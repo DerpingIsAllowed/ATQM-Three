@@ -4,6 +4,7 @@ import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBez
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 
+
 //initiate some variables
 let scene, camera, renderer, controls;
 
@@ -114,7 +115,7 @@ function init() {
     controls.enablePan=false;
     //automagically rotate
     controls.autoRotate=true;
-    controls.autoRotateSpeed=0;
+    controls.autoRotateSpeed=0.3;
     //#endregion
 
     //#region lighting
@@ -179,7 +180,7 @@ function init() {
     //#endregion
 
 
-    spawnOrbsRParticles()
+    spawnOrbsR()
 
 }
 
@@ -262,9 +263,6 @@ function spawnOrbs() {
 
 
 
-
-
-
 function spawnOrbsR() {
     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
     const mat = new THREE.MeshStandardMaterial(
@@ -279,11 +277,27 @@ function spawnOrbsR() {
         );
     
     
+
+
+    let quantumN=2;
+    let quantumL=1;
+    let quantumM=0;
+    let e=2;
+    let bohrRadius=5.29177210903;
+
+    let PartA=Math.sqrt(Math.pow(3, 2/(quantumN*bohrRadius))* (factorial(quantumN-quantumL-1)/2*quantumN*Math.abs(factorial(quantumN+quantumL))));
+    console.log(PartA);
+
+    let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius),e);
+    console.log(PartB);
+
     for (let X = 0; X < 10000; X++) {
         
         sphericalTheta = Math.random() * 2.0 * Math.PI;
         sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
         sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+
+        let P =
 
         meshIndex[x] = new THREE.Mesh(geometry,mat);
         meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
@@ -314,8 +328,24 @@ function spawnOrbsRParticles() {
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
     
-    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true,alpha:0.5 } );
+    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, alpha:0.5 } );
 
     const particles = new THREE.Points( geometry, material );
     scene.add( particles );
+}
+
+function factorial(n) {
+    if (n < 0) return;
+    if (n < 2) return 1;
+    return n * factorial(n - 1);
+}
+
+function Laguerre(laguerreAlpha,laguerreK,laguerreX,E){
+    
+    let part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
+    let part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
+    
+    //return the (k'th deravetive of part 2 times) part 1 
+
+    return 1;
 }
