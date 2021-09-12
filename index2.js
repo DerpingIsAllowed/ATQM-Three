@@ -4,13 +4,11 @@ import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBez
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 
-
 //initiate some variables
 let scene, camera, renderer, controls;
 
 //initiate custom variables
 let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], RadiusOfDistribution, x;
-
 
 init();
 animate();
@@ -152,14 +150,11 @@ function init() {
         const helper = new THREE.BoxHelper(lightD.target, 0xFF0000 );
         scene.add(helper);
 
-
         const helperd2 = new THREE.BoxHelper(lightD2.target, 0xFF0000 );
         scene.add(helperd2);
 
-
         const helperD = new THREE.DirectionalLightHelper( lightD, 5, 0xFF0000 );
         scene.add(helperD);
-
 
         const helperD2 = new THREE.DirectionalLightHelper( lightD2, 5, 0xFF0000 );
         scene.add(helperD2);
@@ -179,7 +174,6 @@ function init() {
     }
     //#endregion
 
-
     spawnOrbsR()
 
 }
@@ -198,7 +192,6 @@ function resizeCanvasToDisplaySize() {
     }
   }
   
-
 function onWindowResize() {
     //make sure your window doesnt get al wonky
     //camera.aspect = Div.innerWidth / Div.innerHeight;
@@ -219,8 +212,6 @@ function animate() {
     renderer.render( scene, camera );
     renderer.shadowMap.autoUpdate =true;
 }
-
-
 
 //spawning a butt ton of orbs
 function spawnOrbs() {
@@ -261,8 +252,6 @@ function spawnOrbs() {
     }
 }
 
-
-
 function spawnOrbsR() {
     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
     const mat = new THREE.MeshStandardMaterial(
@@ -276,9 +265,6 @@ function spawnOrbsR() {
             }
         );
     
-    
-
-
     let quantumN=2;
     let quantumL=1;
     let quantumM=0;
@@ -307,7 +293,6 @@ function spawnOrbsR() {
     
 }
 
-
 function spawnOrbsRParticles() {
 
     const geometry = new THREE.BufferGeometry();
@@ -327,7 +312,6 @@ function spawnOrbsRParticles() {
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-    
     const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, alpha:0.5 } );
 
     const particles = new THREE.Points( geometry, material );
