@@ -7,28 +7,28 @@
 
 h1 {
   color: black;
-  text-align: center;
+  text-align: left;
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
   font-weight: 1000;
-  font-size: 30px;
-  margin-top: 0px;
+  font-size: 3.0935101186322402vw;
+  margin-top: 4.884856943475227vw;
   margin-bottom: 0px;
   margin-right: 0px;
-  margin-left: 0px;
+  margin-left: 2.7913468248429867vw;;
 }
 
 p{
   color: black;
-  text-align: center;
+  text-align: left;
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
   font-weight: 300;
-  font-size: 20px;
+  font-size: 1.7445917655268668vw;
   margin-top: 10px;
   margin-bottom: 0px;
   margin-right: 10px;
-  margin-left: 10px;
+  margin-left: 2.7913468248429867vw;
 }
 
 .PMenu{
@@ -205,21 +205,21 @@ p{
 
 
 @media screen and (max-width: 600px) {
-  h1 {
+  /* h1 {
     font-size: 30px;
-  }
+  } */
 }
 
 @media screen and (min-width: 600px) {
-  h1 {
+  /* h1 {
     font-size: 4.8vw;
-  }
+  } */
 }
 
 @media screen and (min-width: 1250px) {
-  h1 {
+  /* h1 {
     font-size: 60px;
-  }
+  } */
 }
 
 /* MenuBurger button code i might have stolen */
@@ -265,6 +265,7 @@ p{
 .menu-btn__burger::after {
   transform: translateY(1.1165387299371947vw);
 }
+
 /* ANIMATION */
 .menu-btn.open .menu-btn__burger {
   transform: translateX(-3.4891835310537336vw);
