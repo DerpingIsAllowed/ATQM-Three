@@ -1,16 +1,21 @@
 @import url(https://use.typekit.net/xsd6tgi.css);
+*{
+  margin: 0;
+  padding:0;
+  box-sizing: border-box;
+}
 
 h1 {
-    color: black;
-    text-align: center;
-    font-family: bebas-neue-pro, sans-serif;
-    font-style: normal;
-    font-weight: 1000;
-    font-size: 30px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-left: 0px;
+  color: black;
+  text-align: center;
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  font-weight: 1000;
+  font-size: 30px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
 p{
@@ -24,6 +29,40 @@ p{
   margin-bottom: 0px;
   margin-right: 10px;
   margin-left: 10px;
+}
+
+.PMenu{
+  color: black;
+  text-align: left;
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 2.7913468248429867vw;
+  margin-top: 4.884856943475227vw;
+  margin-bottom: 5px;
+  margin-right: 20px;
+  margin-left: 2.7913468248429867vw;
+  animation-delay: 0.7s;
+  animation-duration: 0.5s;
+  animation-name: text-in;
+  animation-fill-mode: forwards;
+  animation-direction: alternate;
+  animation-play-state: paused;
+  opacity: 0;
+}
+.PMenu.open{
+  animation-play-state:running;
+  animation-iteration-count: initial;
+  animation-fill-mode: forwards;
+}
+.PMenu.closed{
+  animation-iteration-count: initial;
+  animation-name: text-out;
+  animation-duration: 0.5s;
+  animation-play-state:running;
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  opacity: 1;
 }
 
 .aspilltext{
@@ -46,46 +85,120 @@ p{
   grid-template-columns: 1fr;
   grid-template-rows:1fr;
   grid-template-areas:"Overlap";
+  background: url(/assets/Web_1920_–_2@2x.png) no-repeat center top fixed;
+  background-size: cover;
 }
 
 .container1 {
   position: fixed;
   width: 30%;
-  background-color: lightblue;
+  background-color: black;
+  opacity: 0.1;
   height: 100vh;
   margin-right: 0px;
+  box-shadow: 0 0 50px 60px black;
+  pointer-events:none;
 }
 
 .container2 {
-    position: relative;
-    width: 70%;
-    height: 100vh;
+  position: relative;
+  width: 70%;
+  height: 100vh;
 }
 
 .test {  
-    position: absolute;
-    left: 50%;
-    transform: translate( -50%);
-    
-    margin-top: 25px;
-    margin-bottom: 25px;
-    margin-right: 0px;
-    margin-left: 0px;
+  position: absolute;
+  left: 50%;
+  transform: translate( -50%);
+  margin-top: 25px;
+  margin-bottom: 25px;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
 .p-inl-extra{
   margin-top: 20px;
+  z-index: 50;
 }
 
 .FrameJS{
-  width: 70%;
-  height: 100%;
-  margin-left: 30%;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -9999;
 }
 
 .DivMain{ 
   width: auto;
   height: 100vh;
+}
+
+.menuLinks{
+  position: fixed;
+  overflow: hidden;
+  z-index: 25;
+  pointer-events:none; 
+}
+
+.menuCube{
+  width: 50vw;
+  height: 50vw;
+  transform: rotate(-45deg); 
+  background-color: white;
+  filter: drop-shadow(20px,20px,50px);
+  position: fixed;
+  top:-25vw;
+  left: -25vw;
+  overflow: hidden;
+  white-space:nowrap;
+  animation-name: menu-in;
+  animation-duration: 0.8s;
+  z-index: 20;
+  animation-fill-mode: forwards;
+  animation-play-state: paused;
+  animation-iteration-count: initial;
+}
+.menuCube.open{
+  animation-play-state:running;
+  animation-iteration-count: initial;
+  animation-fill-mode: forwards;
+}
+.menuCube.closed{
+  animation-iteration-count: initial;
+  animation-name: menu-out;
+  animation-delay: 0.3s;
+  animation-duration: 0.8s;
+  animation-play-state:running;
+  animation-fill-mode: forwards;
+}
+
+@keyframes menu-in {
+  0%   { left:-25vw; top:-60vw; transform: rotate(0deg); }
+  100%   { left:-25vw; top:-25vw; transform: rotate(-45deg); }
+}
+
+@keyframes text-in {
+  
+  0% { margin-left:-800px; opacity: 0;pointer-events:all; }
+  20% { margin-left:-800px; opacity:1;pointer-events:all; }
+  45% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
+  100% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
+}
+
+@keyframes menu-out {
+  0%   { left:-25vw; top:-25vw; transform: rotate(-45deg); }
+  100%   { left:-25vw; top:-60vw; transform: rotate(0deg); }
+}
+
+@keyframes text-out {
+  
+  0% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
+  20% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
+  45% { margin-left:-800px; opacity:1;pointer-events:all; }
+  100% { margin-left:-800px; opacity: 0;pointer-events:all; }
 }
 
 /*Breakpoints*/
@@ -107,4 +220,60 @@ p{
   h1 {
     font-size: 60px;
   }
+}
+
+/* MenuBurger button code i might have stolen */
+.burgerbutton{
+  position: fixed;
+  overflow: hidden;
+  z-index: 25;
+  pointer-events:all; 
+  left: 1.3956734124214933vw;
+}
+
+.menu-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5.582693649685973vw;
+  height: 5.582693649685973vw;
+  cursor: pointer;
+  transition: all .5s ease-in-out;
+  /* border: 3px solid #fff; */
+}
+.menu-btn__burger {
+  width: 3.4891835310537336vw;
+  height: 0.2791346824842987vw;
+  background: #333;
+  border-radius: 5px;
+  transition: all .5s ease-in-out;
+}
+.menu-btn__burger::before,
+.menu-btn__burger::after {
+  content: '';
+  position: absolute;
+  width: 3.4891835310537336vw;
+  height: 0.2791346824842987vw;
+  background: #333;
+  border-radius: 0.34891835310537334vw;
+  transition: all .5s ease-in-out;
+}
+.menu-btn__burger::before {
+  transform: translateY(-1.1165387299371947vw);
+}
+.menu-btn__burger::after {
+  transform: translateY(1.1165387299371947vw);
+}
+/* ANIMATION */
+.menu-btn.open .menu-btn__burger {
+  transform: translateX(-3.4891835310537336vw);
+  background: transparent;
+  box-shadow: none;
+}
+.menu-btn.open .menu-btn__burger::before {
+  transform: rotate(45deg) translate(2.4424284717376135vw, -2.4424284717376135vw);
+}
+.menu-btn.open .menu-btn__burger::after {
+  transform: rotate(-45deg) translate(2.4424284717376135vw, 2.4424284717376135vw);
 }
