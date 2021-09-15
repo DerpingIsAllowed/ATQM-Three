@@ -3,6 +3,7 @@
   margin: 0;
   padding:0;
   box-sizing: border-box;
+  transition: all .5s ease-in-out;
 }
 
 h1 {
@@ -78,6 +79,7 @@ p{
   width: 100vw;
   height: 100vh;
   z-index: 5;
+  transition: unset;
 }
 
 .container{
@@ -98,6 +100,7 @@ p{
   margin-right: 0px;
   box-shadow: 0 0 50px 60px black;
   pointer-events:none;
+  transition: unset;
 }
 
 .container2 {
@@ -129,6 +132,7 @@ p{
   top: 0;
   left: 0;
   z-index: -9999;
+  transition:unset;
 }
 
 .DivMain{ 
@@ -144,6 +148,7 @@ p{
 }
 
 .menuCube{
+  opacity: 0;
   width: 50vw;
   height: 50vw;
   transform: rotate(-45deg); 
@@ -162,11 +167,13 @@ p{
   animation-iteration-count: initial;
 }
 .menuCube.open{
+  opacity: 1;
   animation-play-state:running;
   animation-iteration-count: initial;
   animation-fill-mode: forwards;
 }
 .menuCube.closed{
+  opacity: 1;
   animation-iteration-count: initial;
   animation-name: menu-out;
   animation-delay: 0.3s;
@@ -182,15 +189,16 @@ p{
 
 @keyframes text-in {
   
-  0% { margin-left:-800px; opacity: 0;pointer-events:all; }
-  20% { margin-left:-800px; opacity:1;pointer-events:all; }
-  45% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
-  100% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
+  0% { margin-left:-800px; opacity: 0; pointer-events:all; }
+  20% { margin-left:-800px; opacity:1; pointer-events:all; }
+  45% { margin-left:2.7913468248429867vw;opacity: 1; pointer-events:all; }
+  100% { margin-left:2.7913468248429867vw;opacity: 1; pointer-events:all; }
 }
 
 @keyframes menu-out {
-  0%   { left:-25vw; top:-25vw; transform: rotate(-45deg); }
-  100%   { left:-25vw; top:-60vw; transform: rotate(0deg); }
+  0%   { left:-25vw; top:-25vw; transform: rotate(-45deg); opacity: 1; }
+  99%   { left:-25vw; top:-60vw; transform: rotate(0deg); opacity: 1; }
+  100% {left:-25vw; top:-60vw; transform: rotate(0deg);  opacity: 0;}
 }
 
 @keyframes text-out {
