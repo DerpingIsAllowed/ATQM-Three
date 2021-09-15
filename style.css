@@ -15,7 +15,7 @@ h1 {
   margin-top: 4.884856943475227vw;
   margin-bottom: 0px;
   margin-right: 0px;
-  margin-left: 2.7913468248429867vw;;
+  margin-left: 15px;
 }
 
 p{
@@ -203,78 +203,212 @@ p{
 
 /*Breakpoints*/
 
-
-@media screen and (max-width: 600px) {
-  /* h1 {
+/* mobiel */
+@media screen and (max-width: 767px) {
+  h1 {
     font-size: 30px;
-  } */
+    margin-left: 20px;
+    margin-top: 55px;
+  }
+
+  .PMenu{
+    font-size: 24px;
+  }
+  
+  p{
+    margin-left: 20px;
+    font-size: 20px;
+  }
 }
 
-@media screen and (min-width: 600px) {
-  /* h1 {
-    font-size: 4.8vw;
-  } */
+/* ipad */
+@media screen and (min-width: 767px) and (max-width:1024px){
+  h1 {
+    font-size: 40px;
+    margin-left: 40px;
+    margin-top: 70px;
+  }
+
+  .PMenu{
+    margin-left: 40px;
+    font-size: 24px;
+  }
+  
+  p{
+    margin-left: 40px;
+    font-size: 20px;
+  }
 }
 
-@media screen and (min-width: 1250px) {
-  /* h1 {
+/* vanaf ipad */
+@media screen and (min-width: 1024px) {
+  h1 {
+    margin-top: 100px;
+    margin-left: 40px;
     font-size: 60px;
-  } */
+  } 
+  
+  .PMenu{
+    font-size: 45px;
+  }
+
+  p{
+    margin-left: 40px;
+    font-size: 30px;
+  }
+  
 }
 
 /* MenuBurger button code i might have stolen */
-.burgerbutton{
-  position: fixed;
-  overflow: hidden;
-  z-index: 25;
-  pointer-events:all; 
-  left: 1.3956734124214933vw;
-}
-
 .menu-btn {
-  position: relative;
+  position: absolute;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  width: 5.582693649685973vw;
-  height: 5.582693649685973vw;
+  left: 30px;
+  width: 80px;
+  height: 80px;
   cursor: pointer;
   transition: all .5s ease-in-out;
+  z-index: 30;
   /* border: 3px solid #fff; */
 }
-.menu-btn__burger {
-  width: 3.4891835310537336vw;
-  height: 0.2791346824842987vw;
-  background: #333;
-  border-radius: 5px;
-  transition: all .5s ease-in-out;
-}
-.menu-btn__burger::before,
-.menu-btn__burger::after {
-  content: '';
-  position: absolute;
-  width: 3.4891835310537336vw;
-  height: 0.2791346824842987vw;
-  background: #333;
-  border-radius: 0.34891835310537334vw;
-  transition: all .5s ease-in-out;
-}
-.menu-btn__burger::before {
-  transform: translateY(-1.1165387299371947vw);
-}
-.menu-btn__burger::after {
-  transform: translateY(1.1165387299371947vw);
+
+
+/* mobiel */
+@media screen and (max-width: 767px) {
+    .menu-btn {
+      margin-left: -10px;
+      width: 60px;
+      height: 60px;
+    }
+
+    .menu-btn__burger {
+      width: 33px;
+      height: 3px;
+      background: #313131;
+      border-radius: 5px;
+      transition: all .5s ease-in-out;
+    }
+    .menu-btn__burger::before,
+    .menu-btn__burger::after {
+      content: '';
+      position: absolute;
+      width: 33px;
+      height: 3px;
+      background: #313131;
+      border-radius: 5px;
+      transition: all .5s ease-in-out;
+    }
+    .menu-btn__burger::before {
+      transform: translateY(-10px);
+    }
+    .menu-btn__burger::after {
+      transform: translateY(10px);
+    }
+    /* ANIMATION */
+    .menu-btn.open .menu-btn__burger {
+      transform: translateX(-50px);
+      background: transparent;
+      box-shadow: none;
+    }
+    .menu-btn.open .menu-btn__burger::before {
+      transform: rotate(45deg) translate(35px, -35px);
+    }
+    .menu-btn.open .menu-btn__burger::after {
+      transform: rotate(-45deg) translate(35px, 35px);
+    }
 }
 
-/* ANIMATION */
-.menu-btn.open .menu-btn__burger {
-  transform: translateX(-3.4891835310537336vw);
-  background: transparent;
-  box-shadow: none;
+/* ipad */
+@media screen and (min-width: 767px) and (max-width:1024px) {
+  .menu-btn {
+    margin-left: 10px;
+    width: 60px;
+    height: 60px;
+    top: 15px;
+  }
+  
+  
+  .menu-btn__burger {
+    width: 40px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before,
+  .menu-btn__burger::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before {
+    transform: translateY(-12px);
+  }
+  .menu-btn__burger::after {
+    transform: translateY(12px);
+  }
+  
+  /* ANIMATION */
+  .menu-btn.open .menu-btn__burger {
+    transform: translateX(-50px);
+    background: transparent;
+    box-shadow: none;
+  }
+  .menu-btn.open .menu-btn__burger::before {
+    transform: rotate(45deg) translate(35px, -35px);
+  }
+  .menu-btn.open .menu-btn__burger::after {
+    transform: rotate(-45deg) translate(35px, 35px);
+  }
 }
-.menu-btn.open .menu-btn__burger::before {
-  transform: rotate(45deg) translate(2.4424284717376135vw, -2.4424284717376135vw);
-}
-.menu-btn.open .menu-btn__burger::after {
-  transform: rotate(-45deg) translate(2.4424284717376135vw, 2.4424284717376135vw);
+
+/* vanaf ipad */
+@media screen and (min-width: 1024px) {
+
+  .menu-btn {
+    margin-left: 10px;
+    margin-top: 15px;
+
+  }
+  .menu-btn__burger {
+    width: 50px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before,
+  .menu-btn__burger::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before {
+    transform: translateY(-16px);
+  }
+  .menu-btn__burger::after {
+    transform: translateY(16px);
+  }
+  /* ANIMATION */
+  .menu-btn.open .menu-btn__burger {
+    transform: translateX(-50px);
+    background: transparent;
+    box-shadow: none;
+  }
+  .menu-btn.open .menu-btn__burger::before {
+    transform: rotate(45deg) translate(35px, -35px);
+  }
+  .menu-btn.open .menu-btn__burger::after {
+    transform: rotate(-45deg) translate(35px, 35px);
+  }
 }
