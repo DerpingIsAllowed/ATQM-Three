@@ -326,10 +326,18 @@ function factorial(n) {
 
 function Laguerre(laguerreAlpha,laguerreK,laguerreX,E){
     
-    let part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
-    let part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
+    const L1= 1+laguerreAlpha-laguerreX;
+    
+    const LKprevMinus1=1;
+    const LKprev=1;
+    const LKPlus1=((2*laguerreK+1+laguerreAlpha-laguerreX)*LKprev -(laguerreK+laguerreAlpha)*LKprevMinus1)/laguerreK+1;
+
+    // old redundant code it was never finished lmao
+    // const part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
+    // const part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
     
     //return the (k'th deravetive of part 2 times) part 1 
+    
 
-    return 1;
+    return L1;
 }
