@@ -6,6 +6,12 @@
   transition: all .5s ease-in-out;
 }
 
+:root{
+  /* Custom properties */
+  --leftMenTextMARGIN:20px;
+  
+}
+
 h1 {
   color: black;
   text-align: left;
@@ -38,11 +44,10 @@ p{
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
   font-weight: 300;
-  font-size: 2.7913468248429867vw;
-  margin-top: 4.884856943475227vw;
+  font-size: 25px;
+  margin-top: 30px;
   margin-bottom: 5px;
   margin-right: 20px;
-  margin-left: 2.7913468248429867vw;
   animation-delay: 0.7s;
   animation-duration: 0.5s;
   animation-name: text-in;
@@ -55,6 +60,7 @@ p{
   animation-play-state:running;
   animation-iteration-count: initial;
   animation-fill-mode: forwards;
+  z-index: 50;
 }
 .PMenu.closed{
   animation-iteration-count: initial;
@@ -149,14 +155,10 @@ p{
 
 .menuCube{
   opacity: 0;
-  width: 50vw;
-  height: 50vw;
   transform: rotate(-45deg); 
   background-color: white;
   filter: drop-shadow(20px,20px,50px);
   position: fixed;
-  top:-25vw;
-  left: -25vw;
   overflow: hidden;
   white-space:nowrap;
   animation-name: menu-in;
@@ -182,50 +184,62 @@ p{
   animation-fill-mode: forwards;
 }
 
-@keyframes menu-in {
-  0%   { left:-25vw; top:-60vw; transform: rotate(0deg); }
-  100%   { left:-25vw; top:-25vw; transform: rotate(-45deg); }
-}
-
-@keyframes text-in {
-  
-  0% { margin-left:-800px; opacity: 0; pointer-events:all; }
-  20% { margin-left:-800px; opacity:1; pointer-events:all; }
-  45% { margin-left:2.7913468248429867vw;opacity: 1; pointer-events:all; }
-  100% { margin-left:2.7913468248429867vw;opacity: 1; pointer-events:all; }
-}
-
-@keyframes menu-out {
-  0%   { left:-25vw; top:-25vw; transform: rotate(-45deg); opacity: 1; }
-  99%   { left:-25vw; top:-60vw; transform: rotate(0deg); opacity: 1; }
-  100% {left:-25vw; top:-60vw; transform: rotate(0deg);  opacity: 0;}
-}
-
-@keyframes text-out {
-  
-  0% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
-  20% { margin-left:2.7913468248429867vw;opacity: 1;pointer-events:all; }
-  45% { margin-left:-800px; opacity:1;pointer-events:all; }
-  100% { margin-left:-800px; opacity: 0;pointer-events:all; }
-}
-
 /*Breakpoints*/
 
 /* mobiel */
 @media screen and (max-width: 767px) {
+  
+
   h1 {
     font-size: 30px;
     margin-left: 20px;
-    margin-top: 55px;
+    margin-top: 70px;
   }
 
-  .PMenu{
-    font-size: 24px;
-  }
   
   p{
-    margin-left: 20px;
+    margin-left: 15px;
     font-size: 20px;
+  }
+  
+  .PMenu{
+    font-size: 15px;
+    margin-top: 65px;
+    font-size: 30px;
+    margin-left: 25px;
+  }
+  
+  .menuCube{
+    width: 700px;
+    height: 700px;
+    top: -375px;
+    left: -375px;
+  }
+  
+  @keyframes menu-in {
+    0%   { left: -375px; top: -800px; transform: rotate(0deg); }
+    100%   { left:-375px; top:-375px; transform: rotate(-45deg); }
+  }
+  
+  @keyframes text-in {
+    0% { margin-left:-800px; opacity: 0; pointer-events:all; }
+    20% { margin-left:-800px; opacity:1; pointer-events:all; }
+    45% { margin-left: 25px; opacity: 1; pointer-events:all; }
+    100% { margin-left:25px; opacity: 1; pointer-events:all; }
+  }
+  
+  @keyframes menu-out {
+    0%   { left:-375px; top:-375px; transform: rotate(-45deg); opacity: 1; }
+    99%   { left:-375px; top: -800px; transform: rotate(0deg); opacity: 1; }
+    100% {left:-375px; top: -800px; transform: rotate(0deg);  opacity: 0;}
+  }
+  
+  @keyframes text-out {
+    
+    0% { margin-left:25px; opacity: 1;pointer-events:all; }
+    20% { margin-left:25px; opacity: 1;pointer-events:all; }
+    45% { margin-left:-800px; opacity:1; pointer-events:all; }
+    100% { margin-left:-800px; opacity: 0; pointer-events:all; }
   }
 }
 
@@ -237,14 +251,48 @@ p{
     margin-top: 70px;
   }
 
-  .PMenu{
-    margin-left: 40px;
-    font-size: 24px;
-  }
-  
   p{
     margin-left: 40px;
     font-size: 20px;
+  }
+  
+  .PMenu{
+    margin-left: 40px;
+    margin-top: 70px;
+    font-size: 30px;
+  }
+
+  .menuCube{
+    width: 700px;
+    height: 700px;
+    top: -375px;
+    left: -375px;
+  }
+  
+  @keyframes menu-in {
+    0%   { left: -375px; top: -800px; transform: rotate(0deg); }
+    100%   { left:-375px; top:-375px; transform: rotate(-45deg); }
+  }
+  
+  @keyframes text-in {
+    0% { margin-left:-800px; opacity: 0; pointer-events:all; }
+    20% { margin-left:-800px; opacity:1; pointer-events:all; }
+    45% { margin-left: 40px; opacity: 1; pointer-events:all; }
+    100% { margin-left:40px; opacity: 1; pointer-events:all; }
+  }
+  
+  @keyframes menu-out {
+    0%   { left:-375px; top:-375px; transform: rotate(-45deg); opacity: 1; }
+    99%   { left:-375px; top: -800px; transform: rotate(0deg); opacity: 1; }
+    100% {left:-375px; top: -800px; transform: rotate(0deg);  opacity: 0;}
+  }
+  
+  @keyframes text-out {
+    
+    0% { margin-left:40px; opacity: 1;pointer-events:all; }
+    20% { margin-left:40px; opacity: 1;pointer-events:all; }
+    45% { margin-left:-800px; opacity:1; pointer-events:all; }
+    100% { margin-left:-800px; opacity: 0; pointer-events:all; }
   }
 }
 
@@ -256,15 +304,49 @@ p{
     font-size: 60px;
   } 
   
-  .PMenu{
-    font-size: 45px;
-  }
-
   p{
     margin-left: 40px;
     font-size: 30px;
   }
   
+  .menuCube{
+    width: 1000px;
+    height: 1000px;
+    top: -500px;
+    left: -500px;
+  }
+
+  .PMenu{
+    font-size: 45px;
+    margin-left: 40px;
+    margin-top: 100px;
+  }
+  
+  @keyframes menu-in {
+    0%   { left: -500px; top: -1200px; transform: rotate(0deg); }
+    100%   { left:-500px; top:-500px; transform: rotate(-45deg); }
+  }
+  
+  @keyframes text-in {
+    0% { margin-left:-800px; opacity: 0; pointer-events:all; }
+    20% { margin-left:-800px; opacity:1; pointer-events:all; }
+    45% { margin-left: 40px; opacity: 1; pointer-events:all; }
+    100% { margin-left:40px; opacity: 1; pointer-events:all; }
+  }
+  
+  @keyframes menu-out {
+    0%   { left:-500px; top:-500px; transform: rotate(-45deg); opacity: 1; }
+    99%   { left:-500px; top: -1200px; transform: rotate(0deg); opacity: 1; }
+    100% {left:-500px; top: -1200px; transform: rotate(0deg);  opacity: 0;}
+  }
+  
+  @keyframes text-out {
+    
+    0% { margin-left:40px; opacity: 1;pointer-events:all; }
+    20% { margin-left:40px; opacity: 1;pointer-events:all; }
+    45% { margin-left:-800px; opacity:1; pointer-events:all; }
+    100% { margin-left:-800px; opacity: 0; pointer-events:all; }
+  }
 }
 
 /* MenuBurger button code i might have stolen */
@@ -285,47 +367,48 @@ p{
 
 /* mobiel */
 @media screen and (max-width: 767px) {
-    .menu-btn {
-      margin-left: -10px;
-      width: 60px;
-      height: 60px;
-    }
+  .menu-btn {
+    margin-left: -10px;
+    width: 60px;
+    height: 60px;
+    margin-top: 10px;
+  }
 
-    .menu-btn__burger {
-      width: 33px;
-      height: 3px;
-      background: #313131;
-      border-radius: 5px;
-      transition: all .5s ease-in-out;
-    }
-    .menu-btn__burger::before,
-    .menu-btn__burger::after {
-      content: '';
-      position: absolute;
-      width: 33px;
-      height: 3px;
-      background: #313131;
-      border-radius: 5px;
-      transition: all .5s ease-in-out;
-    }
-    .menu-btn__burger::before {
-      transform: translateY(-10px);
-    }
-    .menu-btn__burger::after {
-      transform: translateY(10px);
-    }
-    /* ANIMATION */
-    .menu-btn.open .menu-btn__burger {
-      transform: translateX(-50px);
-      background: transparent;
-      box-shadow: none;
-    }
-    .menu-btn.open .menu-btn__burger::before {
-      transform: rotate(45deg) translate(35px, -35px);
-    }
-    .menu-btn.open .menu-btn__burger::after {
-      transform: rotate(-45deg) translate(35px, 35px);
-    }
+  .menu-btn__burger {
+    width: 33px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before,
+  .menu-btn__burger::after {
+    content: '';
+    position: absolute;
+    width: 33px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+  }
+  .menu-btn__burger::before {
+    transform: translateY(-10px);
+  }
+  .menu-btn__burger::after {
+    transform: translateY(10px);
+  }
+  /* ANIMATION */
+  .menu-btn.open .menu-btn__burger {
+    transform: translateX(-50px);
+    background: transparent;
+    box-shadow: none;
+  }
+  .menu-btn.open .menu-btn__burger::before {
+    transform: rotate(45deg) translate(35px, -35px);
+  }
+  .menu-btn.open .menu-btn__burger::after {
+    transform: rotate(-45deg) translate(35px, 35px);
+  }
 }
 
 /* ipad */
