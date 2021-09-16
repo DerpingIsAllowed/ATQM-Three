@@ -71,7 +71,7 @@ function init() {
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
-        clipShadows: EnableClipping
+        // clipShadows: EnableClipping
     } );
     
     const mesh = new THREE.Mesh( geometry, material );
@@ -86,7 +86,7 @@ function init() {
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
-        clipShadows: EnableClipping,
+        // clipShadows: EnableClipping,
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
@@ -210,7 +210,7 @@ function animate() {
 
     //render the scene
     renderer.render( scene, camera );
-    renderer.shadowMap.autoUpdate =true;
+    // renderer.shadowMap.autoUpdate = false;
 }
 
 //spawning a butt ton of orbs
@@ -223,7 +223,7 @@ function spawnOrbs() {
                 side: THREE.DoubleSide,
                 clippingPlanes: clipPlanes,
                 clipIntersection: true,
-                clipShadows: EnableClipping
+                // clipShadows: EnableClipping
             }
         );
 
@@ -258,23 +258,22 @@ function spawnOrbsR() {
             {
                 color: 0xFF0000,
                 transparent: false,
-                side: THREE.DoubleSide,
+                // side: THREE.DoubleSide,
                 clippingPlanes: clipPlanes,
                 clipIntersection: true,
-                clipShadows: EnableClipping
+                // clipShadows: EnableClipping
             }
         );
     
-    let quantumN=2;
+    let quantumN=6;
     let quantumL=1;
     let quantumM=0;
-    let e=2;
     let bohrRadius=5.29177210903;
 
     let PartA=Math.sqrt(Math.pow(3, 2/(quantumN*bohrRadius))* (factorial(quantumN-quantumL-1)/2*quantumN*Math.abs(factorial(quantumN+quantumL))));
     console.log(PartA);
 
-    let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius),e);
+    let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius));
     console.log(PartB);
 
     for (let X = 0; X < 10000; X++) {
@@ -324,14 +323,15 @@ function factorial(n) {
     return n * factorial(n - 1);
 }
 
-function Laguerre(laguerreAlpha,laguerreK,laguerreX,E){
+function Laguerre(laguerreAlpha,laguerreK,laguerreX){
     
-    const L1= 1+laguerreAlpha-laguerreX;
-    
-    const LKprevMinus1=1;
-    const LKprev=1;
-    const LKPlus1=((2*laguerreK+1+laguerreAlpha-laguerreX)*LKprev -(laguerreK+laguerreAlpha)*LKprevMinus1)/laguerreK+1;
-
+    let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
+    let LagIndex
+    for (LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
+        LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK+1);
+        console.log(LagIndex + " " + LaguerreValues[LagIndex]);
+    }
+    return LaguerreValues[laguerreK];
     // old redundant code it was never finished lmao
     // const part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
     // const part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
@@ -339,5 +339,4 @@ function Laguerre(laguerreAlpha,laguerreK,laguerreX,E){
     //return the (k'th deravetive of part 2 times) part 1 
     
 
-    return L1;
 }
