@@ -28,9 +28,9 @@ h1 {
 p{
   color: black;
   text-align: left;
-  font-family: bebas-neue-pro, sans-serif;
+  font-family: roboto, sans-serif;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 1.7445917655268668vw;
   margin-top: 10px;
   margin-bottom: 0px;
@@ -189,17 +189,19 @@ p{
 /* mobiel */
 @media screen and (max-width: 767px) {
   
-
+  
   h1 {
     font-size: 30px;
-    margin-left: 20px;
     margin-top: 70px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
-
+  
   
   p{
-    margin-left: 15px;
-    font-size: 20px;
+    font-size: 18px;
+    margin-left: 20px;
+    margin-right: 12vw;
   }
   
   .PMenu{
@@ -214,6 +216,60 @@ p{
     height: 700px;
     top: -375px;
     left: -375px;
+  }
+
+  /* mobile Menu button and animation */
+  .aspilltext{
+    width: 70vw;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.05);
+  }
+  .MobileMenuButton{
+    /* transform: translate( -50%); */
+    position: absolute;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    left: 60vw;
+    margin-left: -10px;
+    width: 50px;
+    height: 50px;
+    top: 50vh;
+    cursor: pointer;
+    transition: all .5s ease-in-out;
+    z-index: 30;
+    pointer-events: all;
+  }
+  .MMB-Arrow{
+    position: absolute;
+    width: 40px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+    transform: translateY(-10px)rotate(35deg);
+  }
+  .MMB-Arrow::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 3px;
+    background: #313131;
+    border-radius: 5px;
+    transition: all .5s ease-in-out;
+    transform: translateY(18px)translateX(12px)rotate(-70deg);
+  }
+  .MobileMenuButton.closed{
+    right: 0px;
+    left: 20px;
+    margin-left: 0vw;
+    margin-top: -20px;
+  }
+  .MobileMenuButton.closed .MMB-Arrow {
+    transform: translateY(10px)rotate(-35deg);
+  }
+  .MobileMenuButton.closed .MMB-Arrow::after {
+    transform: translateY(18px)translateX(-12px)rotate(70deg);
   }
   
   @keyframes menu-in {

@@ -1,6 +1,7 @@
 const menuBtn = document.querySelector('.menu-btn');
 const menuCube= document.querySelector('.menuCube');
 const PMenu=document.querySelector('.PMenu');
+const MobileMenuButton=document.querySelector('.MobileMenuButton');
 
 let menuOpen = false;
 menuBtn.addEventListener('click', () => {
@@ -22,3 +23,16 @@ menuBtn.addEventListener('click', () => {
     menuOpen = false;
   }
 });
+
+let MMBopen =true
+MobileMenuButton.addEventListener('click', () => {
+  if (!MMBopen) {
+    MobileMenuButton.classList.add('open');
+    MobileMenuButton.classList.remove('closed');
+    MMBopen=true
+  }else{
+    MobileMenuButton.classList.add('closed');
+    MobileMenuButton.classList.remove('open');
+    MMBopen=false
+  }
+})
