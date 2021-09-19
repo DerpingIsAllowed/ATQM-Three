@@ -266,8 +266,8 @@ function spawnOrbsR() {
         );
     
     let quantumN=6;
-    let quantumL=1;
-    let quantumM=0;
+    let quantumL=4;
+    let quantumM=4;
     let bohrRadius=5.29177210903;
 
     let PartA=Math.sqrt(Math.pow(3, 2/(quantumN*bohrRadius))* (factorial(quantumN-quantumL-1)/2*quantumN*Math.abs(factorial(quantumN+quantumL))));
@@ -275,6 +275,8 @@ function spawnOrbsR() {
 
     let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius));
     console.log(PartB);
+
+    console.log(Legendre(quantumL, Math.abs(quantumM), Math.cos(1)))
 
     for (let X = 0; X < 10000; X++) {
         
@@ -323,20 +325,38 @@ function factorial(n) {
     return n * factorial(n - 1);
 }
 
-function Laguerre(laguerreAlpha,laguerreK,laguerreX){
+function doubleFactorial(n) {
+    if (n == 0 || n==1)
+        return 1;            
+        return n * doubleFactorial(n - 2);
+}
+
+function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
     let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
-    let LagIndex
-    for (LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
+
+    for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
         LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK+1);
-        console.log(LagIndex + " " + LaguerreValues[LagIndex]);
+        console.log(LagIndex + " Lag " + LaguerreValues[LagIndex]);
     }
-    return LaguerreValues[laguerreK];
+    return LaguerreValues[laguerreK];   
     // old redundant code it was never finished lmao
     // const part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
     // const part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
     
-    //return the (k'th deravetive of part 2 times) part 1 
-    
+    //return the (k'th deravetive of part 2 times) part 1    
+}
+
+function Legendre(LegendreL, LegendreM, LegendreX){
+
+    let LegendreValues = [(-1) ** LegendreM * doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
+    LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
+    console.log(0 + " Leg " + LegendreValues[0]);
+    console.log(1 + " Leg " + LegendreValues[1]);
+    for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
+        LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
+        console.log(LegIndex + " Leg " + LegendreValues[LegIndex]);
+    }
+    return LegendreValues[LegendreL - LegendreM];   
 
 }
