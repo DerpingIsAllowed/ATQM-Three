@@ -4,6 +4,7 @@ import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBez
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 
+
 //initiate some variables
 let scene, camera, renderer, controls;
 
@@ -266,8 +267,8 @@ function spawnOrbsR() {
         );
     
     let quantumN=6;
-    let quantumL=4;
-    let quantumM=4;
+    let quantumL=0;
+    let quantumM=0;
     let bohrRadius=5.29177210903;
 
     let PartA=Math.sqrt(Math.pow(3, 2/(quantumN*bohrRadius))* (factorial(quantumN-quantumL-1)/2*quantumN*Math.abs(factorial(quantumN+quantumL))));
@@ -276,7 +277,8 @@ function spawnOrbsR() {
     let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius));
     console.log(PartB);
 
-    console.log(Legendre(quantumL, Math.abs(quantumM), Math.cos(1)))
+    let PartC = SphericalHarmonics(quantumL, Math.abs(quantumM), sphericalTheta, sphericalPhi);
+    console.log(PartC)
 
     for (let X = 0; X < 10000; X++) {
         
@@ -326,7 +328,7 @@ function factorial(n) {
 }
 
 function doubleFactorial(n) {
-    if (n == 0 || n==1)
+    if (n < 2)
         return 1;            
         return n * doubleFactorial(n - 2);
 }
@@ -360,3 +362,10 @@ function Legendre(LegendreL, LegendreM, LegendreX){
     return LegendreValues[LegendreL - LegendreM];   
 
 }
+
+function SphericalHarmonics(quantumL, quantumM, sphericalTheta, sphericalPhi) {
+
+    return ((-1) ** quantumM * Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi))
+
+}
+
