@@ -297,9 +297,9 @@ function spawnOrbsRParticles() {
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
 
-    let quantumN=2;
-    let quantumL=0;
-    let quantumM=0;
+    let quantumN=3;
+    let quantumL=2;
+    let quantumM=2;
     let bohrRadius=0.529177210903;
     
     for (let X = 0; X < 10000000; X++) {
@@ -319,7 +319,7 @@ function spawnOrbsRParticles() {
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-    const material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, alpha:0.5 } );
+    const material = new THREE.PointsMaterial( { size: 0.2, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, alpha:0.5 } );
 
     const particles = new THREE.Points( geometry, material );
     scene.add( particles );
@@ -343,7 +343,6 @@ function Laguerre(laguerreAlpha, laguerreK, laguerreX){
 
     for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
         LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
-        console.log(LagIndex + " Lag " + LaguerreValues[LagIndex]);
     }
     return LaguerreValues[laguerreK]; 
 }
@@ -355,7 +354,6 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
     for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
         LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
-        console.log(LegIndex + " Leg " + LegendreValues[LegIndex]);
     }
     return LegendreValues[LegendreL - LegendreM];   
 
