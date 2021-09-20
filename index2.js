@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x;
 
 init();
 animate();
@@ -25,20 +25,14 @@ function init() {
     //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
+    camerazoom = 2.5;
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
-
-
-    quantumN=3;
-    quantumL=0;
-    quantumM=0;
-    RadiusOfDistribution = 5 * quantumN;
-    Trials = 1000000 * quantumN ** 3;
-    camerazoom = 2.5 / quantumN;
-    let cameramin=1;
-    let cameramax=1000000;
-    console.log(camerazoom);
+    const sphericalRadiusTest = 0.529177210903;
+    const sphericalPhiTest = 1.6;
+    const sphericalThetaTest = 0.5;
+    RadiusOfDistribution=10;
     //#endregion
 
     //renderer configure
@@ -49,7 +43,7 @@ function init() {
     scene.background = null
 
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, 2 / 1, cameramin, cameramax); 
+    camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
 
     camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
     camera.lookAt( scene.position );
@@ -85,7 +79,7 @@ function init() {
     scene.add( mesh );
 
     //add outer sphere
-    const geometry2 = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
+    const geometry2 = new THREE.SphereGeometry( 5, 20, 20 );
     const material2 = new THREE.MeshStandardMaterial( 
     {   
         color: 0x000000, 
@@ -97,7 +91,7 @@ function init() {
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
-    scene.add( mesh2 );
+    //scene.add( mesh2 );
 
     //#endregion
 
@@ -220,72 +214,104 @@ function animate() {
     // renderer.shadowMap.autoUpdate = false;
 }
 
+//spawning a butt ton of orbs
+function spawnOrbs() {
+    const geometry = new THREE.SphereBufferGeometry(0.2, 5, 5);
+    const mat = new THREE.MeshStandardMaterial(
+            {
+                color: 0xFF0000,
+                transparent: false,
+                side: THREE.DoubleSide,
+                clippingPlanes: clipPlanes,
+                clipIntersection: true,
+                // clipShadows: EnableClipping
+            }
+        );
 
-// function spawnOrbsR() {
-//     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
-//     const mat = new THREE.MeshStandardMaterial(
-//             {
-//                 color: 0xFF0000,
-//                 transparent: false,
-//                 // side: THREE.DoubleSide,
-//                 clippingPlanes: clipPlanes,
-//                 clipIntersection: true,
-//                 // clipShadows: EnableClipping
-//             }
-//         );
+    x = 0;
+    let randomizer=0.2;
+
+    for (sphericalRadius = 0.2; sphericalRadius < 5; sphericalRadius++) {
+        //Radius
+
+        for (sphericalPhi = 0; sphericalPhi < 2 * Math.PI; sphericalPhi = sphericalPhi + Math.PI / 10) {
+            //Phi
+
+            for (sphericalTheta = 0; sphericalTheta < Math.PI; sphericalTheta = sphericalTheta + Math.PI / 10) {
+                //Theta
+                const sphericalRadiusA = MathUtils.randFloat(0, randomizer*2) +sphericalRadius;
+                const sphericalPhiA = MathUtils.randFloat(0, randomizer) + sphericalPhi ;
+                const sphericalThetaA = MathUtils.randFloat(0,randomizer) + sphericalTheta ;
+
+                meshIndex[x] = new THREE.Mesh(geometry,mat);
+                scene.add(meshIndex[x]); //adding new orb
+                meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadiusA, sphericalPhiA, sphericalThetaA)); //spherical coords
+                x++;
+
+            }
+        }
+    }
+}
+
+function spawnOrbsR() {
+    const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
+    const mat = new THREE.MeshStandardMaterial(
+            {
+                color: 0xFF0000,
+                transparent: false,
+                // side: THREE.DoubleSide,
+                clippingPlanes: clipPlanes,
+                clipIntersection: true,
+                // clipShadows: EnableClipping
+            }
+        );
     
-//     let quantumN=3;
-//     let quantumL=1;
-//     let quantumM=0;
-//     let bohrRadius=0.529177210903;
+    let quantumN=3;
+    let quantumL=1;
+    let quantumM=0;
+    let bohrRadius=0.529177210903;
 
-//     // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
+    // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
 
-//     for (let X = 0; X < 100000; X++) {
+    for (let X = 0; X < 100000; X++) {
         
-//         var sphericalTheta = Math.random() * 2.0 * Math.PI;
-//         var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-//         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+        var sphericalTheta = Math.random() * 2.0 * Math.PI;
+        var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
+        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         
         
-//         if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-//             meshIndex[x] = new THREE.Mesh(geometry,mat);
-//             meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
+        if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            meshIndex[x] = new THREE.Mesh(geometry,mat);
+            meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
             
-//             scene.add(meshIndex[x]); 
-//         }
+            scene.add(meshIndex[x]); 
+        }
         
 
-//     }
+    }
     
-// }
+}
 
 function spawnOrbsRParticles() {
 
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
 
-
+    let quantumN=3;
+    let quantumL=2;
+    let quantumM=2;
     let bohrRadius=0.529177210903;
-
-    const texture = new THREE.TextureLoader().load( '/ball.png' );
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-
-    var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
-    console.log(atbohr)
-    console.log(quantumN + " " + quantumL + " " + quantumM + " " )
-
-    for (let X = 0; X < Trials; X++) {
     
-        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+    for (let X = 0; X < 10000000; X++) {
+    
+        var sphericalTheta = Math.random() * 2.0 * Math.PI;
+        var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
 
 
-        if (Math.random()*atbohr<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+        if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
             const v=new Vector3(1,1,1)
-            v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
+            v.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta));
     
             vertices.push(v.x,v.y,v.z); 
         }
@@ -293,12 +319,10 @@ function spawnOrbsRParticles() {
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-    const material = new THREE.PointsMaterial( {alphaTest :.5,map: texture , size: 0.1, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
+    const material = new THREE.PointsMaterial( { size: 0.2, sizeAttenuation: true, transparent: true, color: 0x888888,clippingPlanes: clipPlanes,clipIntersection: true, alpha:0.5 } );
 
     const particles = new THREE.Points( geometry, material );
     scene.add( particles );
-
-    material.needsUpdate = true
 }
 
 function factorial(n) {
