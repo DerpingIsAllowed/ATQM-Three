@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, sphericalRadius, sphericalPhi, sphericalTheta, meshIndex = [], RadiusOfDistribution, x;
+let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x;
 
 init();
 animate();
@@ -29,9 +29,9 @@ function init() {
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
-    sphericalRadius = 0.529177210903;
-    sphericalPhi = 1.6;
-    sphericalTheta = 0.5;
+    const sphericalRadiusTest = 0.529177210903;
+    const sphericalPhiTest = 1.6;
+    const sphericalThetaTest = 0.5;
     RadiusOfDistribution=3;
     //#endregion
 
@@ -64,7 +64,7 @@ function init() {
 
     //#region geometry
     // add an inner sphere
-    const geometry = new THREE.SphereGeometry( .5, 40, 20 );
+    const geometry = new THREE.SphereGeometry( .1, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
     {   
         color: 0x00FF00, 
@@ -266,34 +266,28 @@ function spawnOrbsR() {
             }
         );
     
-    let quantumN=2;
-    let quantumL=0;
+    let quantumN=3;
+    let quantumL=1;
     let quantumM=0;
     let bohrRadius=0.529177210903;
 
-    //let PartA = Math.sqrt(2 / (quantumN * bohrRadius) ** 3 * (factorial(quantumN - quantumL - 1) / 2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(-sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius) );
-    //console.log(PartA);
+    // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
 
-    //let PartB =Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, (2 * sphericalRadius) / (quantumN * bohrRadius));
-    //console.log(PartB);
-
-    //let PartC = SphericalHarmonics(quantumL, Math.abs(quantumM), sphericalTheta);
-    //console.log(PartC);
-
-    console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
-
-    for (let X = 0; X < 10000; X++) {
+    for (let X = 0; X < 100000; X++) {
         
-        sphericalTheta = Math.random() * 2.0 * Math.PI;
-        sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-        sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-
-        let P =
-
-        meshIndex[x] = new THREE.Mesh(geometry,mat);
-        meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
+        var sphericalTheta = Math.random() * 2.0 * Math.PI;
+        var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
+        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         
-        scene.add(meshIndex[x]); //adding new orb
+        
+        if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            meshIndex[x] = new THREE.Mesh(geometry,mat);
+            meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
+            
+            scene.add(meshIndex[x]); 
+        }
+        
+
     }
     
 }
@@ -346,12 +340,7 @@ function Laguerre(laguerreAlpha, laguerreK, laguerreX){
         LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
         console.log(LagIndex + " Lag " + LaguerreValues[LagIndex]);
     }
-    return LaguerreValues[laguerreK];   
-    // old redundant code it was never finished lmao
-    // const part1=(Math.pow(laguerreX,-laguerreAlpha)*Math.pow(E,laguerreX))/factorial(laguerreK);
-    // const part2=(Math.pow(E,-laguerreX)*Math.pow(laguerreX,laguerreK+laguerreAlpha))
-    
-    //return the (k'th deravetive of part 2 times) part 1    
+    return LaguerreValues[laguerreK]; 
 }
 
 function Legendre(LegendreL, LegendreM, LegendreX){
