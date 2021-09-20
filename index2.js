@@ -32,7 +32,7 @@ function init() {
     const sphericalRadiusTest = 0.529177210903;
     const sphericalPhiTest = 1.6;
     const sphericalThetaTest = 0.5;
-    RadiusOfDistribution=3;
+    RadiusOfDistribution=10;
     //#endregion
 
     //renderer configure
@@ -175,7 +175,7 @@ function init() {
     }
     //#endregion
 
-    spawnOrbsR()
+    spawnOrbsRParticles()
 
 }
 
@@ -296,18 +296,26 @@ function spawnOrbsRParticles() {
 
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
-    
-    for (let X = 0; X < 100000; X++) {
-    
-        sphericalTheta = Math.random() * 2.0 * Math.PI;
-        sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-        sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
 
-        const v=new Vector3(1,1,1)
-        v.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta));
+    let quantumN=2;
+    let quantumL=0;
+    let quantumM=0;
+    let bohrRadius=0.529177210903;
     
-        vertices.push(v.x,v.y,v.z); 
+    for (let X = 0; X < 10000000; X++) {
+    
+        var sphericalTheta = Math.random() * 2.0 * Math.PI;
+        var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
+        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+
+
+        if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            const v=new Vector3(1,1,1)
+            v.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta));
+    
+            vertices.push(v.x,v.y,v.z); 
         }
+    }
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
@@ -333,9 +341,6 @@ function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
     let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
 
-    console.log(0 + " Lag " + LaguerreValues[0]);
-    console.log(1 + " Lag " + LaguerreValues[1]);
-
     for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
         LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
         console.log(LagIndex + " Lag " + LaguerreValues[LagIndex]);
@@ -347,9 +352,6 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
     let LegendreValues = [(-1) ** LegendreM * doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
     LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
-
-    console.log(0 + " Leg " + LegendreValues[0]);
-    console.log(1 + " Leg " + LegendreValues[1]);
 
     for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
         LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
