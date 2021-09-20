@@ -29,9 +29,9 @@ function init() {
     EnableClipping = true;
     ClippingPlaneOfset = 0;
     Div="canvas";
-    sphericalRadius = 5;
+    sphericalRadius = 0.529177210903;
     sphericalPhi = 1.6;
-    sphericalTheta = .6;
+    sphericalTheta = 0.5;
     RadiusOfDistribution=3;
     //#endregion
 
@@ -266,19 +266,21 @@ function spawnOrbsR() {
             }
         );
     
-    let quantumN=6;
+    let quantumN=2;
     let quantumL=0;
     let quantumM=0;
-    let bohrRadius=5.29177210903;
+    let bohrRadius=0.529177210903;
 
-    let PartA=Math.sqrt(Math.pow(3, 2/(quantumN*bohrRadius))* (factorial(quantumN-quantumL-1)/2*quantumN*Math.abs(factorial(quantumN+quantumL))));
-    console.log(PartA);
+    //let PartA = Math.sqrt(2 / (quantumN * bohrRadius) ** 3 * (factorial(quantumN - quantumL - 1) / 2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(-sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius) );
+    //console.log(PartA);
 
-    let PartB =Laguerre(2*quantumL+1,quantumN-quantumL-1,(2*sphericalRadius)/(quantumN*bohrRadius));
-    console.log(PartB);
+    //let PartB =Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, (2 * sphericalRadius) / (quantumN * bohrRadius));
+    //console.log(PartB);
 
-    let PartC = SphericalHarmonics(quantumL, Math.abs(quantumM), sphericalTheta, sphericalPhi);
-    console.log(PartC)
+    //let PartC = SphericalHarmonics(quantumL, Math.abs(quantumM), sphericalTheta);
+    //console.log(PartC);
+
+    console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
 
     for (let X = 0; X < 10000; X++) {
         
@@ -337,8 +339,11 @@ function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
     let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
 
+    console.log(0 + " Lag " + LaguerreValues[0]);
+    console.log(1 + " Lag " + LaguerreValues[1]);
+
     for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
-        LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK+1);
+        LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
         console.log(LagIndex + " Lag " + LaguerreValues[LagIndex]);
     }
     return LaguerreValues[laguerreK];   
@@ -353,8 +358,10 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
     let LegendreValues = [(-1) ** LegendreM * doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
     LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
+
     console.log(0 + " Leg " + LegendreValues[0]);
     console.log(1 + " Leg " + LegendreValues[1]);
+
     for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
         LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
         console.log(LegIndex + " Leg " + LegendreValues[LegIndex]);
@@ -363,9 +370,16 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 }
 
-function SphericalHarmonics(quantumL, quantumM, sphericalTheta, sphericalPhi) {
+function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return ((-1) ** quantumM * Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi))
+    return ((-1) ** quantumM * Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/)
 
 }
 
+function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) {
+
+    return  (Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL
+            * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))
+            * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta)) ** 2;
+
+}
