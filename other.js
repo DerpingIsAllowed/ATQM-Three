@@ -4,6 +4,7 @@ const PMenu=document.querySelector('.PMenu');
 const MobileMenuButton=document.querySelector('.MobileMenuButton');
 const aspilltext=document.querySelector('.aspilltext');
 const collapsable=document.querySelector('.collapsable');
+const slidercontainer=document.querySelector('.slidercontainer')
 let root = document.documentElement;
 
 let menuOpen = false;
@@ -48,5 +49,24 @@ MobileMenuButton.addEventListener('click', () => {
     collapsable.classList.remove('open');
     root.style.setProperty('--MobileMenuText', 0)
     MMBopen=false
+  }
+})
+
+let userinterfaceOpen=false
+PMenu.addEventListener('click', () =>{
+  if(!userinterfaceOpen){
+    slidercontainer.classList.add('open');
+        
+    setTimeout(() => {
+      root.style.setProperty('--popUpMenuOpacity',1)
+    }, 10);
+    userinterfaceOpen=true
+  }else{
+    
+    root.style.setProperty('--popUpMenuOpacity',0)
+    setTimeout(() => {
+      slidercontainer.classList.remove('open');
+    }, 200);
+    userinterfaceOpen=false
   }
 })

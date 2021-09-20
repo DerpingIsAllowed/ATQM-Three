@@ -9,9 +9,7 @@
 :root{
   /* Custom properties */
   --MobileMenuText:1;
-
-
-  
+  --popUpMenuOpacity:0;
 }
 
 h1 {
@@ -24,8 +22,21 @@ h1 {
   margin-top: 4.884856943475227vw;
   margin-bottom: 0px;
   margin-right: 0px;
-  margin-left: 15px;
+  margin-left: 10px;
   
+}
+h2{
+  user-select: none;
+  color: black;
+  text-align: left;
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  font-weight: 1000;
+  font-size: 60px;
+  margin-top: 30px;
+  margin-bottom: -20px;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
 p{
@@ -38,7 +49,7 @@ p{
   margin-top: 10px;
   margin-bottom: 0px;
   margin-right: 10px;
-  margin-left: 2.7913468248429867vw;
+  margin-left: 20px;
 }
 
 .PMenu{
@@ -74,6 +85,130 @@ p{
   animation-delay: 0.1s;
   opacity: 1;
 }
+
+
+
+/* button */
+.button{
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  font-size: 22px;
+  color: #707070;
+  background-color: white; 
+  display:flex;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding: 18px 40px;
+  border: none;
+  border-radius: 6px;
+  pointer-events: all;
+  transition: all .1s ease-in-out;
+}
+.button:hover{
+  background-color: #f6f6f6;
+}
+.button:active{
+  background-color: #f0f0f0;
+}
+
+/* slider */
+.slidercontainer{
+  width: 480px;
+  pointer-events:all;
+  z-index: 100;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 680px;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  padding: 60px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  align-content: space-around;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.18);
+  border-style: solid;
+  border-color:white;
+  border-width: 1px;
+  border-radius: 40px;
+  border-right-width:0px;
+  border-bottom-width: 0px;
+  backdrop-filter: blur(3px);
+  box-shadow: 5px 5px 5px 8px rgba(0, 0, 0, .08);
+  display: none;
+  opacity:var(--popUpMenuOpacity);
+  transition:display 0s, opacity .2s;
+} 
+.slidercontainer.closed{
+  opacity:var(--popUpMenuOpacity);
+  transform: translateX(-50%);
+  display: none;
+}
+.slidercontainer.open{
+  opacity:var(--popUpMenuOpacity);
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+.Pslider{
+  pointer-events: none;
+  font-size: 32px;
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  text-align: center;
+  margin-bottom: 15px;
+  margin-top: 8px;
+  color: #707070;
+  user-select: none;
+}
+
+/* ------------------------- slider */
+.slider{
+  pointer-events: all;
+  -webkit-appearance: none;
+  width:100% ;
+  height: 30px;
+  background:rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, .15);
+  outline: none;
+  opacity: 1;
+  border-radius: 0px ;
+}
+.sliderParent{
+  width:100%
+}
+/* --------------------------- webkit browsers */
+.slider::-webkit-slider-thumb {
+  pointer-events: all;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px;
+  background-color: black;
+  overflow: visible;
+  cursor: pointer;
+}
+/* -------------------------- Firefox */
+.slider::-moz-range-thumb { 
+  pointer-events: all;
+  -moz-appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px;
+  background-color: black;
+  overflow: visible;
+  cursor: pointer;
+}
+.slider::-moz-focus-outer { border: 0; }
+
+
 
 .aspilltext{
   grid-area: overlap;
@@ -160,7 +295,7 @@ p{
   opacity: 0;
   transform: rotate(-45deg); 
   background-color: white;
-  filter: drop-shadow(20px,20px,50px);
+  filter:drop-shadow(20px,20px,50px);
   position: fixed;
   overflow: hidden;
   white-space:nowrap;
@@ -196,15 +331,14 @@ p{
   h1 {
     font-size: 30px;
     margin-top: 70px;
-    margin-left: 20px;
+    margin-left: 0px;
     margin-right: 20px;
   }
   
   
   p{
     font-size: 18px;
-    margin-left: 20px;
-    margin-right: 12vw;
+    margin-left: 0px;;
   }
   
   .PMenu{
@@ -223,6 +357,7 @@ p{
 
   /* mobile Menu button and animation */
   .aspilltext{
+    padding-left: 20px;
     width: 70vw;
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.05);
@@ -320,15 +455,19 @@ p{
 
 /* ipad */
 @media screen and (min-width: 767px) and (max-width:1024px){
+  .aspilltext{
+    padding-left: 40px;
+  }
+
   h1 {
     font-size: 40px;
-    margin-left: 40px;
     margin-top: 70px;
+    margin-left: 0px;
   }
 
   p{
-    margin-left: 40px;
     font-size: 20px;
+    margin-left: 0px;
   }
   
   .PMenu{
@@ -373,15 +512,18 @@ p{
 
 /* vanaf ipad */
 @media screen and (min-width: 1024px) {
+  .aspilltext{
+    padding-left: 40px;
+  }
   h1 {
     margin-top: 100px;
-    margin-left: 40px;
+    margin-left: 0px;
     font-size: 60px;
   } 
   
   p{
-    margin-left: 40px;
     font-size: 30px;
+    margin-left: 0px;
   }
   
   .menuCube{
