@@ -63,7 +63,7 @@ function init() {
     const geometry = new THREE.SphereGeometry( .5, 40, 20 );
     const material = new THREE.MeshStandardMaterial( 
     {   
-        color: 0xFF0000, 
+        color: 0x00ff00, 
         transparent: false, 
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
@@ -78,7 +78,7 @@ function init() {
     const geometry2 = new THREE.SphereGeometry( 5, 20, 20 );
     const material2 = new THREE.MeshStandardMaterial( 
     {   
-        color: 0x000000, 
+        color: 0xff0000, 
         transparent: false, 
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,

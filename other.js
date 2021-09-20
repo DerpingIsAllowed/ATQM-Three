@@ -2,6 +2,9 @@ const menuBtn = document.querySelector('.menu-btn');
 const menuCube= document.querySelector('.menuCube');
 const PMenu=document.querySelector('.PMenu');
 const MobileMenuButton=document.querySelector('.MobileMenuButton');
+const aspilltext=document.querySelector('.aspilltext');
+const collapsable=document.querySelector('.collapsable');
+let root = document.documentElement;
 
 let menuOpen = false;
 menuBtn.addEventListener('click', () => {
@@ -24,15 +27,26 @@ menuBtn.addEventListener('click', () => {
   }
 });
 
+
 let MMBopen =true
 MobileMenuButton.addEventListener('click', () => {
   if (!MMBopen) {
     MobileMenuButton.classList.add('open');
     MobileMenuButton.classList.remove('closed');
+    aspilltext.classList.add('open');
+    aspilltext.classList.remove('closed');
+    collapsable.classList.add('open');
+    collapsable.classList.remove('closed');
+    root.style.setProperty('--MobileMenuText', 1)
     MMBopen=true
   }else{
     MobileMenuButton.classList.add('closed');
     MobileMenuButton.classList.remove('open');
+    aspilltext.classList.add('closed');
+    aspilltext.classList.remove('open');
+    collapsable.classList.add('closed');
+    collapsable.classList.remove('open');
+    root.style.setProperty('--MobileMenuText', 0)
     MMBopen=false
   }
 })
