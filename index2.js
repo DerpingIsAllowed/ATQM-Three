@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
+let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius;
 let geometry, vertices;
 init();
 animate();
@@ -25,30 +25,31 @@ function init() {
     //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
-    EnableClipping = true;
+    EnableClipping = false;
     ClippingPlaneOfset = 0;
     Div="canvas";
 
     // quantummechanische waardes! 
+    bohrRadius=0.529177210903;
     quantumN=4;
-    quantumL=3;
-    quantumM=1;
+    quantumL=2;
+    quantumM=0;
     //de maximale radius(niet aan zitten)
-    RadiusOfDistribution = 5 * quantumN;
+    RadiusOfDistribution = 8 * quantumN;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    if (quantumN<=4&&quantumL!=3) {
-        Trials = 1000000 * quantumN ** 2;
-    }else{
-        Trials=1000000*quantumN;
-        console.log("else " + Trials)
-    }
+    // if (quantumN<=4&&quantumL!=3) {
+    Trials = 1000000 * quantumN ** 3;
+    // }else{
+    //     Trials=1000000*quantumN;
+    //     console.log("else " + Trials)
+    // }
     
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
     // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpensiveTrials= 30;
+    ComputationallyLesExpensiveTrials= 500;
     
     // camera zoom variabelen
     camerazoom = 2.5 / quantumN;
@@ -111,7 +112,7 @@ function init() {
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
-    // scene.add( mesh2 );
+    //scene.add( mesh2 );
 
     //#endregion
 
@@ -234,8 +235,7 @@ function animate() {
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
 
-    let bohrRadius=0.529177210903;
-    var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
+    //var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
         
 
     for (let I = 0; I < 100000; I++) {   
@@ -245,7 +245,7 @@ function animate() {
             var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         
         
-            if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            if (Math.random()*(1/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
                 const v=new Vector3(1,1,1)
                 v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
                 vertices.push(v.x,v.y,v.z); 
@@ -379,12 +379,17 @@ function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
 }
 
+function Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius) {
+
+    return  Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL
+
+}
+
 function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) {
 
-    return  (Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL
+    return  (Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius)
             * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))
             * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta)) ** 2;
 
 }
-
 //#endregion
