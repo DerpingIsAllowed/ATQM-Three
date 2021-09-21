@@ -9,8 +9,8 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, ComputationallyLesExpansiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
-
+let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
+let geometry, vertices;
 init();
 animate();
 
@@ -31,18 +31,24 @@ function init() {
 
     // quantummechanische waardes! 
     quantumN=4;
-    quantumL=1;
+    quantumL=3;
     quantumM=1;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 5 * quantumN;
+
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    Trials = 1000000 * quantumN ** 2;
+    if (quantumN<=4&&quantumL!=3) {
+        Trials = 1000000 * quantumN ** 2;
+    }else{
+        Trials=1000000*quantumN;
+        console.log("else " + Trials)
+    }
     
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
     // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpansiveTrials= 30;
+    ComputationallyLesExpensiveTrials= 30;
     
     // camera zoom variabelen
     camerazoom = 2.5 / quantumN;
@@ -190,7 +196,7 @@ function init() {
     //#endregion
 
     spawnOrbsRParticles()
-
+    x=0;
 }
 
 function resizeCanvasToDisplaySize() {
@@ -215,6 +221,7 @@ function onWindowResize() {
     //renderer.setSize( Div.innerWidth, Div.innerHeight );
 }
 
+
 function animate() {
     //do this for animations
     requestAnimationFrame(animate);
@@ -226,6 +233,31 @@ function animate() {
     //render the scene
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
+
+    let bohrRadius=0.529177210903;
+    var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
+        
+
+    for (let I = 0; I < 100000; I++) {   
+        if (x <Trials) {
+            var sphericalPhi  = Math.random() * 2.0 * Math.PI;
+            var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+        
+        
+            if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+                const v=new Vector3(1,1,1)
+                v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
+                vertices.push(v.x,v.y,v.z); 
+            }
+            x++;
+        }
+    }
+    
+    if (x < Trials-100) {
+        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+        geometry.update;
+    }
 }
 
 
@@ -268,45 +300,41 @@ function animate() {
     
 // }
 
+
 function spawnOrbsRParticles() {
-
-    const geometry = new THREE.BufferGeometry();
-    const vertices = [];
-
-
-    let bohrRadius=0.529177210903;
-
+    geometry = new THREE.BufferGeometry();
     const texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-
-    var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
-    console.log(atbohr)
-    console.log(quantumN + " " + quantumL + " " + quantumM + " " )
-
-    for (let X = 0; X < Trials; X++) {
-    
-        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-
-
-        if (Math.random()*(atbohr/ComputationallyLesExpansiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-            const v=new Vector3(1,1,1)
-            v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
-    
-            vertices.push(v.x,v.y,v.z); 
-        }
-    }
+    const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.1, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
+    const particles = new THREE.Points( geometry, material );
+    vertices = [0,0,0];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-
-    const material = new THREE.PointsMaterial( {alphaTest :.5,map: texture , size: 0.1, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
-
-    const particles = new THREE.Points( geometry, material );
     scene.add( particles );
 
-    material.needsUpdate = true
+    // let bohrRadius=0.529177210903;
+
+
+    // var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
+    // console.log(atbohr)
+    // console.log(quantumN + " " + quantumL + " " + quantumM + " " )
+
+    // for (let X = 0; X < Trials; X++) {
+        
+    //     var sphericalPhi  = Math.random() * 2.0 * Math.PI;
+    //     var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+    //     var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+
+
+    //     if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+    //         const v=new Vector3(1,1,1)
+    //         v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
+    //         vertices.push(v.x,v.y,v.z); 
+    //     }
+    // }
+
+    // geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 }
 
 //#region Hydrogen wave function 
