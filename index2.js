@@ -31,8 +31,8 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=4;
-    quantumL=2;
+    quantumN=5;
+    quantumL=3;
     quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 8 * quantumN;
@@ -49,7 +49,7 @@ function init() {
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
     // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpensiveTrials= 500;
+    ComputationallyLesExpensiveTrials= 1;
     
     // camera zoom variabelen
     camerazoom = 2.5 / quantumN;
@@ -235,7 +235,7 @@ function animate() {
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
 
-    //var atbohr= HydrogenWave(1, 0, 0, bohrRadius, 1, bohrRadius) / quantumN
+    var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
         
 
     for (let I = 0; I < 100000; I++) {   
@@ -245,19 +245,20 @@ function animate() {
             var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         
         
-            if (Math.random()*(1/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-                const v=new Vector3(1,1,1)
-                v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
-                vertices.push(v.x,v.y,v.z); 
+            if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+                const v=new Vector3()
+                v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
+                vertices.push(v.x, v.y, v.z); 
             }
             x++;
         }
     }
     
     if (x < Trials-100) {
-        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
         geometry.update;
     }
+
 }
 
 
@@ -306,7 +307,7 @@ function spawnOrbsRParticles() {
     const texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.1, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
+    const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
     const particles = new THREE.Points( geometry, material );
     vertices = [0,0,0];
 
@@ -375,7 +376,7 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return ((-1) ** quantumM * Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/)
+    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
 
 }
 
