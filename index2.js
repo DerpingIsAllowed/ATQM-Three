@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
+let camerazoom, ComputationallyLesExpansiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN;
 
 init();
 animate();
@@ -29,16 +29,26 @@ function init() {
     ClippingPlaneOfset = 0;
     Div="canvas";
 
-
-    quantumN=3;
-    quantumL=0;
-    quantumM=0;
+    // quantummechanische waardes! 
+    quantumN=4;
+    quantumL=1;
+    quantumM=1;
+    //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 5 * quantumN;
-    Trials = 1000000 * quantumN ** 3;
+    //aantal keer dat je een random punt kiest en de berekening uitvoert
+    Trials = 1000000 * quantumN ** 2;
+    
+    // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
+    // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
+    // maar een stuk makkelijker voor je computer is om te hendelen.
+    // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
+    ComputationallyLesExpansiveTrials= 30;
+    
+    // camera zoom variabelen
     camerazoom = 2.5 / quantumN;
     let cameramin=1;
     let cameramax=1000000;
-    console.log(camerazoom);
+
     //#endregion
 
     //renderer configure
@@ -78,7 +88,6 @@ function init() {
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
-        // clipShadows: EnableClipping
     } );
     
     const mesh = new THREE.Mesh( geometry, material );
@@ -93,11 +102,10 @@ function init() {
         side: THREE.DoubleSide,
         clippingPlanes: clipPlanes,
         clipIntersection: true,
-        // clipShadows: EnableClipping,
         wireframe: true
     } );
     const mesh2 = new THREE.Mesh( geometry2, material2 );
-    scene.add( mesh2 );
+    // scene.add( mesh2 );
 
     //#endregion
 
@@ -283,7 +291,7 @@ function spawnOrbsRParticles() {
         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
 
 
-        if (Math.random()*atbohr<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+        if (Math.random()*(atbohr/ComputationallyLesExpansiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
             const v=new Vector3(1,1,1)
             v.setFromSpherical(new Spherical(sphericalRadius,sphericalTheta , sphericalPhi));
     
@@ -300,6 +308,8 @@ function spawnOrbsRParticles() {
 
     material.needsUpdate = true
 }
+
+//#region Hydrogen wave function 
 
 function factorial(n) {
     if (n < 0) return;
@@ -348,3 +358,5 @@ function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTh
             * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta)) ** 2;
 
 }
+
+//#endregion
