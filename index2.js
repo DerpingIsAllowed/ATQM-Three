@@ -31,9 +31,9 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=5;
-    quantumL=3;
-    quantumM=0;
+    quantumN=6;
+    quantumL=2;
+    quantumM=1;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 8 * quantumN;
 
@@ -49,7 +49,7 @@ function init() {
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
     // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpensiveTrials= 1;
+    ComputationallyLesExpensiveTrials= 1000;
     
     // camera zoom variabelen
     camerazoom = 2.5 / quantumN;
@@ -196,7 +196,8 @@ function init() {
     }
     //#endregion
 
-    spawnOrbsRParticles()
+    spawnOrbsRParticles();
+    console.log (SphericalHarmonics(2, 2, 1));
     x=0;
 }
 
@@ -364,7 +365,7 @@ function Laguerre(laguerreAlpha, laguerreK, laguerreX){
 
 function Legendre(LegendreL, LegendreM, LegendreX){
 
-    let LegendreValues = [(-1) ** LegendreM * doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
+    let LegendreValues = [doubleFactorial(2 * LegendreM - 1) * (1 - LegendreX ** 2) ** (LegendreM / 2)];
     LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
 
     for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
@@ -376,7 +377,7 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / (4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
+    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
 
 }
 
