@@ -27,24 +27,24 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 0;
-    TwoDView = true;
+    TwoDView = false;
     Div="canvas";
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
     quantumN=6;
     quantumL=4;
-    quantumM=0;
+    quantumM=2;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 8 * quantumN;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    // if (quantumN<=4&&quantumL!=3) {
+    if (TwoDView == true) {
+    Trials = 1000000 * quantumN ** 2;
+    }else{
     Trials = 1000000 * quantumN ** 3;
-    // }else{
-    //     Trials=1000000*quantumN;
     //     console.log("else " + Trials)
-    // }
+    }
     
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
@@ -236,7 +236,7 @@ function animate() {
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
 
-    var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
+    var atbohr= 1//(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
         
 
     for (let I = 0; I < 100000; I++) {   
@@ -385,7 +385,7 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
+    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
 
 }
 
