@@ -1,25 +1,71 @@
-//#region Hydrogen wave function 
-function CalcVertices(atbohr){
-    for (let I = 0; I < 50000; I++) {   
+//#region Hydrogen wave function
+import { Vector3, Spherical } from "./three.js/build/three.module.js"; 
+//get from main to worker
+let ComputationallyLesExpensiveTrials, RadiusOfDistribution, quantumN, quantumL, quantumM, bohrRadius, Trials, UpdateOnFrames;
+
+//local variables
+let X;
+let boolWorkerStarted;
+let message;
+let vertices;
+
+//get the message from our main thread
+onmessage = function(message){
+    ComputationallyLesExpensiveTrials = message.data[0]; 
+    RadiusOfDistribution= message.data[1]; 
+    quantumN= message.data[2];
+    quantumL= message.data[3]; 
+    quantumM= message.data[4]; 
+    bohrRadius= message.data[5]; 
+    Trials= message.data[6];
+    UpdateOnFrames=message.data[7];
+    boolWorkerStarted= message.data[8];
+    console.log("worker recieved message to start working! Here are the trials! "+ message.data[6] )
+    init()
+}
+
+
+
+function init(){
+    vertices = [0,0,0];
+    console.log("worker init succesfull")
+    X=0;
+    CalcVertices()
+}
+
+//calculate those position using the math from the formula
+function CalcVertices(){
+    console.log("starting to calculate vertices ")
+
+    //value that is a replacement for frames and uses the value of the forloop instead
+    let Clockvalue = 0;
+    for (let I = 0; I < Trials; I++) {   
+
+        if (Clockvalue>=500000){
+            postMessage (vertices);
+            
+            Clockvalue=0;
+        }
+        
+        
         var sphericalPhi  = Math.random() * 2.0 * Math.PI;
         var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-    
-    
-        if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-            const v=new Vector3()
+
+        if (Math.random()*(1/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            const v= new Vector3(0,0,0)
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
         }
-        x++;
+        
+
+        Clockvalue++
     }
+    postMessage (vertices);
+    console.log("Done Loading the model!")
 }
 
-function UpdateGeometry(){
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.update;
-}
-
+//#region Hydrogen Wave-function
 function factorial(n) {
     if (n < 0) return;
     if (n < 2) return 1;

@@ -9,10 +9,14 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames, X;
 let geometry, vertices;
+
+let GeometryWorker;
+
 init();
 animate();
+CalcVertices();
 
 function init() {
     /* READ ME
@@ -31,19 +35,14 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=4;
-    quantumL=3;
-    quantumM=2;
+    quantumN=6;
+    quantumL=4;
+    quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 8 * quantumN;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    // if (quantumN<=4&&quantumL!=3) {
     Trials = 1000000 * quantumN ** 3;
-    // }else{
-    //     Trials=1000000*quantumN;
-    //     console.log("else " + Trials)
-    // }
     
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
@@ -219,10 +218,7 @@ function resizeCanvasToDisplaySize() {
   
 function onWindowResize() {
     //make sure your window doesnt get al wonky
-    //camera.aspect = Div.innerWidth / Div.innerHeight;
     camera.updateProjectionMatrix();
-
-    //renderer.setSize( Div.innerWidth, Div.innerHeight );
 }
 
 
@@ -238,92 +234,48 @@ function animate() {
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
 
-    var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
-        
-
-    if (x < Trials) {
-        CalcVertices(atbohr);
-        }
-    
-    
-    if (x < Trials-100&&Frame==UpdateOnFrames) {
-        UpdateGeometry();
-        Frame=0;
-    }
-    Frame++
 }
 
-async function CalcVertices(atbohr){
-    for (let I = 0; I < 50000; I++) {   
-        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-    
-    
-        if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-            const v=new Vector3()
-            v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
-            vertices.push(v.x, v.y, v.z); 
-        }
-        x++;
+//#region worker
+
+//we send the worker a message containing all the juicy variables it needs
+function CalcVertices(){
+    if (window.Worker){
+        GeometryWorker =new Worker('geometry_update_worker.js', {type: 'module'});
+        GeometryWorker.postMessage([ComputationallyLesExpensiveTrials, RadiusOfDistribution, quantumN, quantumL, quantumM, bohrRadius, Trials, UpdateOnFrames, true])
+    }
+    else{
+        console.error("Your browser doesnt support workers")
     }
 }
 
-async function UpdateGeometry(){
+//we get a message back with the position it has calculated every so often so we can update the model on our side
+GeometryWorker.onmessage = function(v) {
+    vertices=v.data;
+    UpdateGeometry();
+}
+
+//we update the model
+function UpdateGeometry() {
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.update;
+    console.log(geometry.attributes.position.count +  " " + "positions")
+    geometry.attributes.position.updateRange.offset = geometry.attributes.position.count -10000;
+    geometry.attributes.position.updateRange.count = 10000;
+    console.log(geometry.attributes.position.updateRange)
+    geometry.attributes.position.needsUpdate =true;
+    
 }
-
-
-// function spawnOrbsR() {
-//     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
-//     const mat = new THREE.MeshStandardMaterial(
-//             {
-//                 color: 0xFF0000,
-//                 transparent: false,
-//                 // side: THREE.DoubleSide,
-//                 clippingPlanes: clipPlanes,
-//                 clipIntersection: true,
-//                 // clipShadows: EnableClipping
-//             }
-//         );
-    
-//     let quantumN=3;
-//     let quantumL=1;
-//     let quantumM=0;
-//     let bohrRadius=0.529177210903;
-
-//     // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
-
-//     for (let X = 0; X < 100000; X++) {
-        
-//         var sphericalTheta = Math.random() * 2.0 * Math.PI;
-//         var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-//         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-        
-        
-//         if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-//             meshIndex[x] = new THREE.Mesh(geometry,mat);
-//             meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
-            
-//             scene.add(meshIndex[x]); 
-//         }
-        
-
-//     }
-    
-// }
-
+//#endregion
 
 function spawnOrbsRParticles() {
     geometry = new THREE.BufferGeometry();
+    
     const texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
     const particles = new THREE.Points( geometry, material );
     vertices = [0,0,0];
-
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     scene.add( particles );
 
