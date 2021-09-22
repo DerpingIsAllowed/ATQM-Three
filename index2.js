@@ -207,8 +207,9 @@ function resizeCanvasToDisplaySize() {
       // you must pass false here or three.js sadly fights the browser
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
+      camera.setViewOffset(width,height,-width/6,0,width,height,0 );
       camera.updateProjectionMatrix();
-  
+      
       // set render target sizes here
     }
   }
