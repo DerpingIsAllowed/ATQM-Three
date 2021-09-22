@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 let geometry, vertices;
 init();
 animate();
@@ -27,23 +27,23 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 0;
+    TwoDView = 0;
     Div="canvas";
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=4;
-    quantumL=3;
-    quantumM=2;
+    quantumN=6;
+    quantumL=4;
+    quantumM=0;
     //de maximale radius(niet aan zitten)
-    RadiusOfDistribution = 8 * quantumN;
+    RadiusOfDistribution = (quantumN + 1) ** 2;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    // if (quantumN<=4&&quantumL!=3) {
-    Trials = 1000000 * quantumN ** 3;
-    // }else{
-    //     Trials=1000000*quantumN;
-    //     console.log("else " + Trials)
-    // }
+    if (quantumN == 0) {
+        Trials = 2000000 * quantumN ** 3;
+    }else{
+        Trials = 2000000 * quantumN ** 2;
+    }
     
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
@@ -52,9 +52,9 @@ function init() {
     ComputationallyLesExpensiveTrials= 1000;
     
     // camera zoom variabelen
-    camerazoom = 2.5 / quantumN;
+    camerazoom = (quantumN + 1) ** 2;;
     let cameramin=1;
-    let cameramax=1000000;
+    let cameramax=500;
 
     UpdateOnFrames=4;
     Frame=0;
@@ -68,9 +68,9 @@ function init() {
     scene.background = null
 
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, 2 / 1, cameramin, cameramax); 
+    camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
 
-    camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
+    camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
 
 
@@ -100,7 +100,7 @@ function init() {
     } );
     
     const mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
+    //scene.add( mesh );
 
     //add outer sphere
     const geometry2 = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
@@ -131,8 +131,8 @@ function init() {
     controls.screenSpacePanning=true;
     
     //the min and mx zoom distance on scrollwheel
-    controls.minDistance = 5;
-    controls.maxDistance = 200;
+    controls.minDistance = cameramin;
+    controls.maxDistance = cameramax;
     //enablepan
     controls.enablePan=false;
     //automagically rotate
@@ -254,11 +254,23 @@ function animate() {
 }
 
 async function CalcVertices(atbohr){
-    for (let I = 0; I < 50000; I++) {   
-        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-    
+    for (let I = 0; I < 50000; I++) {  
+
+        if (TwoDView == 1) {
+            var sphericalPhi  = Math.round(Math.random()) * Math.PI;
+            var sphericalTheta = 2.0 * Math.PI * Math.random();
+            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+        }
+        else if (TwoDView == 2) {
+            var sphericalPhi  = Math.random() * 2 * Math.PI + 0.5 * Math.PI;
+            var sphericalTheta = 0.5 * Math.PI;
+            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+        }
+        else{
+            var sphericalPhi  = Math.random() * 2 * Math.PI;
+            var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+        }
     
         if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
             const v=new Vector3()
