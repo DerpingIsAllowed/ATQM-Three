@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 let geometry, vertices;
 init();
 animate();
@@ -56,6 +56,8 @@ function init() {
     let cameramin=1;
     let cameramax=1000000;
 
+    UpdateOnFrames=4;
+    Frame=0;
     //#endregion
 
     //renderer configure
@@ -239,27 +241,37 @@ function animate() {
     var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
         
 
-    for (let I = 0; I < 100000; I++) {   
-        if (x <Trials) {
-            var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-            var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-        
-        
-            if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-                const v=new Vector3()
-                v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
-                vertices.push(v.x, v.y, v.z); 
-            }
-            x++;
+    if (x < Trials) {
+        CalcVertices(atbohr);
         }
-    }
     
-    if (x < Trials-100) {
-        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-        geometry.update;
+    
+    if (x < Trials-100&&Frame==UpdateOnFrames) {
+        UpdateGeometry();
+        Frame=0;
     }
+    Frame++
+}
 
+async function CalcVertices(atbohr){
+    for (let I = 0; I < 50000; I++) {   
+        var sphericalPhi  = Math.random() * 2.0 * Math.PI;
+        var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+        var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+    
+    
+        if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+            const v=new Vector3()
+            v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
+            vertices.push(v.x, v.y, v.z); 
+        }
+        x++;
+    }
+}
+
+async function UpdateGeometry(){
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.update;
 }
 
 
