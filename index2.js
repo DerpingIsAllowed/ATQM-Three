@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius;
+let camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius;
 let geometry, vertices;
 init();
 animate();
@@ -27,13 +27,14 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 0;
+    TwoDView = true;
     Div="canvas";
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
     quantumN=6;
-    quantumL=2;
-    quantumM=1;
+    quantumL=4;
+    quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = 8 * quantumN;
 
@@ -77,8 +78,8 @@ function init() {
         
         //add in the three clipping planes that make-up the box
         clipPlanes = [
-            new THREE.Plane( new THREE.Vector3( -1, 0, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
+            //new THREE.Plane( new THREE.Vector3( -1, 0, 0 ), ClippingPlaneOfset ),
+            //new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
             new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), ClippingPlaneOfset )
         ];
         renderer.localClippingEnabled = true;
@@ -197,7 +198,6 @@ function init() {
     //#endregion
 
     spawnOrbsRParticles();
-    console.log (SphericalHarmonics(2, 2, 1));
     x=0;
 }
 
@@ -241,9 +241,17 @@ function animate() {
 
     for (let I = 0; I < 100000; I++) {   
         if (x <Trials) {
-            var sphericalPhi  = Math.random() * 2.0 * Math.PI;
-            var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+
+            if (TwoDView == true) {
+                var sphericalPhi  = Math.round(Math.random()) * Math.PI;
+                var sphericalTheta = 2.0 * Math.PI * Math.random();
+                var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            }
+            else  {
+                var sphericalPhi  = Math.random() * 2 * Math.PI;
+                var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+                var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            }
         
         
             if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
