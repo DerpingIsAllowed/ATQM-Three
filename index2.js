@@ -27,25 +27,23 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 0;
-    TwoDView = false;
+    TwoDView = 0;
     Div="canvas";
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=6;
-    quantumL=4;
-    quantumM=2;
+    quantumN=2;
+    quantumL=0;
+    quantumM=0;
     //de maximale radius(niet aan zitten)
-    RadiusOfDistribution = 8 * quantumN;
+    RadiusOfDistribution = 5 * quantumN ** 2;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    if (TwoDView == true) {
+    if (TwoDView > 0) {
     Trials = 1000000 * quantumN ** 2;
     }else{
     Trials = 1000000 * quantumN ** 3;
-    //     console.log("else " + Trials)
     }
-    
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
@@ -53,9 +51,9 @@ function init() {
     ComputationallyLesExpensiveTrials= 1000;
     
     // camera zoom variabelen
-    camerazoom = 2.5 / quantumN;
+    camerazoom = quantumN ** 2;
     let cameramin=1;
-    let cameramax=1000000;
+    let cameramax=500;
 
     //#endregion
 
@@ -67,9 +65,9 @@ function init() {
     scene.background = null
 
     //inintialize camera
-    camera = new THREE.PerspectiveCamera(20, 2 / 1, cameramin, cameramax); 
+    camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 10000); 
 
-    camera.position.set( 45/camerazoom, 30/camerazoom, 45/camerazoom );
+    camera.position.set( 12 * camerazoom, 9 * camerazoom, 12 * camerazoom );
     camera.lookAt( scene.position );
 
 
@@ -130,8 +128,8 @@ function init() {
     controls.screenSpacePanning=true;
     
     //the min and mx zoom distance on scrollwheel
-    controls.minDistance = 5;
-    controls.maxDistance = 200;
+    controls.minDistance = cameramin;
+    controls.maxDistance = cameramax;
     //enablepan
     controls.enablePan=false;
     //automagically rotate
@@ -236,18 +234,23 @@ function animate() {
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
 
-    var atbohr= 1//(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
+    var atbohr= 1 //Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius));
         
 
     for (let I = 0; I < 100000; I++) {   
         if (x <Trials) {
 
-            if (TwoDView == true) {
+            if (TwoDView == 1) {
                 var sphericalPhi  = Math.round(Math.random()) * Math.PI;
                 var sphericalTheta = 2.0 * Math.PI * Math.random();
                 var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
             }
-            else  {
+            else if (TwoDView == 2) {
+                var sphericalPhi  = Math.random() * 2 * Math.PI + 0.5 * Math.PI;
+                var sphericalTheta = 0.5 * Math.PI;
+                var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            }
+            else{
                 var sphericalPhi  = Math.random() * 2 * Math.PI;
                 var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
                 var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
