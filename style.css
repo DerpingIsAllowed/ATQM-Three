@@ -89,7 +89,7 @@ p{
 
 
 /* button */
-.button{
+.SubmitQuantumValuesButton{
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
   text-align: center;
@@ -108,10 +108,10 @@ p{
   pointer-events: all;
   transition: all .1s ease-in-out;
 }
-.button:hover{
+.SubmitQuantumValuesButton:hover{
   background-color: #f6f6f6;
 }
-.button:active{
+.SubmitQuantumValuesButton:active{
   background-color: #f0f0f0;
 }
 

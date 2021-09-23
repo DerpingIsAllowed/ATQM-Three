@@ -32,14 +32,14 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=6;
-    quantumL=4;
+    quantumN=4;
+    quantumL=2;
     quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = (quantumN + 1) ** 2;
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    if (quantumN == 0) {
+    if (TwoDView == 0) {
         Trials = 2000000 * quantumN ** 3;
     }else{
         Trials = 2000000 * quantumN ** 2;
@@ -203,6 +203,50 @@ function init() {
     x=0;
 }
 
+const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
+
+SubmitSliderValueButton.addEventListener('click', () => {
+    quantumN = document.getElementById("myRangeN").value;
+    quantumL = document.getElementById("myRangeL").value;
+    quantumM = document.getElementById("myRangeM").value;
+    console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
+    
+    
+    //de maximale radius(niet aan zitten)
+    RadiusOfDistribution = (quantumN + 1) ** 2;
+    console.log("radius: " + RadiusOfDistribution)
+    
+    //aantal keer dat je een random punt kiest en de berekening uitvoert
+    if (TwoDView == 0) {
+        Trials = 2000000 * quantumN ** 3;
+        console.log("3d view ")
+    }else{
+        Trials = 2000000 * quantumN ** 2;
+        console.log("2d view ")
+    }
+    
+    // camera zoom variabelen
+    camerazoom = (quantumN + 1) ** 2;;
+    console.log("camerazoom: " + camerazoom)
+    
+    camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
+    camera.lookAt( scene.position );
+    console.log("camera werkt")
+    vertices.length = 3;
+    
+    console.log("new vertices: " +vertices)
+
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.update;
+    
+    console.log("geometry updatet ")
+    x=0;
+    Frame=0;
+    UpdateOnFrames=4;
+
+    return;
+})
+
 function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -239,8 +283,7 @@ function animate() {
     // renderer.shadowMap.autoUpdate = false;
 
     var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
-        
-
+    
     if (x < Trials) {
         CalcVertices(atbohr);
         }
@@ -253,8 +296,10 @@ function animate() {
     Frame++
 }
 
-async function CalcVertices(atbohr){
-    for (let I = 0; I < 50000; I++) {  
+function CalcVertices(atbohr){
+    let I;
+
+    for (I = 0; I < 50000; I++) {  
 
         if (TwoDView == 1) {
             var sphericalPhi  = Math.round(Math.random()) * Math.PI;
@@ -271,9 +316,9 @@ async function CalcVertices(atbohr){
             var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
             var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         }
-    
+        
         if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-            const v=new Vector3()
+            const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
         }
@@ -281,9 +326,11 @@ async function CalcVertices(atbohr){
     }
 }
 
-async function UpdateGeometry(){
+
+function UpdateGeometry(){
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
     geometry.update;
+    // console.log(geometry.attributes.position.count + " " + vertices.length);
 }
 
 
