@@ -5,6 +5,7 @@ const MobileMenuButton=document.querySelector('.MobileMenuButton');
 const aspilltext=document.querySelector('.aspilltext');
 const collapsable=document.querySelector('.collapsable');
 const slidercontainer=document.querySelector('.slidercontainer')
+const closeSliderContainer = document.querySelector('.closeSliderContainer')
 let root = document.documentElement;
 
 let menuOpen = false;
@@ -61,8 +62,11 @@ PMenu.addEventListener('click', () =>{
       root.style.setProperty('--popUpMenuOpacity',1)
     }, 10);
     userinterfaceOpen=true
-  }else{
+  }
+})
+  closeSliderContainer.addEventListener('click', () =>{
     
+    if(userinterfaceOpen){
     root.style.setProperty('--popUpMenuOpacity',0)
     setTimeout(() => {
       slidercontainer.classList.remove('open');
