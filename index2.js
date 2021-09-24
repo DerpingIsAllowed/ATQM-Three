@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 let geometry, vertices;
 init();
 animate();
@@ -28,12 +28,13 @@ function init() {
     EnableClipping = false;
     ClippingPlaneOfset = 0;
     TwoDView = 0;
+    WaveType = 0;
     Div="canvas";
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=4;
-    quantumL=2;
+    quantumN=6;
+    quantumL=5;
     quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = (quantumN + 1) ** 2;
@@ -44,12 +45,16 @@ function init() {
     }else{
         Trials = 2000000 * quantumN ** 2;
     }
-    
+
+    if (WaveType > 0) {
+        Trials = 2000000 * Math.round(Math.sqrt(quantumN));
+    }
+     console.log (Trials)
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
     // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
-    ComputationallyLesExpensiveTrials= 1000;
+    ComputationallyLesExpensiveTrials= 500;
     
     // camera zoom variabelen
     camerazoom = (quantumN + 1) ** 2;;
@@ -199,8 +204,12 @@ function init() {
     //#endregion
 
     spawnOrbsRParticles();
-    console.log (SphericalHarmonics(2, 2, 1));
+    console.log (SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
+    console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius));
+    console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius) * SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
+    console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius));
     x=0;
+    
 }
 
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
@@ -298,6 +307,7 @@ function animate() {
 
 function CalcVertices(atbohr){
     let I;
+    var Wave;
 
     for (I = 0; I < 50000; I++) {  
 
@@ -316,8 +326,16 @@ function CalcVertices(atbohr){
             var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
             var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
         }
+
+        if (WaveType == 1) {
+            Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius);
+        } else if (WaveType == 2) {
+            Wave = SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta);
+        } else {
+            Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius);
+        }
         
-        if (Math.random()*(atbohr/ComputationallyLesExpensiveTrials)<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
+        if (Math.random() * (atbohr / ComputationallyLesExpensiveTrials) < Wave) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -448,21 +466,20 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return Math.sqrt(((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta))/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
+    return (2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) ** 2;/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
 
 }
 
-function Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius) {
+function RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) {
 
-    return  Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL
+    return  (2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL)) * (Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))) ** 2;
 
 }
 
 function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) {
 
-    return  (Normalisation(quantumN, quantumL, sphericalRadius, bohrRadius)
-            * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))
-            * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta)) ** 2;
+    return  RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius)
+            * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta);
 
 }
 //#endregion
