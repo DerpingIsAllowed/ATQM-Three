@@ -34,7 +34,7 @@ function init() {
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
     quantumN=6;
-    quantumL=5;
+    quantumL=4;
     quantumM=0;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = (quantumN + 1) ** 2;
@@ -46,8 +46,11 @@ function init() {
         Trials = 2000000 * quantumN ** 2;
     }
 
-    if (WaveType > 0) {
-        Trials = 2000000 * Math.round(Math.sqrt(quantumN));
+    if (WaveType == 1) {
+        Trials = 2000000 * quantumN;
+    } 
+    if (WaveType == 2) {
+        Trials = 500 * RadiusOfDistribution ** 2;
     }
      console.log (Trials)
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
@@ -314,17 +317,17 @@ function CalcVertices(atbohr){
         if (TwoDView == 1) {
             var sphericalPhi  = Math.round(Math.random()) * Math.PI;
             var sphericalTheta = 2.0 * Math.PI * Math.random();
-            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            var sphericalRadius = Math.sqrt(Math.random()) * RadiusOfDistribution;
         }
         else if (TwoDView == 2) {
             var sphericalPhi  = Math.random() * 2 * Math.PI + 0.5 * Math.PI;
             var sphericalTheta = 0.5 * Math.PI;
-            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            var sphericalRadius = Math.sqrt(Math.random()) * RadiusOfDistribution;
         }
         else{
             var sphericalPhi  = Math.random() * 2 * Math.PI;
             var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-            var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
+            var sphericalRadius = Math.cbrt(Math.random()) * RadiusOfDistribution;
         }
 
         if (WaveType == 1) {
