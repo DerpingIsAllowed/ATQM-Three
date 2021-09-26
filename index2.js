@@ -77,8 +77,11 @@ function init() {
 
     //inintialize camera
     camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
-
-    camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
+    if (TwoDView == 0) {
+        camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
+    } else {
+        camera.position.set( 6 * camerazoom, 0, 0 );
+    }
     camera.lookAt( scene.position );
 
 
@@ -144,8 +147,10 @@ function init() {
     //enablepan
     controls.enablePan=false;
     //automagically rotate
+    if (TwoDView == 0) {
     controls.autoRotate=true;
     controls.autoRotateSpeed=0.3;
+    }
     //#endregion
 
     //#region lighting
