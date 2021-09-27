@@ -28,18 +28,18 @@
                 <p class="closeSliderContainer">⤬</p>
                 <h2>User Input</h3>
             <div class=sliderParent>
-            <p class=Pslider>Quantum N</p>
-                <input type="range" min="0" max="10" value="5" class="slider" id="myRangeN">
+                <p class=Pslider>Quantum N </p>
+                <input type="range" min="1" max="7" value="5" class="slider" id="myRangeN" onchange="updateText(this.value, this);">
                 <br>
             </div>
             <div class=sliderParent>
-            <p class=Pslider>Quantum L</p>
-                <input type="range" min="0" max="10" value="5" class="slider" id="myRangeL">
+                <p class=Pslider>Quantum L </p>
+                <input type="range" min="0" max="10" value="4" class="slider" id="myRangeL" onchange="updateText(this.value, this);">
                 <br>
             </div>
             <div class=sliderParent>
-            <p class=Pslider>Quantum M</p>
-                <input type="range" min="0" max="10" value="5" class="slider" id="myRangeM">
+                <p class=Pslider>Quantum M</p>
+                <input type="range" min="0" max="10" value="0" class="slider" id="myRangeM" onchange="updateText(this.value, this);">
                 <br>
             </div>
                 <button class="SubmitQuantumValuesButton">Submit</button>

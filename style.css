@@ -10,10 +10,12 @@
   /* Custom properties */
   --MobileMenuText:1;
   --popUpMenuOpacity:0;
+  --accentcolor:#ff0000;
+  --black: #000;
 }
 
 h1 {
-  color: black;
+  color: var(--black);
   text-align: left;
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
@@ -27,7 +29,7 @@ h1 {
 }
 h2{
   user-select: none;
-  color: black;
+  color: var(--black);
   text-align: left;
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
@@ -40,7 +42,7 @@ h2{
 }
 
 p{
-  color: black;
+  color: var(--black);
   text-align: left;
   font-family: roboto, sans-serif;
   font-style: normal;
@@ -53,7 +55,7 @@ p{
 }
 
 .PMenu{
-  color: black;
+  color: var(--black);
   text-align: left;
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
@@ -168,6 +170,13 @@ p{
   margin-top: 8px;
   color: #707070;
   user-select: none;
+}
+.bubble{
+  background: var(--accentcolor);
+  color: white; /* tekst kleur */
+  padding: 4px 12px;
+  position: relative;
+  border-radius: 4px;
 }
 
 /* ------------------------- slider */

@@ -10,7 +10,13 @@ let scene, camera, renderer, controls;
 
 //initiate custom variables
 let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+//bufferentities
 let geometry, vertices;
+//debug geometry
+let DevGeometry,DevMaterial,DevMesh
+//slider
+let Nslider = document.getElementById("myRangeN")
+
 init();
 animate();
 
@@ -33,26 +39,28 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=6;
-    quantumL=4;
+    quantumN=2;
+    quantumL=0;
     quantumM=0;
+
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = (quantumN + 1) ** 2;
-
+    
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
         Trials = 2000000 * quantumN ** 3;
     }else{
         Trials = 2000000 * quantumN ** 2;
     }
-
+    
     if (WaveType == 1) {
         Trials = 2000000 * quantumN;
     } 
     if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
-     console.log (Trials)
+    console.log ("Trials: " +Trials)
+    console.log("radius: " + RadiusOfDistribution)
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
@@ -60,14 +68,20 @@ function init() {
     ComputationallyLesExpensiveTrials= 500;
     
     // camera zoom variabelen
-    camerazoom = (quantumN + 1) ** 2;;
+    camerazoom = (quantumN + 1) ** 2;
+    console.log("camerazoom: " + camerazoom)
     let cameramin=1;
     let cameramax=500;
-
+    
     UpdateOnFrames=4;
     Frame=0;
+    
+    // Set slider maximum :)
+    Nslider.value=quantumN
+    document.getElementById("myRangeL").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Nslider.value-1;
     //#endregion
-
+    
     //renderer configure
     renderer = new THREE.WebGLRenderer({antialias:true, canvas: document.querySelector(Div), alpha: true}); //the renderer itself its complex go read the docs
 
@@ -111,11 +125,11 @@ function init() {
     } );
     
     const mesh = new THREE.Mesh( geometry, material );
-    //scene.add( mesh );
+    // scene.add( mesh );
 
     //add outer sphere
-    const geometry2 = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
-    const material2 = new THREE.MeshStandardMaterial( 
+    DevGeometry = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
+    DevMaterial = new THREE.MeshStandardMaterial( 
     {   
         color: 0x000000, 
         transparent: false, 
@@ -124,8 +138,8 @@ function init() {
         clipIntersection: true,
         wireframe: true
     } );
-    const mesh2 = new THREE.Mesh( geometry2, material2 );
-    //scene.add( mesh2 );
+    DevMesh = new THREE.Mesh( DevGeometry, DevMaterial );
+    scene.add( DevMesh );
 
     //#endregion
 
@@ -216,21 +230,34 @@ function init() {
     console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius));
     console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius) * SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius));
+    console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     x=0;
     
 }
 
+
+Nslider.addEventListener('click', () => {
+    document.getElementById("myRangeL").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Nslider.value-1;
+})
+
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
 
 SubmitSliderValueButton.addEventListener('click', () => {
-    quantumN = document.getElementById("myRangeN").value;
-    quantumL = document.getElementById("myRangeL").value;
-    quantumM = document.getElementById("myRangeM").value;
+    quantumN = parseInt(document.getElementById("myRangeN").value);
+    quantumL = parseInt(document.getElementById("myRangeL").value);
+    quantumM = parseInt(document.getElementById("myRangeM").value);
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     
-    
     //de maximale radius(niet aan zitten)
+    console.log(quantumN);
     RadiusOfDistribution = (quantumN + 1) ** 2;
+    if (WaveType == 1) {
+        Trials = 2000000 * quantumN;
+    } 
+    if (WaveType == 2) {
+        Trials = 500 * RadiusOfDistribution ** 2;
+    }
     console.log("radius: " + RadiusOfDistribution)
     
     //aantal keer dat je een random punt kiest en de berekening uitvoert
@@ -257,6 +284,8 @@ SubmitSliderValueButton.addEventListener('click', () => {
     geometry.update;
     
     console.log("geometry updatet ")
+    DevMesh.geometry.dispose();
+    DevMesh.geometry=new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
     x=0;
     Frame=0;
     UpdateOnFrames=4;

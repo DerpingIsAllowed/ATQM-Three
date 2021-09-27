@@ -74,3 +74,8 @@ PMenu.addEventListener('click', () =>{
     userinterfaceOpen=false
   }
 })
+
+function updateText(value, slider){
+  console.log(slider.previousElementSibling.innerHTML);
+  console.log(value) ;
+}
