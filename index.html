@@ -19,7 +19,13 @@
     </div>
     <div class=menuCube></div>
     <div class=menuLinks>
-        <p class=PMenu> Home<br> Model <br> About <br> Explaination </p>
+        <p class="PMenu mQuantumWaardes"> Quantum Waardes</p>
+        <p class="PMenu mHome"> Home</p>
+        <p class="PMenu mModel"> Model</p>
+        <p class="PMenu mAbout"> About</p>
+        <p class="PMenu mExplaination"> Explaination</p>
+
+        
     </div>
     <div class="DivMain">
         <div class="user-input">
@@ -28,18 +34,27 @@
                 <p class="closeSliderContainer">⤬</p>
                 <h2>User Input</h3>
             <div class=sliderParent>
-                <p class=Pslider>Quantum N </p>
-                <input type="range" min="1" max="7" value="5" class="slider" id="myRangeN" onchange="updateText(this.value, this);">
+                <div class=textSliderParent>
+                    <p class=Pslider>Quantum N: </p>
+                    <p class="Pslider PNsliderAmount">N</p>
+                </div>
+                <input type="range" min="1" max="7" value="3" class="slider" id="myRangeN" onchange="updateTextN();">
                 <br>
             </div>
             <div class=sliderParent>
-                <p class=Pslider>Quantum L </p>
-                <input type="range" min="0" max="10" value="4" class="slider" id="myRangeL" onchange="updateText(this.value, this);">
+                <div class=textSliderParent>
+                    <p class=Pslider>Quantum L: </p>
+                    <p class="Pslider PLsliderAmount">L</p>
+                </div>
+                <input type="range" min="0" max="10" value="2" class="slider" id="myRangeL" onchange="updateTextL();">
                 <br>
             </div>
             <div class=sliderParent>
-                <p class=Pslider>Quantum M</p>
-                <input type="range" min="0" max="10" value="0" class="slider" id="myRangeM" onchange="updateText(this.value, this);">
+                <div class=textSliderParent>
+                    <p class=Pslider>Quantum M: </p>
+                    <p class="Pslider PMsliderAmount">M</p>
+                </div>
+                <input type="range" min="0" max="10" value="1" class="slider" id="myRangeM" onchange="updateTextM();">
                 <br>
             </div>
                 <button class="SubmitQuantumValuesButton">Submit</button>

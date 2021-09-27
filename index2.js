@@ -16,6 +16,8 @@ let geometry, vertices;
 let DevGeometry,DevMaterial,DevMesh
 //slider
 let Nslider = document.getElementById("myRangeN")
+let Lslider = document.getElementById("myRangeL")
+
 
 init();
 animate();
@@ -39,9 +41,9 @@ function init() {
 
     // quantummechanische waardes! 
     bohrRadius=0.529177210903;
-    quantumN=2;
-    quantumL=0;
-    quantumM=0;
+    quantumN=3;
+    quantumL=2;
+    quantumM=1;
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = (quantumN + 1) ** 2;
@@ -79,7 +81,8 @@ function init() {
     // Set slider maximum :)
     Nslider.value=quantumN
     document.getElementById("myRangeL").max = Nslider.value-1;
-    document.getElementById("myRangeM").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -Lslider.value;
     //#endregion
     
     //renderer configure
@@ -139,7 +142,7 @@ function init() {
         wireframe: true
     } );
     DevMesh = new THREE.Mesh( DevGeometry, DevMaterial );
-    scene.add( DevMesh );
+    // scene.add( DevMesh );
 
     //#endregion
 
@@ -213,15 +216,17 @@ function init() {
 
     if (EnableClippingHelpers == true)
     {       //clippingplane helpers
-        const planehelpers= [
-            new PlaneHelper(clipPlanes[0], 10 ,0xFF0000),
-            new PlaneHelper(clipPlanes[1], 10 ,0xFF0000),
-            new PlaneHelper(clipPlanes[2], 10 ,0xFF0000)      
-        ];
-        
-        scene.add(planehelpers[0]);
-        scene.add(planehelpers[1]);
-        scene.add(planehelpers[2]);
+        if (clippingPlanes!=null){
+            const planehelpers= [
+                new PlaneHelper(clipPlanes[0], 10 ,0xFF0000),
+                new PlaneHelper(clipPlanes[1], 10 ,0xFF0000),
+                new PlaneHelper(clipPlanes[2], 10 ,0xFF0000)      
+            ];
+            
+            scene.add(planehelpers[0]);
+            scene.add(planehelpers[1]);
+            scene.add(planehelpers[2]);
+        }
     }
     //#endregion
 
@@ -238,7 +243,13 @@ function init() {
 
 Nslider.addEventListener('click', () => {
     document.getElementById("myRangeL").max = Nslider.value-1;
-    document.getElementById("myRangeM").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -(Lslider.value);
+})
+
+Lslider.addEventListener('click', () => {
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -(Lslider.value);
 })
 
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
@@ -284,8 +295,10 @@ SubmitSliderValueButton.addEventListener('click', () => {
     geometry.update;
     
     console.log("geometry updatet ")
-    DevMesh.geometry.dispose();
-    DevMesh.geometry=new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
+    if (DevMesh!=null){
+        DevMesh.geometry.dispose();
+        DevMesh.geometry=new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
+    }
     x=0;
     Frame=0;
     UpdateOnFrames=4;

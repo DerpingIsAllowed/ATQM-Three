@@ -8,7 +8,7 @@
 
 :root{
   /* Custom properties */
-  --MobileMenuText:1;
+  --MobileMenuText:1 ;
   --popUpMenuOpacity:0;
   --accentcolor:#ff0000;
   --black: #000;
@@ -61,7 +61,6 @@ p{
   font-style: normal;
   font-weight: 300;
   font-size: 25px;
-  margin-top: 30px;
   margin-bottom: 5px;
   margin-right: 20px;
   animation-delay: 0.7s;
@@ -121,7 +120,7 @@ p{
 .slidercontainer{
   width: 480px;
   pointer-events:all;
-  z-index: 100;
+  z-index: 1000;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -160,6 +159,10 @@ p{
   transform: translate(-50%, -50%);
   display: flex;
 }
+.textSliderParent{
+  display: flex;
+  justify-content: center;
+}
 .Pslider{
   pointer-events: none;
   font-size: 32px;
@@ -168,15 +171,8 @@ p{
   text-align: center;
   margin-bottom: 15px;
   margin-top: 8px;
-  color: #707070;
+  color: #303030;
   user-select: none;
-}
-.bubble{
-  background: var(--accentcolor);
-  color: white; /* tekst kleur */
-  padding: 4px 12px;
-  position: relative;
-  border-radius: 4px;
 }
 
 /* ------------------------- slider */
@@ -302,6 +298,7 @@ p{
 .menuLinks{
   position: fixed;
   overflow: hidden;
+  padding-top: 30px;
   z-index: 25;
   pointer-events:none; 
 }
@@ -360,9 +357,11 @@ p{
     margin-left: 0px;;
   }
   
+  .menuLinks{
+    padding-top: 65px;
+  }
   .PMenu{
     font-size: 15px;
-    margin-top: 65px;
     font-size: 30px;
     margin-left: 25px;
   }
@@ -490,9 +489,11 @@ p{
     margin-left: 0px;
   }
   
+  .menuLinks{
+    padding-top: 70px;
+  }
   .PMenu{
     margin-left: 40px;
-    margin-top: 70px;
     font-size: 30px;
   }
 
@@ -553,10 +554,13 @@ p{
     left: -500px;
   }
 
+  .menuLinks{
+    padding-top: 100px;
+  }
+
   .PMenu{
     font-size: 45px;
     margin-left: 40px;
-    margin-top: 100px;
   }
   
   @keyframes menu-in {
