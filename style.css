@@ -70,6 +70,8 @@ p{
   animation-direction: alternate;
   animation-play-state: paused;
   opacity: 0;
+  user-select: none;
+  cursor: pointer;
 }
 .PMenu.open{
   animation-play-state:running;
@@ -108,6 +110,7 @@ p{
   border-radius: 6px;
   pointer-events: all;
   transition: all .1s ease-in-out;
+  cursor: pointer;
 }
 .SubmitQuantumValuesButton:hover{
   background-color: #f6f6f6;
@@ -214,10 +217,12 @@ p{
 }
 .slider::-moz-focus-outer { border: 0; }
 .closeSliderContainer{
+  user-select:none;
   position: absolute;
   right: 55px;
   top: 30px;
   font-size: 35px;
+  cursor: pointer;
 }
 
 
@@ -364,6 +369,7 @@ p{
     font-size: 15px;
     font-size: 30px;
     margin-left: 25px;
+    
   }
   
   .menuCube{

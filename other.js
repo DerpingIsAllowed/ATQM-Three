@@ -9,12 +9,7 @@ const SubmitSliderValueButton         =document.querySelector('.SubmitQuantumVal
 const PMenu                           =document.querySelectorAll('.PMenu');
 const mQuantumWaardes                 =document.querySelector('.mQuantumWaardes');
 let root = document.documentElement;
-updateTextN();
-updateTextL();
-updateTextM();
-updateTextN();
-updateTextL();
-updateTextM();
+
 //Open and close Navmenu with the burger
 let menuOpen = false;
 menuBtn.addEventListener('click', () => {
