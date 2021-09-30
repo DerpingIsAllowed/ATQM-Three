@@ -241,15 +241,19 @@ function init() {
 }
 
 
-Nslider.addEventListener('click', () => {
+Nslider.addEventListener('change', () => {
     document.getElementById("myRangeL").max = Nslider.value-1;
     document.getElementById("myRangeM").max = Lslider.value;
     document.getElementById("myRangeM").min = -(Lslider.value);
+    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
 })
 
-Lslider.addEventListener('click', () => {
+Lslider.addEventListener('change', () => {
     document.getElementById("myRangeM").max = Lslider.value;
     document.getElementById("myRangeM").min = -(Lslider.value);
+    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
 })
 
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');

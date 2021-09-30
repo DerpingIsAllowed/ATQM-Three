@@ -14,6 +14,14 @@ let root = document.documentElement;
 let menuOpen = false;
 menuBtn.addEventListener('click', () => {
   if(!menuOpen) {
+    openNavMenu();
+  } else {
+    closeNavMenu();
+  }
+});
+
+function openNavMenu(){
+  if(!menuOpen) {
     menuBtn.classList.add('open');
     menuCube.classList.add('open');
     PMenu.forEach(element => {element.classList.add('open')});
@@ -21,8 +29,10 @@ menuBtn.addEventListener('click', () => {
     menuCube.classList.remove('closed');
     PMenu.forEach(element => {element.classList.remove('closed')});
     menuOpen = true;
-
-  } else {
+  }
+}
+function closeNavMenu(){
+  if(menuOpen){
     menuBtn.classList.add('closed');
     menuCube.classList.add('closed');
     PMenu.forEach(element => {element.classList.add('closed')});
@@ -30,9 +40,8 @@ menuBtn.addEventListener('click', () => {
     menuCube.classList.remove('open');
     PMenu.forEach(element => {element.classList.remove('open')});
     menuOpen = false;
-
   }
-});
+}
 
 //open and close MobileMenu
 let MMBopen =true
@@ -61,6 +70,17 @@ MobileMenuButton.addEventListener('click', () => {
 //open and close quantumUI
 let userinterfaceOpen=false
 mQuantumWaardes.addEventListener('click', () =>{
+  openQuantumUI();
+  closeNavMenu();
+})
+closeSliderContainer.addEventListener('click', () =>{
+  closeQuantumUI();
+})
+SubmitSliderValueButton.addEventListener('click', () =>{
+  closeQuantumUI();
+})
+
+function openQuantumUI(){
   if(!userinterfaceOpen){
     slidercontainer.classList.add('open');
         
@@ -69,18 +89,9 @@ mQuantumWaardes.addEventListener('click', () =>{
     }, 10);
     userinterfaceOpen=true
   }
-})
-  closeSliderContainer.addEventListener('click', () =>{
-    
-    if(userinterfaceOpen){
-    root.style.setProperty('--popUpMenuOpacity',0)
-    setTimeout(() => {
-      slidercontainer.classList.remove('open');
-    }, 200);
-    userinterfaceOpen=false
-  }
-})
-SubmitSliderValueButton.addEventListener('click', () =>{
+}
+
+function closeQuantumUI(){
   if(userinterfaceOpen){
     root.style.setProperty('--popUpMenuOpacity',0)
     setTimeout(() => {
@@ -88,7 +99,7 @@ SubmitSliderValueButton.addEventListener('click', () =>{
     }, 200);
     userinterfaceOpen=false
   }
-})
+}
 
 // update the text in the quantumUI
 function updateTextN(){
@@ -97,18 +108,22 @@ function updateTextN(){
   updateTextL();
   updateTextM();
 }
+var Mslider = document.getElementById('myRangeM');
+var Lslider = document.getElementById('myRangeL');
 
 function updateTextL(){
-  var Lslider = document.getElementById('myRangeL')
-  setTimeout(() => {
   Lslider.previousElementSibling.lastElementChild.innerHTML=Lslider.value;
-  },20);
   updateTextM();
 }
 
+Lslider.addEventListener('change', () => {
+  Lslider.previousElementSibling.lastElementChild.innerHTML=Lslider.value;
+})
+
+Mslider.addEventListener('change', () => {
+  Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
+})
+
 function updateTextM(){
-  var Mslider = document.getElementById('myRangeM')
-  setTimeout(() => {
-    Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
-    },20);
+  Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
 }
