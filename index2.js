@@ -23,7 +23,7 @@ init();
 animate();
 
 function init() {
-    console.log("Version : 1.1")
+    console.log("Version : 1.1.2")
 
     /* READ ME
     De docs zijn kapot handig \/
@@ -351,6 +351,11 @@ function animate() {
     
     if (x < Trials) {
         CalcVertices(atbohr);
+        }
+        else if (x=Trials){
+            console.log(geometry.attributes.position.count);
+            x+=1;
+            
         }
     
     
