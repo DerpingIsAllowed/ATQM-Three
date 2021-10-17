@@ -23,6 +23,8 @@ init();
 animate();
 
 function init() {
+    console.log("Version : 1.1")
+
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
