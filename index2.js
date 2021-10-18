@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -37,8 +37,9 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 0;
-    TwoDView = 0;
-    WaveType = 0;
+    TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
+    WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
+    ShowProbability = 2     // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -388,12 +389,30 @@ function CalcVertices(atbohr){
             var sphericalRadius = Math.cbrt(Math.random()) * RadiusOfDistribution;
         }
 
-        if (WaveType == 1) {
-            Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius);
-        } else if (WaveType == 2) {
-            Wave = SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta);
-        } else {
-            Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius);
+        if (WaveType == 1 ) {
+            Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) ^ 2;
+        } 
+        else if (WaveType == 2) {
+            if (ShowProbability == 0) {
+                Wave = SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) ^ 2;
+            } 
+            else if (ShowProbability == 1) {
+                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.cos(sphericalPhi * quantumM));
+            } 
+            else {
+                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.sin(sphericalPhi * quantumM));
+            }
+        } 
+        else {
+            if (ShowProbability == 0) {
+                Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) ^ 2;
+            } 
+            else if (ShowProbability == 1) {
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.cos(sphericalPhi * quantumM));
+            } 
+            else {
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.sin(sphericalPhi * quantumM));
+            }
         }
         
         if (Math.random() * (atbohr / ComputationallyLesExpensiveTrials) < Wave) {
@@ -527,13 +546,13 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return (2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) ** 2;/* * Math.exp(math.sqrt(-1) * quantumM * sphericalPhi)*/
+    return (2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta));
 
 }
 
 function RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) {
 
-    return  (2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL)) * (Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius))) ** 2;
+    return  (2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL)) * (Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius)));
 
 }
 
