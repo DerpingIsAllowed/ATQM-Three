@@ -23,7 +23,7 @@ init();
 animate();
 
 function init() {
-    console.log("Version : 1.1.4")
+    console.log("Version : 1.1.5")
 
     /* READ ME
     De docs zijn kapot handig \/
