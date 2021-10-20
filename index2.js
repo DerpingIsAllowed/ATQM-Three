@@ -528,21 +528,8 @@ function doubleFactorial(n) {
 
 function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius) {
     if (sum > 0.999) return r;
-    console.log(sum,r)
     return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius) ** 2, r + 0.1, quantumN, quantumL, bohrRadius);
 }
-
-// function AtomicRadius() {
-//     let sum = [0, 0];
-
-//     for (let r = 0.05; r < 100; r += 0.1 ) {
-//         if (sum[1] > 0.999) {
-//             return r;
-//         }
-//         sum[0] = sum[1]
-//         sum[1] = sum[0] + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius) ** 2;
-//     }
-// }
 
 function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
