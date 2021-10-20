@@ -23,8 +23,7 @@ init();
 animate();
 
 function init() {
-    console.log("Version : 1.1.5")
-
+    console.log("Version : 1.1.6")
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -39,7 +38,7 @@ function init() {
     ClippingPlaneOfset = 0;
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
-    ShowProbability = 2     // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
+    ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -47,21 +46,22 @@ function init() {
     quantumN=3;
     quantumL=2;
     quantumM=1;
+    console.log("Radius = " + AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius))
 
     //de maximale radius(niet aan zitten)
-    RadiusOfDistribution = (quantumN + 1) ** 2;
+    RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
     
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 2000000 * quantumN ** 3;
+        Trials = 5000 * RadiusOfDistribution ** 3;
     }else{
-        Trials = 2000000 * quantumN ** 2;
+        Trials = 5000 * RadiusOfDistribution ** 2;
     }
     
     if (WaveType == 1) {
-        Trials = 2000000 * quantumN;
+        Trials = 5000 * RadiusOfDistribution;
     } 
-    if (WaveType == 2) {
+    else if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
     console.log ("Trials: " +Trials)
@@ -73,7 +73,7 @@ function init() {
     ComputationallyLesExpensiveTrials= 500;
     
     // camera zoom variabelen
-    camerazoom = (quantumN + 1) ** 2;
+    camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
     let cameramin=1;
     let cameramax=500;
@@ -269,26 +269,28 @@ SubmitSliderValueButton.addEventListener('click', () => {
     
     //de maximale radius(niet aan zitten)
     console.log(quantumN);
-    RadiusOfDistribution = (quantumN + 1) ** 2;
-    if (WaveType == 1) {
-        Trials = 2000000 * quantumN;
-    } 
-    if (WaveType == 2) {
-        Trials = 500 * RadiusOfDistribution ** 2;
-    }
+    RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
+
     console.log("radius: " + RadiusOfDistribution)
     
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 2000000 * quantumN ** 3;
+        Trials = 5000 * RadiusOfDistribution ** 3;
         console.log("3d view ")
     }else{
-        Trials = 2000000 * quantumN ** 2;
+        Trials = 5000 * RadiusOfDistribution ** 2;
         console.log("2d view ")
+    }
+
+    if (WaveType == 1) {
+        Trials = 5000 * RadiusOfDistribution;
+    } 
+    else if (WaveType == 2) {
+        Trials = 500 * RadiusOfDistribution ** 2;
     }
     
     // camera zoom variabelen
-    camerazoom = (quantumN + 1) ** 2;;
+    camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
     
     camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
@@ -352,12 +354,11 @@ function animate() {
     
     if (x < Trials) {
         CalcVertices(atbohr);
-        }
-        else if (x==Trials){
-            console.log(geometry.attributes.position.count);
-            x+=1;
-            
-        }
+    }
+    else if (x==Trials){
+        console.log(geometry.attributes.position.count);
+        x+=1;
+    }
     
     
     if (x < Trials-100&&Frame==UpdateOnFrames) {
@@ -371,7 +372,7 @@ function CalcVertices(atbohr){
     let I;
     var Wave;
 
-    for (I = 0; I < 50000; I++) {  
+    for (I = 0; I < 20000; I++) {  
 
         if (TwoDView == 1) {
             var sphericalPhi  = Math.round(Math.random()) * Math.PI;
@@ -389,29 +390,32 @@ function CalcVertices(atbohr){
             var sphericalRadius = Math.cbrt(Math.random()) * RadiusOfDistribution;
         }
 
-        if (WaveType == 1 ) {
-            Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) ^ 2;
+        if (WaveType == 1 ) {           
+            if (ShowProbability == 0) {
+                Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) ** 2;
+            } 
+            else Wave = RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) ** 2;
         } 
         else if (WaveType == 2) {
             if (ShowProbability == 0) {
-                Wave = SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) ^ 2;
+                Wave = SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) ** 2;
             } 
             else if (ShowProbability == 1) {
-                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.cos(sphericalPhi * quantumM));
+                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.cos(sphericalPhi * quantumM)) ** 2;
             } 
             else {
-                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.sin(sphericalPhi * quantumM));
+                Wave = Math.abs(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta) * Math.sin(sphericalPhi * quantumM)) ** 2;
             }
         } 
         else {
             if (ShowProbability == 0) {
-                Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) ^ 2;
+                Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) ** 2;
             } 
             else if (ShowProbability == 1) {
-                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.cos(sphericalPhi * quantumM));
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.cos(sphericalPhi * quantumM)) ** 2;
             } 
             else {
-                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.sin(sphericalPhi * quantumM));
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius) * Math.sin(sphericalPhi * quantumM)) ** 2;
             }
         }
         
@@ -519,15 +523,33 @@ function factorial(n) {
 function doubleFactorial(n) {
     if (n < 2)
         return 1;            
-        return n * doubleFactorial(n - 2);
+    return n * doubleFactorial(n - 2);
 }
+
+function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius) {
+    if (sum > 0.999) return r;
+    console.log(sum,r)
+    return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius) ** 2, r + 0.1, quantumN, quantumL, bohrRadius);
+}
+
+// function AtomicRadius() {
+//     let sum = [0, 0];
+
+//     for (let r = 0.05; r < 100; r += 0.1 ) {
+//         if (sum[1] > 0.999) {
+//             return r;
+//         }
+//         sum[0] = sum[1]
+//         sum[1] = sum[0] + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius) ** 2;
+//     }
+// }
 
 function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
     let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
 
     for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
-        LaguerreValues[LagIndex] = ((2 * laguerreK + 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (laguerreK + laguerreAlpha) * LaguerreValues[LagIndex - 2])/(laguerreK + 1);
+        LaguerreValues[LagIndex] = ((2 * LagIndex - 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (LagIndex + laguerreAlpha - 1) * LaguerreValues[LagIndex - 2])/LagIndex;
     }
     return LaguerreValues[laguerreK]; 
 }
@@ -546,13 +568,13 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return (2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM)) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta));
+    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta));
 
 }
 
 function RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius) {
 
-    return  (2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL)) * (Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius)));
+    return  Math.sqrt((2 / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius / (quantumN * bohrRadius)) * (2 * sphericalRadius / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius / (quantumN * bohrRadius));
 
 }
 
