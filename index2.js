@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, DodecahedronBufferGeometry, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -18,12 +18,25 @@ let DevGeometry,DevMaterial,DevMesh
 let Nslider = document.getElementById("myRangeN")
 let Lslider = document.getElementById("myRangeL")
 
+//#region ill Defined Functions
+var debug=[]
+debug.log=function log(string){
+    console.log(string)
+}
+debug.error=function error(string1){
+    console.error(string1)
+}
+debug.warn=function warn(string2){
+    console.warn(string2)
+}
+//#endregion
 
 init();
 animate();
 
+
 function init() {
-    console.log("Version : 1.1.6")
+    console.warn("Version : 1.1.7")
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -39,6 +52,7 @@ function init() {
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
+    PerformanceMode = 0;    // 0 = lowest performance, 2 = medium, 3 = high 
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -64,12 +78,24 @@ function init() {
     else if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
+    
+
+    if(PerformanceMode == 0){
+        Trials = Trials/4
+    } else if(PerformanceMode == 1){
+        Trials = Trials/2
+    } else if (PerformanceMode == 2){
+        Trials = Trials
+    }
+
+    console.log("Performance Mode: " +PerformanceMode)
     console.log ("Trials: " +Trials)
+
     console.log("radius: " + RadiusOfDistribution)
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
-    // het staat geschreven als gedeeld door, waardes tussen de ~10 en 80 zijn een beetje de norm
+    // het staat geschreven als gedeeld door, waardes tussen de ~100 en 800 zijn een beetje de norm
     ComputationallyLesExpensiveTrials= 500;
     
     // camera zoom variabelen
@@ -121,29 +147,56 @@ function init() {
     //#region geometry
     // add an inner sphere
     const geometry = new THREE.SphereGeometry( .1, 40, 20 );
-    const material = new THREE.MeshStandardMaterial( 
-    {   
-        color: 0x00FF00, 
-        transparent: false, 
-        side: THREE.DoubleSide,
-        clippingPlanes: clipPlanes,
-        clipIntersection: true,
-    } );
-    
+    let material;
+    if (clipPlanes == null)
+    {
+        material = new THREE.MeshStandardMaterial( 
+        {   
+            color: 0x00FF00, 
+            transparent: false, 
+            side: THREE.DoubleSide,
+            clipIntersection: true,
+        })
+    }
+    else
+    {
+        material = new THREE.MeshStandardMaterial( 
+        {   
+            color: 0x00FF00, 
+            transparent: false, 
+            side: THREE.DoubleSide,
+            clippingPlanes: clipPlanes,
+            clipIntersection: true,
+        })
+    }
+
     const mesh = new THREE.Mesh( geometry, material );
     // scene.add( mesh );
 
     //add outer sphere
     DevGeometry = new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
-    DevMaterial = new THREE.MeshStandardMaterial( 
-    {   
-        color: 0x000000, 
-        transparent: false, 
-        side: THREE.DoubleSide,
-        clippingPlanes: clipPlanes,
-        clipIntersection: true,
-        wireframe: true
-    } );
+    if (clipPlanes == null){   
+        DevMaterial = new THREE.MeshStandardMaterial( 
+        {   
+            color: 0x000000, 
+            transparent: false, 
+            side: THREE.DoubleSide,
+            clipIntersection: true,
+            wireframe: true
+        } )
+    } else{
+        DevMaterial = new THREE.MeshStandardMaterial( 
+        {   
+            color: 0x000000, 
+            transparent: false, 
+            side: THREE.DoubleSide,
+            clippingPlanes: clipPlanes,
+            clipIntersection: true,
+            wireframe: true
+        } )
+    }
+
+    
     DevMesh = new THREE.Mesh( DevGeometry, DevMaterial );
     // scene.add( DevMesh );
 
@@ -320,12 +373,20 @@ function resizeCanvasToDisplaySize() {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     if (canvas.width !== width ||canvas.height !== height) {
-      // you must pass false here or three.js sadly fights the browser
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.setViewOffset(width,height,-width/6,0,width,height,0 );
-      camera.updateProjectionMatrix();
-      // set render target sizes here
+        // you must pass false here or three.js sadly fights the browser
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+
+        // let MediaQueryMobile=window.matchMedia("(max-width: 767px)")
+        // if(!MediaQueryMobile.matches)
+        // {
+            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+        // }
+        // else{
+        //     camera.setViewOffset(width,height,0 ,0 ,width,height);
+        // }
+        camera.updateProjectionMatrix();
+        // set render target sizes here
     }
   }
   
@@ -355,17 +416,20 @@ function animate() {
     if (x < Trials) {
         CalcVertices(atbohr);
     }
-    else if (x==Trials){
-        console.log(geometry.attributes.position.count);
+    else if (Trials<x&& x<Trials+100000000){
+        console.log("Added particles: "+ geometry.attributes.position.count);
         x+=1;
+        x=+1000000000000;
+        OnModelCalculationEnd();
     }
     
     
-    if (x < Trials-100&&Frame==UpdateOnFrames) {
+    if (x < Trials&&Frame==UpdateOnFrames) {
         UpdateGeometry();
         Frame=0;
     }
     Frame++
+    
 }
 
 function CalcVertices(atbohr){
@@ -481,13 +545,14 @@ function spawnOrbsRParticles() {
     const texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    const material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );
+    let material 
+    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
+    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
     vertices = [0,0,0];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     scene.add( particles );
-
     // let bohrRadius=0.529177210903;
 
 
@@ -513,6 +578,7 @@ function spawnOrbsRParticles() {
 }
 
 //#region Hydrogen wave function 
+
 
 function factorial(n) {
     if (n < 0) return;
@@ -572,3 +638,11 @@ function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTh
 
 }
 //#endregion
+
+function OnModelCalculationEnd(){
+    console.log("Scene polycount:", renderer.info.render.triangles)
+    console.log("Active Drawcalls:", renderer.info.render.calls)
+    console.log("Textures in Memory", renderer.info.memory.textures)
+    console.log("Geometries in Memory", renderer.info.memory.geometries)
+}
+
