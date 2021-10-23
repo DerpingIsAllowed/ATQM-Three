@@ -36,7 +36,9 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.1.7")
+    console.warn("Version : 1.1.8")
+
+    
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -60,7 +62,6 @@ function init() {
     quantumN=3;
     quantumL=2;
     quantumM=1;
-    console.log("Radius = " + AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius))
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
@@ -87,11 +88,11 @@ function init() {
     } else if (PerformanceMode == 2){
         Trials = Trials
     }
-
+    console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     console.log("Performance Mode: " +PerformanceMode)
     console.log ("Trials: " +Trials)
 
-    console.log("radius: " + RadiusOfDistribution)
+    console.log("Radius: " + RadiusOfDistribution)
     // ik heb een waarde toegevoegd die eigenlijk het maximum pakt de 100% in kansberekening 
     // en vervolgens zegt, alles wat hoger dan 50% is mag ook spawnen wat hetzelfde effect geeft, visueel als de trials omhoog gooien,
     // maar een stuk makkelijker voor je computer is om te hendelen.
@@ -291,7 +292,7 @@ function init() {
     console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius));
     console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius) * SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius));
-    console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
+
     x=0;
     
 }
@@ -315,16 +316,16 @@ Lslider.addEventListener('change', () => {
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
 
 SubmitSliderValueButton.addEventListener('click', () => {
+    console.log(" ")
+
     quantumN = parseInt(document.getElementById("myRangeN").value);
     quantumL = parseInt(document.getElementById("myRangeL").value);
     quantumM = parseInt(document.getElementById("myRangeM").value);
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     
     //de maximale radius(niet aan zitten)
-    console.log(quantumN);
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
 
-    console.log("radius: " + RadiusOfDistribution)
     
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
@@ -341,14 +342,26 @@ SubmitSliderValueButton.addEventListener('click', () => {
     else if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
-    
+
+    //performance mode
+    if(PerformanceMode == 0){
+        Trials = Trials/4
+    } else if(PerformanceMode == 1){
+        Trials = Trials/2
+    } else if (PerformanceMode == 2){
+        Trials = Trials
+    }
+
+    console.log("Performance Mode: " +PerformanceMode)
+    console.log("Trials: " +Trials)
+    console.log("Radius: " + RadiusOfDistribution)
+
     // camera zoom variabelen
     camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
     
     camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
-    console.log("camera werkt")
     vertices.length = 3;
     
     console.log("new vertices: " +vertices)
@@ -356,7 +369,7 @@ SubmitSliderValueButton.addEventListener('click', () => {
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
     geometry.update;
     
-    console.log("geometry updatet ")
+    console.log("geometry updated ")
     if (DevMesh!=null){
         DevMesh.geometry.dispose();
         DevMesh.geometry=new THREE.SphereGeometry( RadiusOfDistribution, 20, 20 );
@@ -364,6 +377,11 @@ SubmitSliderValueButton.addEventListener('click', () => {
     x=0;
     Frame=0;
     UpdateOnFrames=4;
+
+    console.log (SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
+    console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius));
+    console.log (RadialWave(quantumN, quantumL, bohrRadius, bohrRadius) * SphericalHarmonics(Math.abs(quantumM), quantumL, 1));
+    console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius));
 
     return;
 })
