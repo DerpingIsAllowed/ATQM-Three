@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.1.8")
+    console.warn("Version : 1.1.9")
 
     
     /* READ ME
@@ -54,7 +54,7 @@ function init() {
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    PerformanceMode = 0;    // 0 = lowest performance, 2 = medium, 3 = high 
+    PerformanceMode = 1;    // 0 = lowest performance, 1 = medium, 2 = high 
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -65,7 +65,9 @@ function init() {
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
-    
+
+    // console.log(RadialWave(3, 0, 1, bohrRadius))
+
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
         Trials = 5000 * RadiusOfDistribution ** 3;
@@ -326,7 +328,6 @@ SubmitSliderValueButton.addEventListener('click', () => {
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
 
-    
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
         Trials = 5000 * RadiusOfDistribution ** 3;
@@ -428,11 +429,9 @@ function animate() {
     //render the scene
     renderer.render( scene, camera );
     // renderer.shadowMap.autoUpdate = false;
-
-    var atbohr= 1 //(Normalisation(quantumN, quantumL, bohrRadius, bohrRadius) * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * bohrRadius / (quantumN * bohrRadius)))
     
     if (x < Trials) {
-        CalcVertices(atbohr);
+        CalcVertices();
     }
     else if (Trials<x&& x<Trials+100000000){
         console.log("Added particles: "+ geometry.attributes.position.count);
@@ -450,7 +449,7 @@ function animate() {
     
 }
 
-function CalcVertices(atbohr){
+function CalcVertices(){
     let I;
     var Wave;
 
@@ -501,7 +500,7 @@ function CalcVertices(atbohr){
             }
         }
         
-        if (Math.random() * (atbohr / ComputationallyLesExpensiveTrials) < Wave) {
+        if (Math.random() * 1 / ComputationallyLesExpensiveTrials < Wave) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -615,12 +614,24 @@ function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius) {
     return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius) ** 2, r + 0.1, quantumN, quantumL, bohrRadius);
 }
 
+function RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius) {
+    let rMax = [0, 0];
+
+    for (let r = 0.1; r < RadiusOfDistribution; r += 0.1) {
+        rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius) ** 2;
+        if (rMax[1] > rMax[0]) {
+            rMax[0] = rMax[1];
+        }
+    }
+    return rMax[0]
+}
+
 function Laguerre(laguerreAlpha, laguerreK, laguerreX){
     
     let LaguerreValues = [1, 1 + laguerreAlpha - laguerreX];
 
     for (let LagIndex = 2; LagIndex <= laguerreK; LagIndex++) {
-        LaguerreValues[LagIndex] = ((2 * LagIndex - 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (LagIndex + laguerreAlpha - 1) * LaguerreValues[LagIndex - 2])/LagIndex;
+        LaguerreValues[LagIndex] = ((2 * LagIndex - 1 + laguerreAlpha - laguerreX) * LaguerreValues[LagIndex - 1] - (LagIndex + laguerreAlpha - 1) * LaguerreValues[LagIndex - 2]) / LagIndex;
     }
     return LaguerreValues[laguerreK]; 
 }
@@ -631,7 +642,7 @@ function Legendre(LegendreL, LegendreM, LegendreX){
     LegendreValues[1] = LegendreX * (2 * LegendreM + 1) * LegendreValues[0];
 
     for (let LegIndex = 2; LegIndex <= LegendreL - LegendreM; LegIndex++) {
-        LegendreValues[LegIndex] = ((2 * LegendreL + 1) * LegendreX * LegendreValues[LegIndex - 1] - (LegendreL + LegendreM) * LegendreValues[LegIndex - 2]) / (LegendreL - LegendreM + 1)
+        LegendreValues[LegIndex] = ((2 * (LegendreM + LegIndex) - 1) * LegendreX * LegendreValues[LegIndex - 1] - (2 * LegendreM + LegIndex - 1) * LegendreValues[LegIndex - 2]) / LegIndex;
     }
     return LegendreValues[LegendreL - LegendreM];   
 
