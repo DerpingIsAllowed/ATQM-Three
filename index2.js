@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.1.9")
+    console.warn("Version : 1.1.10")
 
     
     /* READ ME
@@ -54,7 +54,7 @@ function init() {
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    PerformanceMode = 1;    // 0 = lowest performance, 1 = medium, 2 = high 
+    PerformanceMode = 2;    // 0 = lowest performance, 1 = medium, 2 = high 
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -65,12 +65,12 @@ function init() {
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius);
-
+    RadialMax = RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius)
     // console.log(RadialWave(3, 0, 1, bohrRadius))
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 5000 * RadiusOfDistribution ** 3;
+        Trials = 500000 * RadiusOfDistribution ** 3 * RadialMax;
     }else{
         Trials = 5000 * RadiusOfDistribution ** 2;
     }
@@ -330,7 +330,7 @@ SubmitSliderValueButton.addEventListener('click', () => {
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 5000 * RadiusOfDistribution ** 3;
+        Trials = 500000 * RadiusOfDistribution ** 3 * RadialMax;
         console.log("3d view ")
     }else{
         Trials = 5000 * RadiusOfDistribution ** 2;
@@ -500,7 +500,7 @@ function CalcVertices(){
             }
         }
         
-        if (Math.random() * 1 / ComputationallyLesExpensiveTrials < Wave) {
+        if (Math.random() * RadialMax < Wave) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -617,7 +617,7 @@ function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius) {
 function RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius) {
     let rMax = [0, 0];
 
-    for (let r = 0.1; r < RadiusOfDistribution; r += 0.1) {
+    for (let r = 0; r < RadiusOfDistribution; r += 0.1) {
         rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius) ** 2;
         if (rMax[1] > rMax[0]) {
             rMax[0] = rMax[1];
