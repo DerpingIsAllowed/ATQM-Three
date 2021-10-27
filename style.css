@@ -73,17 +73,19 @@ p{
   user-select: none;
   cursor: pointer;
 }
+
 .PMenu.open{
-  animation-play-state:running;
+  animation-play-state: running;
   animation-iteration-count: initial;
   animation-fill-mode: forwards;
   z-index: 50;
 }
+
 .PMenu.closed{
   animation-iteration-count: initial;
   animation-name: text-out;
   animation-duration: 0.5s;
-  animation-play-state:running;
+  animation-play-state: running;
   animation-fill-mode: forwards;
   animation-delay: 0.1s;
   opacity: 1;
