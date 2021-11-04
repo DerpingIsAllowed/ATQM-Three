@@ -376,7 +376,6 @@ SubmitSliderValueButton.addEventListener('click', () => {
     console.log("new vertices: " +vertices)
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.update;
     
     console.log("geometry updated ")
     if (DevMesh!=null){
@@ -520,7 +519,6 @@ function CalcVertices(){
 
 function UpdateGeometry(){
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.update;
     // console.log(geometry.attributes.position.count + " " + vertices.length);
 }
 
