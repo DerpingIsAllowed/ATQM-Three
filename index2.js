@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.0")
+    console.warn("Version : 1.2.1")
 
     
     /* READ ME
@@ -422,20 +422,16 @@ function animate() {
     
     if (x < Trials) {
         CalcVertices();
+        UpdateGeometry();
     }
     else if (Trials<x&& x<Trials+100000000){
         console.log("Added particles: "+ geometry.attributes.position.count);
         x+=1;
         x=+1000000000000;
+        UpdateGeometry();
         OnModelCalculationEnd();
     }
-    
-    
-    if (x < Trials&&Frame==UpdateOnFrames) {
-        UpdateGeometry();
-        Frame=0;
-    }
-    Frame++
+
     
 }
 
