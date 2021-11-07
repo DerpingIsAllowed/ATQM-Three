@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.1")
+    console.warn("Version : 1.2.2")
 
     
     /* READ ME
@@ -453,7 +453,7 @@ function CalcVertices(){
         }
         else{
             var sphericalPhi  = Math.random() * 2 * Math.PI;
-            var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
+            var sphericalTheta = Math.random() * Math.PI;
             var sphericalRadius = Math.random() * RadiusOfDistribution;
         }
 
@@ -486,7 +486,7 @@ function CalcVertices(){
             }
         }
         
-        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 < Wave ) {
+        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave ) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -615,7 +615,7 @@ function AngularWaveMax(quantumM, quantumL) {
     let thetaMax = [0, 0];
 
     for (let theta = 0; theta < 2 * Math.PI; theta += 1 / 30 * Math.PI) {
-        thetaMax[1] = SphericalHarmonics(Math.abs(quantumM), quantumL, theta) ** 2;
+        thetaMax[1] = SphericalHarmonics(Math.abs(quantumM), quantumL, theta) ** 2 * Math.sin(theta);
         if (thetaMax[1] > thetaMax[0]) {
             thetaMax[0] = thetaMax[1];
         }
