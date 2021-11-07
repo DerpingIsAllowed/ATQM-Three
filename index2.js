@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.1.11")
+    console.warn("Version : 1.2.0")
 
     
     /* READ ME
@@ -54,7 +54,7 @@ function init() {
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    PerformanceMode = 2;    // 0 = lowest performance, 1 = medium, 2 = high 
+    PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
     Div="canvas";
 
     // quantummechanische waardes! 
@@ -72,7 +72,7 @@ function init() {
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 500000 * RadiusOfDistribution ** 3 * RadialMax * AngularMax;
+        Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
     }else{
         Trials = 5000 * RadiusOfDistribution ** 2;
     }
@@ -85,13 +85,6 @@ function init() {
     }
     
 
-    if(PerformanceMode == 0){
-        Trials = Trials/4
-    } else if(PerformanceMode == 1){
-        Trials = Trials/2
-    } else if (PerformanceMode == 2){
-        Trials = Trials
-    }
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     console.log("Performance Mode: " +PerformanceMode)
     console.log ("Trials: " +Trials)
@@ -336,28 +329,18 @@ SubmitSliderValueButton.addEventListener('click', () => {
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
     if (TwoDView == 0) {
-        Trials = 500000 * RadiusOfDistribution ** 3 * RadialMax * AngularMax;
-        console.log("3d view ")
+        Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
     }else{
         Trials = 5000 * RadiusOfDistribution ** 2;
-        console.log("2d view ")
     }
-
+    
     if (WaveType == 1) {
         Trials = 5000 * RadiusOfDistribution;
     } 
     else if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
-
-    //performance mode
-    if(PerformanceMode == 0){
-        Trials = Trials/4
-    } else if(PerformanceMode == 1){
-        Trials = Trials/2
-    } else if (PerformanceMode == 2){
-        Trials = Trials
-    }
+    
 
     console.log("Performance Mode: " +PerformanceMode)
     console.log("Trials: " +Trials)
@@ -475,7 +458,7 @@ function CalcVertices(){
         else{
             var sphericalPhi  = Math.random() * 2 * Math.PI;
             var sphericalTheta = Math.acos(2.0 * Math.random() - 1.0);
-            var sphericalRadius = Math.cbrt(Math.random()) * RadiusOfDistribution;
+            var sphericalRadius = Math.random() * RadiusOfDistribution;
         }
 
         if (WaveType == 1 ) {           
@@ -507,7 +490,7 @@ function CalcVertices(){
             }
         }
         
-        if (Math.random() * RadialMax * AngularMax < Wave) {
+        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 < Wave ) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -572,7 +555,7 @@ function spawnOrbsRParticles() {
     if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
     else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
-    vertices = [0,0,0];
+    vertices = [];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     scene.add( particles );
@@ -624,7 +607,7 @@ function RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius, nuc
     let rMax = [0, 0];
 
     for (let r = 0; r < RadiusOfDistribution; r += 0.1) {
-        rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2;
+        rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2 * r ** 2;
         if (rMax[1] > rMax[0]) {
             rMax[0] = rMax[1];
         }
