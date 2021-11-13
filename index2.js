@@ -36,7 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.2")
+    console.warn("Version : 1.2.3")
 
     
     /* READ ME
@@ -101,7 +101,7 @@ function init() {
     // camera zoom variabelen
     camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
-    let cameramin=1;
+    let cameramin=2;
     let cameramax=500;
     
     UpdateOnFrames=4;
@@ -293,7 +293,9 @@ function init() {
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius, nucleusCharge));
 
     x=0;
-    
+    vertices.shift();
+    vertices.shift();
+    vertices.shift();
 }
 
 
@@ -551,7 +553,7 @@ function spawnOrbsRParticles() {
     if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
     else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
-    vertices = [];
+    vertices = [0,0,0];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     scene.add( particles );
@@ -595,7 +597,7 @@ function doubleFactorial(n) {
 }
 
 function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius, nucleusCharge) {
-    if (sum > 0.999) return r;
+    if (sum > 0.9999) return r;
     return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2, r + 0.1, quantumN, quantumL, bohrRadius, nucleusCharge);
 }
 
@@ -670,5 +672,8 @@ function OnModelCalculationEnd(){
     console.log("Active Drawcalls:", renderer.info.render.calls)
     console.log("Textures in Memory", renderer.info.memory.textures)
     console.log("Geometries in Memory", renderer.info.memory.geometries)
+    vertices.shift();
+    vertices.shift();
+    vertices.shift();
 }
 
