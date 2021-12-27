@@ -1,5 +1,5 @@
 import * as THREE from '../three.js/build/three.module.js';
-import { BoxHelper, CullFaceBack, DodecahedronBufferGeometry, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
+import { BoxHelper, CullFaceBack, DodecahedronBufferGeometry, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector2, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
@@ -9,14 +9,11 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
+let campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
 let DevGeometry,DevMaterial,DevMesh
-//slider
-let Nslider = document.getElementById("myRangeN")
-let Lslider = document.getElementById("myRangeL")
 
 //#region ill Defined Functions
 var debug=[]
@@ -60,9 +57,9 @@ function init() {
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
-    quantumN = 3;
-    quantumL = 2;
-    quantumM = 1;
+    quantumN = 1;
+    quantumL = 0;
+    quantumM = 0;
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -107,11 +104,6 @@ function init() {
     UpdateOnFrames=4;
     Frame=0;
     
-    // Set slider maximum :)
-    Nslider.value=quantumN
-    document.getElementById("myRangeL").max = Nslider.value-1;
-    document.getElementById("myRangeM").max = Lslider.value;
-    document.getElementById("myRangeM").min = -Lslider.value;
     //#endregion
     
     //renderer configure
@@ -137,8 +129,8 @@ function init() {
         //add in the three clipping planes that make-up the box
         clipPlanes = [
             new THREE.Plane( new THREE.Vector3( -1, 0, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
-            new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), ClippingPlaneOfset )
+            //new THREE.Plane( new THREE.Vector3( 0, -1, 0 ), ClippingPlaneOfset ),
+            //new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), ClippingPlaneOfset )
         ];
         renderer.localClippingEnabled = true;
     }
@@ -219,9 +211,11 @@ function init() {
     controls.maxDistance = cameramax;
     //enablepan
     controls.enablePan=false;
+    controls.enableZoom=false;
+    
     //automagically rotate
     if (TwoDView == 0) {
-    controls.autoRotate=true;
+    controls.autoRotate=false;
     controls.autoRotateSpeed=0.3;
     }
     //#endregion
@@ -296,32 +290,23 @@ function init() {
     vertices.shift();
     vertices.shift();
     vertices.shift();
+    
+    
+
 }
 
+document.addEventListener('keydown', UpdateModel);
 
-Nslider.addEventListener('change', () => {
-    document.getElementById("myRangeL").max = Nslider.value-1;
-    document.getElementById("myRangeM").max = Lslider.value;
-    document.getElementById("myRangeM").min = -(Lslider.value);
-    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
-    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-})
-
-Lslider.addEventListener('change', () => {
-    document.getElementById("myRangeM").max = Lslider.value;
-    document.getElementById("myRangeM").min = -(Lslider.value);
-    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
-    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-})
-
-const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
-
-SubmitSliderValueButton.addEventListener('click', () => {
+function UpdateModel(){
     console.log(" ")
 
-    quantumN = parseInt(document.getElementById("myRangeN").value);
-    quantumL = parseInt(document.getElementById("myRangeL").value);
-    quantumM = parseInt(document.getElementById("myRangeM").value);
+    // quantumN = NLM.x
+    // quantumL = NLM.y
+    // quantumM = NLM.z
+    quantumN = 7
+    quantumL = 2
+    quantumM = 2
+    IsTransitioning=true;
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
     
     //de maximale radius(niet aan zitten)
@@ -354,11 +339,12 @@ SubmitSliderValueButton.addEventListener('click', () => {
     camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
     
-    camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
-    camera.lookAt( scene.position );
-    vertices.length = 3;
     
-    console.log("new vertices: " +vertices)
+    //do the thing with the zoom out/in
+    //camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
+    camera.lookAt( scene.position );
+    J=0;
+    
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
     
@@ -377,7 +363,7 @@ SubmitSliderValueButton.addEventListener('click', () => {
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius, nucleusCharge));
 
     return;
-})
+}
 
 function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
@@ -414,6 +400,27 @@ function animate() {
     //do this for animations
     requestAnimationFrame(animate);
 
+    
+
+    let lerptarget=new Vector3( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom);
+    if(IsTransitioning){
+        camera.position.lerp( lerptarget,0.05);
+        controls.enabled=false;
+        campos=new Vector3(Math.round(camera.position.x * 100) / 100, Math.round(camera.position.y  * 100) / 100, Math.round(camera.position.z * 100) / 100)
+        transpos=new Vector3(Math.round(lerptarget.x  * 100) / 100, Math.round(lerptarget.y * 100) / 100, Math.round(lerptarget.z * 100) / 100)
+    }
+    
+    else{controls.enabled=true;}
+    
+    
+    if (IsTransitioning&&campos.equals(transpos))
+    {
+        IsTransitioning=false;
+    }
+    
+    // }
+    
+
     //for controls if you edit it through script
     controls.update();
     resizeCanvasToDisplaySize();
@@ -436,6 +443,7 @@ function animate() {
 
     
 }
+
 
 function CalcVertices(){
     let I;
@@ -491,7 +499,13 @@ function CalcVertices(){
         if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave ) {
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
-            vertices.push(v.x, v.y, v.z); 
+            //vertices.push(v.x, v.y, v.z); 
+            
+            
+            vertices[3 * J] = v.x;
+            vertices[3 * J + 1] = v.y;
+            vertices[3 * J + 2] = v.z;
+            J++
         }
         x++;
     }
@@ -553,7 +567,7 @@ function spawnOrbsRParticles() {
     if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
     else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
-    vertices = [0,0,0];
+    vertices = [];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     scene.add( particles );
@@ -672,8 +686,5 @@ function OnModelCalculationEnd(){
     console.log("Active Drawcalls:", renderer.info.render.calls)
     console.log("Textures in Memory", renderer.info.memory.textures)
     console.log("Geometries in Memory", renderer.info.memory.geometries)
-    vertices.shift();
-    vertices.shift();
-    vertices.shift();
+    vertices.splice(J)
 }
-

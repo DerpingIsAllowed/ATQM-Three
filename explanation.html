@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <!-- deze moet bovenaan blijven want hij moet als eerste laden \/ (en dan raken we hem niet kwijt lol) -->
+    <script type="module" src="ModelExplaination.js"></script>
     <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon">
     <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
@@ -48,19 +50,28 @@
     </div>
     <div class=menuCube></div>
     <div class=menuLinks>
-
         <p><a class="PMenu mHome" href="../"> Home</a></p>
         <p><a class="PMenu mModel" href="../model.html"> Model</a></p>
         <p><a class="PMenu mAbout" href="../about.html"> About</a></p>
         <p><a class="PMenu mExplaination" href="../explanation.html"> Explaination</a></p>
+
         
     </div>
     <div class="DivMain">
-        
         <div class=container>
 
+            <div class=background>
+                <section class="container1">
+
+                </section>
+                <canvas class="FrameJS"></canvas>
+            </div>
+
             <div class=aspilltext>
-                
+                <div class="MobileMenuButton">
+                    <div class="MMB-Arrow"></div>
+                </div>
+                <div class=collapsable>
 
                     <h1>The Accessible Truthful Quantum Model</h1>
 
