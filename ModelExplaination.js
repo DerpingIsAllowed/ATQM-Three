@@ -61,6 +61,8 @@ function init() {
     quantumL = 0;
     quantumM = 0;
 
+    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "( " + quantumN + ", " + quantumL + ", " + quantumM + " )";
+
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
     RadialMax = RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -308,6 +310,7 @@ function UpdateModel(){
     quantumM = 2
     IsTransitioning=true;
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
+    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "( " + quantumN + ", " + quantumL + ", " + quantumM + " )";
     
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -404,7 +407,7 @@ function animate() {
 
     let lerptarget=new Vector3( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom);
     if(IsTransitioning){
-        camera.position.lerp( lerptarget,0.05);
+        camera.position.lerp( lerptarget,0.03);
         controls.enabled=false;
         campos=new Vector3(Math.round(camera.position.x * 100) / 100, Math.round(camera.position.y  * 100) / 100, Math.round(camera.position.z * 100) / 100)
         transpos=new Vector3(Math.round(lerptarget.x  * 100) / 100, Math.round(lerptarget.y * 100) / 100, Math.round(lerptarget.z * 100) / 100)
