@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let randomAngle=0,campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
+let currentAngle=0.25*Math.PI,newAngle=0,campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -33,7 +33,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.5")
+    console.warn("Version : 1.2.6")
 
     
     /* READ ME
@@ -289,9 +289,6 @@ function init() {
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius, nucleusCharge));
 
     x=0;
-    vertices.shift();
-    vertices.shift();
-    vertices.shift();
     
     
 
@@ -379,9 +376,10 @@ function UpdateModel(NLM){
     //camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
     J=0;
-    randomAngle =  0.5 * (0.5 - Math.random()) * Math.PI //* 1/2 * Math.PI;
-    event.sc
-
+    currentAngle = 2 * Math.atan(camera.position.z / ( camera.position.x + Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2)));
+    newAngle =  currentAngle + 1/4 * Math.PI;
+    console.log("Angle: " +currentAngle)
+    console.log("newAngle: " +newAngle)
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
     
     console.log("geometry updated ")
@@ -436,7 +434,7 @@ function animate() {
     //do this for animations
     requestAnimationFrame(animate);
     
-    let lerptarget=new Vector3( Math.cos(randomAngle) * 6 / Math.sqrt(2) * camerazoom, 2.25 * camerazoom, Math.sin(randomAngle) * 6 / Math.sqrt(2) * camerazoom);
+    let lerptarget=new Vector3( Math.cos(newAngle) * 6 / Math.sqrt(2) * camerazoom, 2.25 * camerazoom, Math.sin(newAngle) * 6 / Math.sqrt(2) * camerazoom);
 
     if(IsTransitioning){
         camera.position.lerp( lerptarget,0.03);
