@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
+let randomAngle=0,campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -33,7 +33,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.4")
+    console.warn("Version : 1.2.5")
 
     
     /* READ ME
@@ -57,11 +57,11 @@ function init() {
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
-    quantumN = 1;
-    quantumL = 0;
+    quantumN = 6;
+    quantumL = 4;
     quantumM = 0;
 
-    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "( " + quantumN + ", " + quantumL + ", " + quantumM + " )";
+    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
 
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -297,20 +297,52 @@ function init() {
 
 }
 
-document.addEventListener('keydown', UpdateModel);
 
-function UpdateModel(){
+var nlmValues;
+var nlmValuesPrev;
+
+document.getElementsByClassName("collapsable")[0].addEventListener('scroll',ModelAnimation)
+function ModelAnimation(){
+    
+    var TriggerModelUpdatesOn = document.getElementsByClassName("TriggerModelUpdate")
+    
+    for (let I1 = 0; I1 < TriggerModelUpdatesOn.length; I1++) {
+        const ModelUpdatePoint = TriggerModelUpdatesOn[I1];
+        
+        //var windowHeight = window.innerHeight;
+        var revealTop = ModelUpdatePoint.getBoundingClientRect().top;
+        var transitionPoint = window.innerHeight/2;
+        
+        if (revealTop < transitionPoint && revealTop > -transitionPoint){
+            
+            nlmValues=ModelUpdatePoint.dataset.nlmValues;
+            nlmValues.split();
+            
+        }
+        
+        if(nlmValues!=nlmValuesPrev){
+            UpdateModel(nlmValues);
+            nlmValuesPrev=nlmValues;
+        }
+
+
+    }
+
+}
+
+// document.addEventListener('keydown', UpdateModel);
+
+function UpdateModel(NLM){
     console.log(" ")
 
-    // quantumN = NLM.x
-    // quantumL = NLM.y
-    // quantumM = NLM.z
-    quantumN = 7
-    quantumL = 2
-    quantumM = 2
+    quantumN = parseInt(NLM[0]);
+    quantumL = parseInt(NLM[1]);
+    quantumM = parseInt(NLM[2]);
+
     IsTransitioning=true;
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)
-    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "( " + quantumN + ", " + quantumL + ", " + quantumM + " )";
+    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
+    
     
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -347,7 +379,8 @@ function UpdateModel(){
     //camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
     J=0;
-    
+    randomAngle =  0.5 * (0.5 - Math.random()) * Math.PI //* 1/2 * Math.PI;
+    event.sc
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
     
@@ -402,10 +435,9 @@ function onWindowResize() {
 function animate() {
     //do this for animations
     requestAnimationFrame(animate);
-
     
+    let lerptarget=new Vector3( Math.cos(randomAngle) * 6 / Math.sqrt(2) * camerazoom, 2.25 * camerazoom, Math.sin(randomAngle) * 6 / Math.sqrt(2) * camerazoom);
 
-    let lerptarget=new Vector3( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom);
     if(IsTransitioning){
         camera.position.lerp( lerptarget,0.03);
         controls.enabled=false;

@@ -284,6 +284,7 @@ p{
   height: 100vh;
   z-index: 5;
   transition: unset;
+  overflow-y: hidden;
 }
 
 .collapsable{
@@ -304,6 +305,7 @@ section{
   padding-top: 100px;
   height: 100vh;
   scroll-snap-align: start;
+  overflow-y:hidden ;
 }
 section h1{
   padding-top: 0px;
