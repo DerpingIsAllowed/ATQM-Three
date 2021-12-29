@@ -10,9 +10,10 @@
   /* Custom properties */
   --MobileMenuText:1 ;
   --popUpMenuOpacity:0;
-  --accentcolor:#ff0000;
+  --accentcolor:#943838;
+  --accentgray:#bbb;
   --black: #000;
-  --gray:#383838 ;
+  --gray:#707070 ;
 }
 
 h1 {
@@ -22,7 +23,7 @@ h1 {
   font-style: normal;
   font-weight: 1000;
   font-size: 3.0935101186322402vw;
-  margin-top: 4.884856943475227vw;
+  margin-top: 10px;
   margin-bottom: 0px;
   margin-right: 0px;
   margin-left: 10px;
@@ -121,6 +122,37 @@ p{
 
 
 /* button */
+
+.buttonSt{
+  font-family: bebas-neue-pro, sans-serif;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+  color: var(--black);
+  background-color:#ffffff00; 
+  display:flex;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding: 12px 24px;
+  border-color:var(--black);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 6px;
+  pointer-events: all;
+  transition: all .1s ease-in-out;
+  cursor: pointer;
+}
+.buttonSt:active{
+  background-color: #f0f0f0;
+}
+.divSpacer{
+  padding-top:40px ;
+}
+
+
 .SubmitQuantumValuesButton{
   font-family: bebas-neue-pro, sans-serif;
   font-style: normal;
@@ -352,10 +384,11 @@ p{
 }
 
 .collapsable{
-  height: 100vh;
+  height: calc( 100vh - 80px);
   scroll-snap-type: y mandatory;
   overflow-y:scroll;
   pointer-events:all;
+  margin-top: 80px;
 
   /* hide scrollbar: */
   -ms-overflow-style: none;  /* IE and Edge */
@@ -366,8 +399,7 @@ p{
 }
 
 section{
-  padding-top: 100px;
-  height: 100vh;
+  height: 100%;
   scroll-snap-align: start;
   overflow-y:hidden ;
 }
@@ -485,13 +517,13 @@ section h1{
   
   h1 {
     font-size: 30px;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: 0px;
     margin-right: 20px;
   }
   .h1{
     font-size: 30px;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-left: 0px;
     margin-right: 20px;
   }
@@ -506,6 +538,13 @@ section h1{
     font-size: 16px;
     margin-left: 0px;;
   }
+  .HideOnMobile{
+    visibility: hidden;
+    display: none;
+  }
+  .NLMDisplay{
+    right:  50vw;
+  }
   
   .menuLinks{
     padding-top: 65px;
@@ -515,6 +554,10 @@ section h1{
     font-size: 30px;
     margin-left: 25px;
     
+  }
+  section{
+    height: auto;
+    padding-top: 30px;
   }
   
   .fullpageArticle{
@@ -546,6 +589,8 @@ section h1{
     backdrop-filter: blur(5px) contrast(100%);
     -webkit-backdrop-filter: blur(5px) contrast(100%);
     pointer-events: unset;
+    padding-top: 0px;
+    display:block;
   }
   .aspilltext.closed{
     width: 80px;
@@ -553,8 +598,10 @@ section h1{
     width: 0vw;
   }
   .collapsable{
+    margin-top: 60px;
     opacity: 1;
-    display:unset;
+    display:block;
+    height: calc( 100vh - 60px);
   }
   .collapsable.closed{
     opacity: 0;
@@ -562,12 +609,12 @@ section h1{
   }
   .MobileMenuButton{
     /* transform: translate( -50%); */
-    position: absolute;
+    position: sticky;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     left: 60vw;
-    margin-left: -10px;
+    margin-left: 10px;
     width: 50px;
     height: 50px;
     top: 50vh;
@@ -575,25 +622,30 @@ section h1{
     transition: all .5s ease-in-out;
     z-index: 30;
     pointer-events: all;
+    margin-top: -50px;
+    
   }
   .MMB-Arrow{
     position: absolute;
     width: 40px;
-    height: 3px;
+    height: 4px;
     background: #313131;
     border-radius: 5px;
     transition: all .5s ease-in-out;
-    transform: translateY(-10px)rotate(35deg);
+    transform: translateY(-10px)rotate(-35deg);
+    zoom: 0.8;
+    -moz-transform: scale(0.8);
   }
   .MMB-Arrow::after {
     content: '';
     position: absolute;
     width: 40px;
-    height: 3px;
+    height: 4px;
     background: #313131;
     border-radius: 5px;
     transition: all .5s ease-in-out;
-    transform: translateY(18px)translateX(12px)rotate(-70deg);
+    transform: translateY(18px)translateX(-12px)rotate(70deg);
+    
   }
   .MobileMenuButton.closed{
     right: 0px;
@@ -602,11 +654,11 @@ section h1{
     margin-top: -20px;
   }
   .MobileMenuButton.closed .MMB-Arrow {
-    transform: translateY(10px)rotate(-35deg);
+    transform: translateY(-5px)rotate(35deg);
   }
   .MobileMenuButton.closed .MMB-Arrow::after {
-    transform: translateY(18px)translateX(-12px)rotate(70deg);
-  }
+    transform: translateY(18px)translateX(12px)rotate(-70deg);
+  } 
   
   @keyframes menu-in {
     0%   { left: -375px; top: -800px; transform: rotate(0deg); }
@@ -641,16 +693,18 @@ section h1{
     width: 60%;
     padding-left: 40px;
     padding-right: 40px;
+    padding-top: 0px;
+    display:block;
   }
 
   h1 {
     font-size: 38px;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: 0px;
   }
   .h1{
     font-size: 38px;
-    margin-top: 40px;
+    margin-top: 10px;
     margin-left: 0px;
   }
   h3{
@@ -676,6 +730,10 @@ section h1{
     grid-column-start:1;
   }
 
+  .HideOnIpad{
+    visibility: hidden;
+    display: none;
+  }
   
   .menuLinks{
     padding-top: 70px;
@@ -727,7 +785,7 @@ section h1{
   }
   h1 {
     font-size: 55px;
-    margin-top: 100px;
+    margin-top: 10px;
     margin-left: 0px;
   }
   .h1{
@@ -746,6 +804,10 @@ section h1{
   p{
     font-size: 20px;
     margin-left: 0px;
+  }
+  .HideOnDesktp{
+    visibility: hidden;
+    display: none;
   }
 
   .fullpageArticle{
@@ -793,6 +855,28 @@ section h1{
     45% { margin-left:-800px; opacity:1; pointer-events:all; }
     100% { margin-left:-800px; opacity: 0; pointer-events:all; }
   }
+}
+
+/* progressbar */
+
+.readerProgress{
+  display: flex;
+  position: absolute;
+  height: 0px;
+  width: 100%;
+  padding-right: 80px;
+  align-items: center;
+  justify-content: center;
+}
+.dot{
+  transform: translateY(+20px);
+  align-self: center;
+  height: 15px;
+  width: 15px;
+  margin: 5px;
+  background-color:var(--accentgray);
+  border-radius: 50%;
+  display:block ;
 }
 
 /* MenuBurger button code i might have stolen */

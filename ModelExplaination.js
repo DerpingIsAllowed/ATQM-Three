@@ -33,7 +33,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.0")
+    console.warn("Version : 1.3.1")
 
     
     /* READ ME
@@ -289,14 +289,25 @@ function init() {
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius, nucleusCharge));
 
     x=0;
-    
-    
 
 }
 
 
+var modelbtns=document.getElementsByClassName("UpdateModelBtn");
+
+for (let I = 0; I < modelbtns.length; I++) {
+    const modelbutton = modelbtns[I];
+    modelbutton.addEventListener("click",() => {
+        var NLMValues=document.getElementsByClassName("UpdateModelBtn")[I].parentElement.parentElement.dataset.nlmValues;
+        UpdateModel(NLMValues);
+    })
+}
+
 var nlmValues;
 var nlmValuesPrev;
+
+var Progressdots = document.getElementsByClassName("dot")
+Progressdots[0].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
 
 document.getElementsByClassName("collapsable")[0].addEventListener('scroll',ModelAnimation)
 function ModelAnimation(){
@@ -314,7 +325,11 @@ function ModelAnimation(){
             
             nlmValues=ModelUpdatePoint.dataset.nlmValues;
             nlmValues.split();
-            
+
+            Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
+        }
+        else{
+            Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentgray');
         }
         
         if(nlmValues!=nlmValuesPrev){
@@ -399,25 +414,66 @@ function UpdateModel(NLM){
     return;
 }
 
-function resizeCanvasToDisplaySize() {
+
+
+//change the placement of the model based on the breakpoint for mobile on window resize
+var resizeCanvas=window.matchMedia("(max-width: 767px)")
+
+function ReCenterModel(){
+    // if(resizeCanvas==null){return}
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     if (canvas.width !== width ||canvas.height !== height) {
+        if (resizeCanvas.matches)
+        {
+            // dosomething
+            debug.log(true);
+            camera.setViewOffset(width,height,0,0,width,height);
+
+        }
+        else{
+            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+            camera.updateProjectionMatrix();
+            debug.log(false);
+        }
+    }
+}
+
+//change the placement of the model based on the breakpoint for mobile on pageload
+resizeCanvas.addEventListener("change", ReCenterModel)
+window.onload=() => {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+        if (resizeCanvas.matches)
+        {
+            // dosomething
+            debug.log(true);
+            camera.setViewOffset(width,height,0,0,width,height);
+            camera.updateProjectionMatrix();
+
+        }
+        else{
+            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+            camera.updateProjectionMatrix();
+            debug.log(false);
+        }
+    console.log('page is fully loaded');
+};
+
+
+
+function resizeCanvasToDisplaySize() {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    if (canvas.width !== width ||canvas.height !== height) {
         // you must pass false here or three.js sadly fights the browser
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
-
-        // let MediaQueryMobile=window.matchMedia("(max-width: 767px)")
-        // if(!MediaQueryMobile.matches)
-        // {
-            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
-        // }
-        // else{
-        //     camera.setViewOffset(width,height,0 ,0 ,width,height);
-        // }
         camera.updateProjectionMatrix();
-        // set render target sizes here
     }
   }
   

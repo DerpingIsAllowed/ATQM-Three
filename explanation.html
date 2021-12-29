@@ -73,6 +73,14 @@
                 <div class="MobileMenuButton">
                     <div class="MMB-Arrow"></div>
                 </div>
+                <div class="readerProgress HideOnMobile"> 
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
 
                 <div class=collapsable>
                     <section class="TriggerModelUpdate" id="quantum-mechanica" data-nlm-values=640>
@@ -87,48 +95,62 @@
                         <p>In dit model van het waterstofatoom laten we de elektronenwolk zien als rode bolletjes. 
                             De dichtheid van de bolletjes staat voor de waarschijnlijkheid van het elektron op die locatie.</p>
                         
+                        <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
                                 
                     </section>
                     
                     <section class="TriggerModelUpdate" id="grondtoestand" data-nlm-values=100>
                         <h3>Grondtoestand</h3>
                         <p class="p-inl-extra">Dit is de grondtoestand van het model, wat betekent dat het elektron een zo laag mogelijke potentiële energie heeft. 
-                            Er is maar één golf te zien die alle kanten oploopt. </p>
+                            Er is maar één golf te zien die alle kanten oploopt. 
+                            Dit is in het model zichtbaar als een draaisymmetrische wolk om een middelpunt.</p>
+                        <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
+                            
                     </section>
                     
                     <section class="TriggerModelUpdate" id="kwantumtoestand" data-nlm-values=200>
                         <h3>Kwantumtoestand</h3>
-                        <p class="p-inl-extra">De kwantumtoestand van het elektron kan beschreven worden met drie kwantumgetallen:</p>
+                        <p class="p-inl-extra">De kwantumtoestand van het elektron kan beschreven worden met drie kwantumgetallen: <I>n</I>, <I>l</I>, en <I>m</I>.
+                            Dit staat bovenin genoteerd als (n, l, m) = (...).</p>
                         <p>Kwantumgetal <I>n</I> heet het hoofdkwantumgetal, en beschrijft het energieniveau van een gebonden elektron. 
                             In het periodiek systeem is <I>n</I> de periode en de schil van een elektron. 
                             Dit getal is altijd een positief natuurlijk getal.</p>
-                        <p>Hoofdkwantumgetal <I>n</I> geeft het totaal aantal golven dat te zien is. 
-                            Het aantal knopen tussen de golven is daarom gelijk aan <I>n - 1</I>. 
-                            De eerste aangeslagen toestand van <I>n = 2</I> geeft twee golven die alle kanten oplopen. </p>
+                        <p>Kwantumgetal <I>n</I> geeft het totaal aantal golven dat te zien is. 
+                            De eerste aangeslagen toestand <I>n = 2</I>, geeft twee golven die alle kanten oplopen. 
+                            In het model ziet dit eruit als twee bolvormige schillen om een middelpunt.</p>
+                        <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
                     </section>
 
                     <section class="TriggerModelUpdate" id="tweede_aangeslagen_toestand" data-nlm-values=300>
                         <h3>Tweede Aangeslagen Toestand</h3>
-                        <p class="p-inl-extra">De tweede aangeslagen toestand geeft drie golven die alle kanten oplopen. 
+                        <p class="p-inl-extra">De tweede aangeslagen toestand <I>n = 3</I>, geeft drie golven die alle kanten oplopen. 
+                            In het model ziet dit eruit als drie bolvormige schillen om een middelpunt.
+                        <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
                         </p>
                     </section>
 
                     <section class="TriggerModelUpdate" id="impulsmomentkwantumgetal" data-nlm-values=320>
                         <h3>Impulsmomentkwantumgetal</h3>
-                        <p class="p-inl-extra">Kwantumgetal <I>l</I> heet het impulsmomentkwantumgetal, en is bepalend voor het totale impulsmoment van een elektron. 
+                        <p class="p-inl-extra">Kwantumgetal <I>l</I>, heet het impulsmomentkwantumgetal, en is bepalend voor het totale impulsmoment van een elektron. 
                             Daarnaast bepaalt het de vorm van het orbitaal van een atoom. 
                             Dit is ook wel de subschil van een elektron. 
                             <I>l</I> is altijd een natuurlijk getal kleiner dan <I>n</I>.</p>
                         <p>In het atoom wordt onderscheid gemaakt tussen radiale en angulaire golven. 
-                            Het impulsmomentkwantumgetal <I>l</I> geeft hoeveel van het totaal aantal golven als angulaire golven te zien zijn. 
-                            Bij <I>n = 3</I> en <I>l = 2</I> zijn dus twee angulaire golven te zien en één radiale golf. 
+                            Kwantumgetal <I>l</I> geeft hoeveel van het totaal aantal golven <I>n</I>, als angulaire golven te zien zijn.
+                            Een angulaire golf is een golf die in een cirkel om een middelpunt heen loopt. 
+                            Een radiale golf loopt vanuit het middelpunt naar buiten, en ziet er dus uit als een schil.
+                            <!-- Een angulaire golf loopt hier haaks op. -->
+                            Bij <I>n = 3</I> en <I>l = 2</I>, het model hiernaast, zijn dus twee angulaire golven te zien en één radiale golf. 
+                            <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
                         </p>
                     </section>
 
                     <section class="TriggerModelUpdate" id="magnetisch_kwantumgetal" data-nlm-values=321>
                         <h3>Magnetisch Kwantumgetal</h3>
-                        <p class="p-inl-extra">Kwantumgetal <I>m</I> heet het magnetisch kwantumgetal, en beschrijft de ruimtelijke oriëntatie van het angulaire moment van het elektron, om de z-as. 
+                        <p class="p-inl-extra">Kwantumgetal <I>m</I> heet het magnetisch kwantumgetal, en beschrijft de ruimtelijke oriëntatie van het impulsmoment van het elektron, om de z-as.
+                            De z-as, is de as die in dit model verticaal over het beeldscherm loopt.
                             De mogelijke waarden voor <I>m</I> zijn gehele getallen tussen <I>-l</I> en <I>l</I>. 
+                            <div class="divSpacer HideOnDesktp HideOnIpad"> <input value="Update Model" type="button" class="buttonSt UpdateModelBtn"></button></div>
                         </p>
                     </section>
 
