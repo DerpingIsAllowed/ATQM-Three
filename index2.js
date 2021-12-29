@@ -9,7 +9,7 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
+let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0xFF0000, complexAngle;
 //bufferentities
 let geometry, vertices;
 //debug geometry
@@ -489,6 +489,9 @@ function CalcVertices(){
         }
         
         if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave ) {
+            complexAngle = sphericalPhi * quantumM * Math.sign(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta));
+            orbColor = HueToRGB(complexAngle);
+
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
             vertices.push(v.x, v.y, v.z); 
@@ -550,8 +553,8 @@ function spawnOrbsRParticles() {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     let material 
-    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
-    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
+    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: orbColor,clippingPlanes: clipPlanes,clipIntersection: true } );}
+    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: orbColor,clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
     vertices = [0,0,0];
 
@@ -649,7 +652,7 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta));
+    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) * (-1) ** quantumM;
 
 }
 
@@ -665,6 +668,39 @@ function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTh
             * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta);
 
 }
+
+function HueToRGB(h) {
+
+    let r;
+    let g;
+    let b;
+    let x = (1 - Math.abs((h * 3 / Math.PI) % 2 - 1));
+
+    if (0 <= h && h < 60) {
+        r = 1; g = x; b = 0;  
+      } else if (60 <= h && h < 120) {
+        r = x; g = 1; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = 1; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = 1;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = 1;
+      } else if (300 <= h && h < 360) {
+        r = 1; g = 0; b = x;
+      }
+      r = Math.round((r + m) * 255);
+      g = Math.round((g + m) * 255);
+      b = Math.round((b + m) * 255);
+
+      let newColor = parseInt(r * 256 ** 2 + g * 256 + b)
+
+      return 0xFFFFFF + newColor
+}
+
+
+
+
 //#endregion
 
 function OnModelCalculationEnd(){
