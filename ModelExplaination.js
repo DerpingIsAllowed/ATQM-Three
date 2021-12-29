@@ -33,7 +33,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.2.6")
+    console.warn("Version : 1.3.0")
 
     
     /* READ ME
@@ -593,7 +593,7 @@ function UpdateGeometry(){
 
 function spawnOrbsRParticles() {
     geometry = new THREE.BufferGeometry();
-    const texture = new THREE.TextureLoader().load( '/ball.png' );
+    const texture = new THREE.TextureLoader().load( '/ball2.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     let material 

@@ -2,7 +2,7 @@ import * as THREE from '../three.js/build/three.module.js';
 import { BoxHelper, CullFaceBack, DodecahedronBufferGeometry, MathUtils, Particle, PlaneHelper, QuadraticBezierCurve, SphereBufferGeometry, Spherical, TriangleFanDrawMode, Vector3, WireframeGeometry } from './three.js/build/three.module.js';
 
 import {OrbitControls} from './three.js/examples/jsm/controls/OrbitControls.js';
-import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
+import { color, GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 
 
 //initiate some variables
@@ -11,7 +11,7 @@ let scene, camera, renderer, controls;
 //initiate custom variables
 let Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0xFF0000, complexAngle;
 //bufferentities
-let geometry, vertices;
+let geometry, vertices = [], colors = [];
 //debug geometry
 let DevGeometry,DevMaterial,DevMesh
 //slider
@@ -38,7 +38,6 @@ animate();
 function init() {
     console.warn("Version : 1.2.5")
 
-    
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -293,9 +292,6 @@ function init() {
     console.log (HydrogenWave(quantumN, quantumL, quantumM, bohrRadius, 1, bohrRadius, nucleusCharge));
 
     x=0;
-    vertices.shift();
-    vertices.shift();
-    vertices.shift();
 }
 
 
@@ -356,11 +352,13 @@ SubmitSliderValueButton.addEventListener('click', () => {
     
     camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
-    vertices.length = 3;
+    vertices.length = 0;
+    colors.length=0;
     
     console.log("new vertices: " +vertices)
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute(colors, 3));
     
     console.log("geometry updated ")
     if (DevMesh!=null){
@@ -488,9 +486,17 @@ function CalcVertices(){
             }
         }
         
-        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave ) {
-            complexAngle = sphericalPhi * quantumM * Math.sign(SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta));
+        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave) {
+            if (Math.sign(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge)) == -1) {
+                complexAngle = ((sphericalPhi * quantumM + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            }   else {
+                complexAngle = ((sphericalPhi * quantumM) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            }
+            
             orbColor = HueToRGB(complexAngle);
+            
+
+            colors.push(orbColor.r,orbColor.g,orbColor.b);
 
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
@@ -503,6 +509,7 @@ function CalcVertices(){
 
 function UpdateGeometry(){
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
     // console.log(geometry.attributes.position.count + " " + vertices.length);
 }
 
@@ -553,12 +560,14 @@ function spawnOrbsRParticles() {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     let material 
-    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: orbColor,clippingPlanes: clipPlanes,clipIntersection: true } );}
-    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: orbColor,clipIntersection: true } );}
+    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {vertexColors: true,alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clippingPlanes: clipPlanes,clipIntersection: true } );}
+    else {material = new THREE.PointsMaterial( {vertexColors: true,alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
-    vertices = [0,0,0];
+
+    
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
     scene.add( particles );
     // let bohrRadius=0.529177210903;
 
@@ -658,7 +667,7 @@ function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
 function RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius, nucleusCharge) {
 
-    return  Math.sqrt((2 * nucleusCharge / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) * (2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius));
+    return Math.sqrt((2 * nucleusCharge / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) * (2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius));
 
 }
 
@@ -670,34 +679,39 @@ function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTh
 }
 
 function HueToRGB(h) {
-
     let r;
     let g;
     let b;
     let x = (1 - Math.abs((h * 3 / Math.PI) % 2 - 1));
 
-    if (0 <= h && h < 60) {
+    if (0 <= h && h < Math.PI / 3) {
         r = 1; g = x; b = 0;  
-      } else if (60 <= h && h < 120) {
+      } else if (Math.PI / 3 <= h && h < 2 * Math.PI / 3) {
         r = x; g = 1; b = 0;
-      } else if (120 <= h && h < 180) {
+      } else if (2 * Math.PI / 3 <= h && h < Math.PI) {
         r = 0; g = 1; b = x;
-      } else if (180 <= h && h < 240) {
+      } else if (Math.PI <= h && h < 4 * Math.PI / 3) {
         r = 0; g = x; b = 1;
-      } else if (240 <= h && h < 300) {
+      } else if (4 * Math.PI / 3 <= h && h < 5 * Math.PI / 3) {
         r = x; g = 0; b = 1;
-      } else if (300 <= h && h < 360) {
+      } else if (5 * Math.PI / 3 <= h && h < 2 * Math.PI) {
         r = 1; g = 0; b = x;
       }
-      r = Math.round((r + m) * 255);
-      g = Math.round((g + m) * 255);
-      b = Math.round((b + m) * 255);
+      r = Math.round(r * 255) / 255;
+      g = Math.round(g * 255) / 255;
+      b = Math.round(b * 255) / 255;
 
-      let newColor = parseInt(r * 256 ** 2 + g * 256 + b)
+      const color = new THREE.Color()
+      
 
-      return 0xFFFFFF + newColor
+      const rgb=new THREE.Color(r,g,b);
+
+      return(rgb)
 }
 
+function rgbToHex(r, g, b) {
+    return "0x" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
 
 
 
@@ -708,8 +722,8 @@ function OnModelCalculationEnd(){
     console.log("Active Drawcalls:", renderer.info.render.calls)
     console.log("Textures in Memory", renderer.info.memory.textures)
     console.log("Geometries in Memory", renderer.info.memory.geometries)
-    vertices.shift();
-    vertices.shift();
-    vertices.shift();
+
+    debug.log("vertices: "+ vertices.length)
+    debug.log("colors: "+ colors.length)
 }
 
