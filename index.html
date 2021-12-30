@@ -3,7 +3,7 @@
 
 <head>
     <!-- deze moet bovenaan blijven want hij moet als eerste laden \/ (en dan raken we hem niet kwijt lol) -->
-    <script type="module" src="index2.js"></script>
+    <script type="module" src="ModelHomePage.js"></script>
     <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon">
     <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
@@ -54,41 +54,40 @@
         <p><a class="PMenu mHome" href="../"> Home</a></p>
         <p><a class="PMenu mModel" href="../model.html"> Model</a></p>
         <p><a class="PMenu mAbout" href="../about.html"> About</a></p>
-        <p><a class="PMenu mExplaination" href="../explanation.html"> Explaination</a></p>
+        <p><a class="PMenu mExplaination" href="../explanation.html"> Explanation</a></p>
 
         
     </div>
     <div class="DivMain">
-        <div class="user-input">
-                                                
+        <div class="user-input">                           
             <div class="slidercontainer">
                 <p class="closeSliderContainer">⤬</p>
                 <h2>User Input</h3>
-            <div class=sliderParent>
-                <div class=textSliderParent>
-                    <p class=Pslider>Quantum N: </p>
-                    <p class="Pslider PNsliderAmount">3</p>
+                <div class=sliderParent>
+                    <div class=textSliderParent>
+                        <p class=Pslider>Quantum N: </p>
+                        <p class="Pslider PNsliderAmount">3</p>
+                    </div>
+                    <input type="range" min="1" max="7" value="3" class="slider" id="myRangeN" oninput="updateTextN();">
+                    <br>
                 </div>
-                <input type="range" min="1" max="7" value="3" class="slider" id="myRangeN" oninput="updateTextN();">
-                <br>
-            </div>
-            <div class=sliderParent>
-                <div class=textSliderParent>
-                    <p class=Pslider>Quantum L: </p>
-                    <p class="Pslider PLsliderAmount">2</p>
+                <div class=sliderParent>
+                    <div class=textSliderParent>
+                        <p class=Pslider>Quantum L: </p>
+                        <p class="Pslider PLsliderAmount">2</p>
+                    </div>
+                    <input type="range" min="0" max="10" value="2" class="slider" id="myRangeL" oninput="updateTextL();">
+                    <br>
                 </div>
-                <input type="range" min="0" max="10" value="2" class="slider" id="myRangeL" oninput="updateTextL();">
-                <br>
-            </div>
-            <div class=sliderParent>
-                <div class=textSliderParent>
-                    <p class=Pslider>Quantum M: </p>
-                    <p class="Pslider PMsliderAmount">1</p>
+                <div class=sliderParent>
+                    <div class=textSliderParent>
+                        <p class=Pslider>Quantum M: </p>
+                        <p class="Pslider PMsliderAmount">1</p>
+                    </div>
+                    <input type="range" min="0" max="10" value="1" class="slider" id="myRangeM" oninput="updateTextM();">
+                    <br>
                 </div>
-                <input type="range" min="0" max="10" value="1" class="slider" id="myRangeM" oninput="updateTextM();">
-                <br>
-            </div>
-                <button class="SubmitQuantumValuesButton">Submit</button>
+                    <button class="SubmitQuantumValuesButton">Submit</button>
             </div>
         </div>
         <div class=container>
@@ -97,6 +96,7 @@
                 <section class="container1">
 
                 </section>
+                <div class="NLMDisplay"><p>{ , , }</p></div>
                 <canvas class="FrameJS"></canvas>
             </div>
 
@@ -106,7 +106,7 @@
                 </div>
                 <div class=collapsable>
 
-                    <h1>The Accessible Truthful Quantum Model</h1>
+                    <h1 class="h1">The Accessible Truthful Quantum Model</h1>
 
                     <p class="p-inl-extra">Welcome to The Accessible Truthful Quantum Model, or ATQM for short. 
                         On this page you'll find an explaination of what a real atom looks like. For this we'll use the H-atom </p>

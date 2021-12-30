@@ -10,6 +10,16 @@ const PMenu                           =document.querySelectorAll('.PMenu');
 const mQuantumWaardes                 =document.querySelector('.mQuantumWaardes');
 let root = document.documentElement;
 
+let Nslider,Lslider,Mslider;
+
+init();
+
+function init(){
+  Nslider = document.getElementById('myRangeN');
+  Lslider = document.getElementById('myRangeL');
+  Mslider = document.getElementById('myRangeM');
+}
+
 //Open and close Navmenu with the burger
 let menuOpen = false;
 menuBtn.addEventListener('click', () => {
@@ -69,16 +79,19 @@ MobileMenuButton.addEventListener('click', () => {
 
 //open and close quantumUI
 let userinterfaceOpen=false
+if (mQuantumWaardes!=null){
 mQuantumWaardes.addEventListener('click', () =>{
   openQuantumUI();
   closeNavMenu();
-})
+})}
+if(closeSliderContainer!=null){
 closeSliderContainer.addEventListener('click', () =>{
   closeQuantumUI();
-})
+})}
+if(SubmitSliderValueButton!=null){
 SubmitSliderValueButton.addEventListener('click', () =>{
   closeQuantumUI();
-})
+})}
 
 function openQuantumUI(){
   if(!userinterfaceOpen){
@@ -101,18 +114,22 @@ function closeQuantumUI(){
   }
 }
 
+
+
 // update the text in the quantumUI
 function updateTextN(){
-  var Nslider = document.getElementById('myRangeN')
-  Nslider.previousElementSibling.lastElementChild.innerHTML=Nslider.value
+  Nslider = document.getElementById('myRangeN')
+  document.getElementsByClassName('PNsliderAmount')[0].innerHTML=Nslider.value
+  // Nslider.previousElementSibling.lastElementChild.innerHTML=Nslider.value
   updateTextL();
   updateTextM();
 }
-var Mslider = document.getElementById('myRangeM');
-var Lslider = document.getElementById('myRangeL');
+
 
 function updateTextL(){
-  Lslider.previousElementSibling.lastElementChild.innerHTML=Lslider.value;
+
+  // Lslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value
+  document.getElementsByClassName('PLsliderAmount')[0].innerHTML=Nslider.valuenerHTML=Lslider.value;
   updateTextM();
 }
 
@@ -125,5 +142,7 @@ Mslider.addEventListener('change', () => {
 })
 
 function updateTextM(){
-  Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
+  Mslider = document.getElementById('myRangeM');
+  document.getElementsByClassName('PMsliderAmount')[0].innerHTML=Mslider.valuenerHTML=Mslider.value;
+  // Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
 }

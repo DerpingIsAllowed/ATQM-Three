@@ -9,11 +9,14 @@ import { GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let currentAngle=0.25*Math.PI,newAngle=0,campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames;
+let currentAngle=0.25*Math.PI,newAngle=0,campos=0,transpos=0,J=0,IsTransitioning, Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames,orbColor = 0xFF0000, complexAngle;
 //bufferentities
-let geometry, vertices;
+let geometry, vertices = [], colors = [];
 //debug geometry
 let DevGeometry,DevMaterial,DevMesh
+//slider
+let Nslider = document.getElementById("myRangeN")
+let Lslider = document.getElementById("myRangeL")
 
 //#region ill Defined Functions
 var debug=[]
@@ -54,12 +57,14 @@ function init() {
     PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
     Div="canvas";
 
+    
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
     quantumN = 6;
     quantumL = 4;
     quantumM = 0;
+
 
     document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
 
@@ -105,6 +110,12 @@ function init() {
     
     UpdateOnFrames=4;
     Frame=0;
+
+    // Set slider maximum :)
+    Nslider.value=quantumN
+    document.getElementById("myRangeL").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -Lslider.value;
     
     //#endregion
     
@@ -213,11 +224,11 @@ function init() {
     controls.maxDistance = cameramax;
     //enablepan
     controls.enablePan=false;
-    controls.enableZoom=false;
+    controls.enableZoom=true;
     
     //automagically rotate
     if (TwoDView == 0) {
-    controls.autoRotate=false;
+    controls.autoRotate=true;
     controls.autoRotateSpeed=0.3;
     }
     //#endregion
@@ -293,59 +304,92 @@ function init() {
 }
 
 
-var modelbtns=document.getElementsByClassName("UpdateModelBtn");
+// var modelbtns=document.getElementsByClassName("UpdateModelBtn");
 
-for (let I = 0; I < modelbtns.length; I++) {
-    const modelbutton = modelbtns[I];
-    modelbutton.addEventListener("click",() => {
-        var NLMValues=document.getElementsByClassName("UpdateModelBtn")[I].parentElement.parentElement.dataset.nlmValues;
-        UpdateModel(NLMValues);
-    })
-}
+// for (let I = 0; I < modelbtns.length; I++) {
+//     const modelbutton = modelbtns[I];
+//     modelbutton.addEventListener("click",() => {
+//         var NLMValues=document.getElementsByClassName("UpdateModelBtn")[I].parentElement.parentElement.dataset.nlmValues;
+//         UpdateModel(NLMValues);
+//     })
+// }
 
-var nlmValues;
-var nlmValuesPrev;
+// var nlmValues;
+// var nlmValuesPrev;
 
-var Progressdots = document.getElementsByClassName("dot")
-Progressdots[0].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
+// var Progressdots = document.getElementsByClassName("dot")
+// Progressdots[0].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
 
-document.getElementsByClassName("collapsable")[0].addEventListener('scroll',ModelAnimation)
-function ModelAnimation(){
-    if (resizeCanvas.matches)
-    return;
+// document.getElementsByClassName("collapsable")[0].addEventListener('scroll',ModelAnimation)
+// function ModelAnimation(){
+//     if (resizeCanvas.matches)
+//     return;
 
 
-    var TriggerModelUpdatesOn = document.getElementsByClassName("TriggerModelUpdate")
+//     var TriggerModelUpdatesOn = document.getElementsByClassName("TriggerModelUpdate")
     
-    for (let I1 = 0; I1 < TriggerModelUpdatesOn.length; I1++) {
-        const ModelUpdatePoint = TriggerModelUpdatesOn[I1];
+//     for (let I1 = 0; I1 < TriggerModelUpdatesOn.length; I1++) {
+//         const ModelUpdatePoint = TriggerModelUpdatesOn[I1];
         
-        //var windowHeight = window.innerHeight;
-        var revealTop = ModelUpdatePoint.getBoundingClientRect().top;
-        var transitionPoint = window.innerHeight/2;
+//         //var windowHeight = window.innerHeight;
+//         var revealTop = ModelUpdatePoint.getBoundingClientRect().top;
+//         var transitionPoint = window.innerHeight/2;
         
-        if (revealTop < transitionPoint && revealTop > -transitionPoint){
+//         if (revealTop < transitionPoint && revealTop > -transitionPoint){
             
-            nlmValues=ModelUpdatePoint.dataset.nlmValues;
-            nlmValues.split();
+//             nlmValues=ModelUpdatePoint.dataset.nlmValues;
+//             nlmValues.split();
 
-            Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
-        }
-        else{
-            Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentgray');
-        }
+//             Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
+//         }
+//         else{
+//             Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentgray');
+//         }
         
-        if(nlmValues!=nlmValuesPrev){
-            UpdateModel(nlmValues);
-            nlmValuesPrev=nlmValues;
-        }
+//         if(nlmValues!=nlmValuesPrev){
+//             UpdateModel(nlmValues);
+//             nlmValuesPrev=nlmValues;
+//         }
 
 
-    }
+//     }
 
+// }
+
+
+Nslider.addEventListener('change', () => {
+    document.getElementById("myRangeL").max = Nslider.value-1;
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -(Lslider.value);
+    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
+})
+
+Lslider.addEventListener('change', () => {
+    document.getElementById("myRangeM").max = Lslider.value;
+    document.getElementById("myRangeM").min = -(Lslider.value);
+    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
+})
+
+const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
+
+SubmitSliderValueButton.addEventListener('click', () => {
+    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    UpdateModel(NLM)
+});
+
+function PickRandomModel(){
+    var N= Math.round( Math.random() * 7 + 1) ;
+    var L= Math.round( Math.abs(Math.random() * (N - 1))) ;
+    var M=  (Math.random() * L * 2);
+    M-=0.5*M;
+    M=Math.round(M);
+
+    var NLM=[N,L,M]
+    UpdateModel(NLM)
+    debug.log(NLM)
 }
-
-// document.addEventListener('keydown', UpdateModel);
 
 function UpdateModel(NLM){
     console.log(" ")
@@ -377,7 +421,6 @@ function UpdateModel(NLM){
     else if (WaveType == 2) {
         Trials = 500 * RadiusOfDistribution ** 2;
     }
-    
 
     console.log("Performance Mode: " +PerformanceMode)
     console.log("Trials: " +Trials)
@@ -389,16 +432,22 @@ function UpdateModel(NLM){
     camerazoom = RadiusOfDistribution;
     console.log("camerazoom: " + camerazoom)
     
+    vertices.length = 0;
+    colors.length=0;
     
     //do the thing with the zoom out/in
     //camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
     camera.lookAt( scene.position );
     J=0;
+    
     currentAngle = 2 * Math.atan(camera.position.z / ( camera.position.x + Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2)));
     newAngle =  currentAngle + 1/4 * Math.PI;
+    
     console.log("Angle: " +currentAngle)
     console.log("newAngle: " +newAngle)
+
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute(colors, 3));
     
     console.log("geometry updated ")
     if (DevMesh!=null){
@@ -419,52 +468,52 @@ function UpdateModel(NLM){
 
 
 
-//change the placement of the model based on the breakpoint for mobile on window resize
-var resizeCanvas=window.matchMedia("(max-width: 767px)")
+// //change the placement of the model based on the breakpoint for mobile on window resize
+// var resizeCanvas=window.matchMedia("(max-width: 767px)")
 
-function ReCenterModel(){
-    // if(resizeCanvas==null){return}
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    if (canvas.width !== width ||canvas.height !== height) {
-        if (resizeCanvas.matches)
-        {
-            // dosomething
-            debug.log(true);
-            camera.setViewOffset(width,height,0,0,width,height);
+// function ReCenterModel(){
+//     // if(resizeCanvas==null){return}
+//     const canvas = renderer.domElement;
+//     const width = canvas.clientWidth;
+//     const height = canvas.clientHeight;
+//     if (canvas.width !== width ||canvas.height !== height) {
+//         if (resizeCanvas.matches)
+//         {
+//             // dosomething
+//             debug.log(true);
+//             camera.setViewOffset(width,height,0,0,width,height);
 
 
-        }
-        else{
-            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
-            camera.updateProjectionMatrix();
-            debug.log(false);
-        }
-    }
-}
+//         }
+//         else{
+//             camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+//             camera.updateProjectionMatrix();
+//             debug.log(false);
+//         }
+//     }
+// }
 
-//change the placement of the model based on the breakpoint for mobile on pageload
-resizeCanvas.addEventListener("change", ReCenterModel)
-window.onload=() => {
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-        if (resizeCanvas.matches)
-        {
-            // dosomething
-            debug.log(true);
-            camera.setViewOffset(width,height,0,0,width,height);
-            camera.updateProjectionMatrix();
+// //change the placement of the model based on the breakpoint for mobile on pageload
+// resizeCanvas.addEventListener("change", ReCenterModel)
+// window.onload=() => {
+//     const canvas = renderer.domElement;
+//     const width = canvas.clientWidth;
+//     const height = canvas.clientHeight;
+//         if (resizeCanvas.matches)
+//         {
+//             // dosomething
+//             debug.log(true);
+//             camera.setViewOffset(width,height,0,0,width,height);
+//             camera.updateProjectionMatrix();
 
-        }
-        else{
-            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
-            camera.updateProjectionMatrix();
-            debug.log(false);
-        }
-    console.log('page is fully loaded');
-};
+//         }
+//         else{
+//             camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+//             camera.updateProjectionMatrix();
+//             debug.log(false);
+//         }
+//     console.log('page is fully loaded');
+// };
 
 
 
@@ -472,14 +521,23 @@ function resizeCanvasToDisplaySize() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
-
     if (canvas.width !== width ||canvas.height !== height) {
         // you must pass false here or three.js sadly fights the browser
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
+
+        // let MediaQueryMobile=window.matchMedia("(max-width: 767px)")
+        // if(!MediaQueryMobile.matches)
+        // {
+            camera.setViewOffset(width,height,-width/6,0,width,height,0 );
+        // }
+        // else{
+        //     camera.setViewOffset(width,height,0 ,0 ,width,height);
+        // }
         camera.updateProjectionMatrix();
+        // set render target sizes here
     }
-  }
+}
   
 function onWindowResize() {
     //make sure your window doesnt get al wonky
@@ -493,24 +551,34 @@ function onWindowResize() {
 function animate() {
     //do this for animations
     requestAnimationFrame(animate);
+
+    if(Math.random()*100>99.95)
+    {
+        PickRandomModel();
+    }
     
     let lerptarget=new Vector3( Math.cos(newAngle) * 6 / Math.sqrt(2) * camerazoom, 2.25 * camerazoom, Math.sin(newAngle) * 6 / Math.sqrt(2) * camerazoom);
 
     if(IsTransitioning){
         camera.position.lerp( lerptarget,0.03);
         controls.enabled=false;
-
+        controls.autoRotate=false;
+        
         campos=camera.position
         transpos=lerptarget
+        
     }
-    else{controls.enabled=true;}
-
+    else{controls.enabled=true;
+        controls.autoRotate=true;
+    }
+    
     var rounderror=0.5;
     if (IsTransitioning && campos.x >= transpos.x - rounderror && campos.x <= transpos.x + rounderror && campos.y >= transpos.y - rounderror && campos.y <= transpos.y + rounderror && campos.z >= transpos.z - rounderror && campos.z <= transpos.z + rounderror)
     {
         IsTransitioning=false;
     }
     
+    // if (IsTransitioning && campos.equals(transpos)
     // }
     
 
@@ -536,6 +604,7 @@ function animate() {
 
     
 }
+
 
 
 function CalcVertices(){
@@ -589,16 +658,23 @@ function CalcVertices(){
             }
         }
         
-        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave ) {
+        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave) {
+            if (Math.sign(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge)) == -1) {
+                complexAngle = ((sphericalPhi * quantumM + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            }   else {
+                
+                complexAngle = ((sphericalPhi * quantumM) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            }
+            
+
+            orbColor = HueToRGB(complexAngle);
+            
+
+            colors.push(orbColor.r,orbColor.g,orbColor.b);
+
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
-            //vertices.push(v.x, v.y, v.z); 
-            
-            
-            vertices[3 * J] = v.x;
-            vertices[3 * J + 1] = v.y;
-            vertices[3 * J + 2] = v.z;
-            J++
+            vertices.push(v.x, v.y, v.z); 
         }
         x++;
     }
@@ -607,62 +683,22 @@ function CalcVertices(){
 
 function UpdateGeometry(){
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    // console.log(geometry.attributes.position.count + " " + vertices.length);
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 }
-
-
-// function spawnOrbsR() {
-//     const geometry = new THREE.SphereBufferGeometry(0.05, 5, 5);
-//     const mat = new THREE.MeshStandardMaterial(
-//             {
-//                 color: 0xFF0000,
-//                 transparent: false,
-//                 // side: THREE.DoubleSide,
-//                 clippingPlanes: clipPlanes,
-//                 clipIntersection: true,
-//                 // clipShadows: EnableClipping
-//             }
-//         );
-    
-//     let quantumN=3;
-//     let quantumL=1;
-//     let quantumM=0;
-//     let bohrRadius=0.529177210903;
-
-//     // console.log(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius))
-
-//     for (let X = 0; X < 100000; X++) {
-        
-//         var sphericalTheta = Math.random() * 2.0 * Math.PI;
-//         var sphericalPhi = Math.acos(2.0 * Math.random() - 1.0);
-//         var sphericalRadius = Math.cbrt(Math.random())* RadiusOfDistribution;
-        
-        
-//         if (Math.random()/20<HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius)) {
-//             meshIndex[x] = new THREE.Mesh(geometry,mat);
-//             meshIndex[x].position.setFromSpherical(new Spherical(sphericalRadius, sphericalPhi, sphericalTheta)); //spherical coords
-            
-//             scene.add(meshIndex[x]); 
-//         }
-        
-
-//     }
-    
-// }
 
 
 function spawnOrbsRParticles() {
     geometry = new THREE.BufferGeometry();
-    const texture = new THREE.TextureLoader().load( '/ball2.png' );
+    const texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     let material 
-    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clippingPlanes: clipPlanes,clipIntersection: true } );}
-    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, color: 0xff2222,clipIntersection: true } );}
+    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clippingPlanes: clipPlanes,clipIntersection: true } );}
+    else {material = new THREE.PointsMaterial( {vertexColors: true,alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: true } );}
     const particles = new THREE.Points( geometry, material );
-    vertices = [];
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
     scene.add( particles );
     // let bohrRadius=0.529177210903;
 
@@ -756,13 +792,13 @@ function Legendre(LegendreL, LegendreM, LegendreX){
 
 function SphericalHarmonics(quantumM, quantumL, sphericalTheta) {
 
-    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta));
+    return Math.sqrt((2 * quantumL + 1) * factorial(quantumL - quantumM) / ((4 * Math.PI) * factorial(quantumL + quantumM))) * Legendre(quantumL, Math.abs(quantumM), Math.cos(sphericalTheta)) * (-1) ** quantumM;
 
 }
 
 function RadialWave(quantumN, quantumL, sphericalRadius, bohrRadius, nucleusCharge) {
 
-    return  Math.sqrt((2 * nucleusCharge / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) * (2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius));
+    return Math.sqrt((2 * nucleusCharge / (quantumN * bohrRadius)) ** 3 * factorial(quantumN - quantumL - 1) / (2 * quantumN * factorial(quantumN + quantumL))) * Math.exp(- sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) * (2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius)) ** quantumL * Laguerre(2 * quantumL + 1, quantumN - quantumL - 1, 2 * sphericalRadius * nucleusCharge / (quantumN * bohrRadius));
 
 }
 
@@ -772,6 +808,42 @@ function HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTh
             * SphericalHarmonics(Math.abs(quantumM), quantumL, sphericalTheta);
 
 }
+
+function HueToRGB(h) {
+    let r;
+    let g;
+    let b;
+    let x = (1 - Math.abs((h * 3 / Math.PI) % 2 - 1));
+
+    if (0 <= h && h < Math.PI / 3) {
+        r = 1; g = x; b = 0;  
+      } else if (Math.PI / 3 <= h && h < 2 * Math.PI / 3) {
+        r = x; g = 1; b = 0;
+      } else if (2 * Math.PI / 3 <= h && h < Math.PI) {
+        r = 0; g = 1; b = x;
+      } else if (Math.PI <= h && h < 4 * Math.PI / 3) {
+        r = 0; g = x; b = 1;
+      } else if (4 * Math.PI / 3 <= h && h < 5 * Math.PI / 3) {
+        r = x; g = 0; b = 1;
+      } else if (5 * Math.PI / 3 <= h && h < 2 * Math.PI) {
+        r = 1; g = 0; b = x;
+      }
+      r = Math.round(r * 255) / 255;
+      g = Math.round(g * 255) / 255;
+      b = Math.round(b * 255) / 255;
+      
+
+      const rgb=new THREE.Color(r,g,b);
+
+      return(rgb)
+}
+
+function rgbToHex(r, g, b) {
+    return "0x" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+
+
 //#endregion
 
 function OnModelCalculationEnd(){
@@ -779,5 +851,7 @@ function OnModelCalculationEnd(){
     console.log("Active Drawcalls:", renderer.info.render.calls)
     console.log("Textures in Memory", renderer.info.memory.textures)
     console.log("Geometries in Memory", renderer.info.memory.geometries)
-    vertices.splice(J)
+
+    debug.log("vertices: "+ vertices.length)
+    debug.log("colors: "+ colors.length)
 }
