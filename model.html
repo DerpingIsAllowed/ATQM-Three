@@ -77,7 +77,7 @@
                     <h6 class="h1">User Input</h6>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>Quantum N: </p>
+                        <p class=Pslider>n = </p>
                         <p class="Pslider PNsliderAmount">3</p>
                     </div>
                     <input type="range" min="1" max="7" value="3" class="slider" id="myRangeN" oninput="updateTextN();">
@@ -85,7 +85,7 @@
                 </div>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>Quantum L: </p>
+                        <p class=Pslider>l = </p>
                         <p class="Pslider PLsliderAmount">2</p>
                     </div>
                     <input type="range" min="0" max="10" value="2" class="slider" id="myRangeL" oninput="updateTextL();">
@@ -93,10 +93,32 @@
                 </div>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>Quantum M: </p>
+                        <p class=Pslider>m = </p>
                         <p class="Pslider PMsliderAmount">1</p>
                     </div>
                     <input type="range" min="0" max="10" value="1" class="slider" id="myRangeM" oninput="updateTextM();">
+                    <br>
+                </div>
+                <div class=sliderParent> 
+                    <div class=textSliderParent>
+                        <p class=Pslider>Enable Colors </p>
+                    </div>
+                    <input type="range" min="0" max="1" value="0" class="checkbox" id="enableColors" oninput="updateColors();">
+                    <br>
+                </div>
+                
+                <div class=sliderParent>
+                    <div class=textSliderParent>
+                        <p class=Pslider>color</p>
+                    </div>
+                    <input type="color" class="html5colorpicker" value="#ff0000">
+                </div>
+
+                <div class=sliderParent> 
+                    <div class=textSliderParent>
+                        <p class=Pslider>Enable Complex/Real wave </p>
+                    </div>
+                    <input type="range" min="0" max="1" value="0" class="checkbox" id="enableComplexWave" oninput="updateWave();">
                     <br>
                 </div>
                     <!-- <button class="buttonSt SubmitQuantumValuesButton">Submit</button> -->

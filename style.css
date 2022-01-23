@@ -125,7 +125,19 @@ p{
   opacity: 1;
 }
 
-
+.html5colorpicker{
+  display: block;
+  pointer-events: all;
+  align-self: center;
+  margin-left: auto;
+  margin-right:auto;
+  padding: 0px;
+  height: 20px;
+  width: 100%;
+  border: 0px;
+  border-color: white;
+  background-color: rgba(0, 0, 0, 0);
+}
 
 /* button */
 
@@ -257,11 +269,33 @@ p{
   opacity: 1;
   border-radius: 0px ;
 }
+.checkbox{
+  pointer-events: all;
+  -webkit-appearance: none;
+  width: 60px ;
+  height: 30px;
+  background:rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, .15);
+  outline: none;
+  opacity: 1;
+  border-radius: 0px ;
+}
+
 .sliderParent{
   width:100%
 }
 /* --------------------------- webkit browsers */
 .slider::-webkit-slider-thumb {
+  pointer-events: all;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px;
+  background-color: black;
+  overflow: visible;
+  cursor: pointer;
+}
+.checkbox::-webkit-slider-thumb {
   pointer-events: all;
   -webkit-appearance: none;
   width: 30px;
@@ -282,6 +316,16 @@ p{
   overflow: visible;
   cursor: pointer;
 }
+.checkbox::-moz-range-thumb { 
+  pointer-events: all;
+  -moz-appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px;
+  background-color: black;
+  overflow: visible;
+  cursor: pointer;
+}
 .slider::-moz-focus-outer { border: 0; }
 .closeSliderContainer{
   user-select:none;
@@ -291,6 +335,16 @@ p{
   font-size: 35px;
   cursor: pointer;
 }
+.checkbox::-moz-focus-outer { border: 0; }
+.closeSliderContainer{
+  user-select:none;
+  position: absolute;
+  right: 55px;
+  top: 30px;
+  font-size: 35px;
+  cursor: pointer;
+}
+
 
 
 .aspilltext{

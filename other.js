@@ -10,7 +10,7 @@ const PMenu                           =document.querySelectorAll('.PMenu');
 const mQuantumWaardes                 =document.querySelector('.mQuantumWaardes');
 let root = document.documentElement;
 
-let Nslider,Lslider,Mslider;
+let Nslider,Lslider,Mslider,colorSlider,complexWaveSlider;
 
 init();
 
@@ -18,6 +18,8 @@ function init(){
   Nslider = document.getElementById('myRangeN');
   Lslider = document.getElementById('myRangeL');
   Mslider = document.getElementById('myRangeM');
+  colorSlider = document.getElementById('enableColors');
+  complexWaveSlider = document.getElementById('enableComplexWave');
 }
 
 //Open and close Navmenu with the burger
@@ -129,7 +131,7 @@ function updateTextN(){
 function updateTextL(){
 
   // Lslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value
-  document.getElementsByClassName('PLsliderAmount')[0].innerHTML=Nslider.valuenerHTML=Lslider.value;
+  document.getElementsByClassName('PLsliderAmount')[0].innerHTML=Lslider.valuenerHTML=Lslider.value;
   updateTextM();
 }
 
@@ -145,4 +147,12 @@ function updateTextM(){
   Mslider = document.getElementById('myRangeM');
   document.getElementsByClassName('PMsliderAmount')[0].innerHTML=Mslider.valuenerHTML=Mslider.value;
   // Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
+}
+
+function updateColors(){
+  colorSlider = document.getElementById('enableColors');
+}
+
+function updateWave(){
+  complexWaveSlider = document.getElementById('enableComplexWave');
 }

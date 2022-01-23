@@ -9,15 +9,16 @@ import { color, GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let yAngle=0.25*Math.PI, xAngle=0,newAngle=0,campos=0,transpos=0,J=0,Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, ShowProbability, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0xFF0000, complexAngle, IsTransitioning;
+let yAngle=0.25*Math.PI, xAngle=0,newAngle=0,campos=0,transpos=0,J=0,Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0x943838, placeholderColor, complexAngle, IsTransitioning;
 //bufferentities
-let geometry, vertices = [], colors = [];
+let particles, geometry, material, texture, vertices = [], rainbowColor = [], fixedColor = [];
 //debug geometry
 let DevGeometry,DevMaterial,DevMesh
 //slider
-let Nslider = document.getElementById("myRangeN")
-let Lslider = document.getElementById("myRangeL")
-
+let Nslider = document.getElementById("myRangeN");
+let Lslider = document.getElementById("myRangeL");
+let EnableColors = document.getElementById("enableColors").value;
+let ShowProbability = document.getElementById("enableComplexWave").value;
 //#region ill Defined Functions
 var debug=[]
 debug.log=function log(string){
@@ -36,7 +37,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.1")
+    console.warn("Version : 1.3.2")
 
     /* READ ME
     De docs zijn kapot handig \/
@@ -48,15 +49,16 @@ function init() {
     //#region boleans and stuff for in the UI and easy acces    
     EnableLightHelpers = false;
     EnableClippingHelpers = false;
-    EnableClipping = false;
+    EnableClipping = true;
     ClippingPlaneOfset = 1;
     PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
     Div="canvas";
 
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om z-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
-    ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-
+                             // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
+    placeholderColor=window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
+    debug.log(placeholderColor);
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
@@ -323,6 +325,21 @@ Mslider.addEventListener('change',()=>{
     UpdateModel(NLM)
 })
 
+colorSlider.addEventListener('change' ,()=>{
+    EnableColors = document.getElementById("enableColors").value;
+    UpdateColor()
+})
+
+complexWaveSlider.addEventListener('change' ,()=>{
+    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    ShowProbability = document.getElementById("enableComplexWave").value;
+    UpdateModel(NLM)
+})
+
+document.getElementsByClassName("html5colorpicker")[0].addEventListener('change' , ()=>{
+    placeholderColor=document.getElementsByClassName("html5colorpicker")[0].value;
+    UpdateColor()
+})
 
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
 
@@ -392,14 +409,19 @@ function UpdateModel(NLM){
     
     yAngle = 2 * Math.atan(camera.position.z / ( camera.position.x + Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2)));
     xAngle = Math.atan(camera.position.y/Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2));
-    newAngle =  yAngle + 1/4 * Math.PI;
     
     console.log("yAngle: " +yAngle)
     console.log("xAngle: " +xAngle)
     console.log("newAngle: " +newAngle)
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute(colors, 3));
+    if(EnableColors == true) {
+        particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
+    } else {
+        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.needsUpdate = true;
+    }
     
     console.log("geometry updated ")
     if (DevMesh!=null){
@@ -487,12 +509,17 @@ function animate() {
         CalcVertices();
         UpdateGeometry();
     }
-    else if (Trials<x&& x<Trials+100000000){
-        console.log("Added particles: "+ geometry.attributes.position.count);
-        x+=1;
-        x=+1000000000000;
+    else if (Trials <= x && 3 * J < vertices.length){
+        vertices.splice(-3000);
+        rainbowColor.splice(-3000);
+        fixedColor.splice(-3000);
         UpdateGeometry();
+    }
+    else if (Trials <= x && x < Trials + 100000000){
+        console.log("Added particles: "+ geometry.attributes.position.count);
+        x =+ 1000000000000;
         OnModelCalculationEnd();
+        UpdateGeometry();
     }
 
     
@@ -562,7 +589,7 @@ function CalcVertices(){
             orbColor = HueToRGB(complexAngle);
             
 
-            colors.push(orbColor.r,orbColor.g,orbColor.b);
+            //colors.push(orbColor.r,orbColor.g,orbColor.b);
 
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
@@ -571,9 +598,13 @@ function CalcVertices(){
             vertices[3 * J + 1] = v.y;
             vertices[3 * J + 2] = v.z;
 
-            colors[3 * J] = orbColor.r;
-            colors[3 * J + 1] = orbColor.g;
-            colors[3 * J + 2] = orbColor.b;
+            rainbowColor[3 * J] = orbColor.r;
+            rainbowColor[3 * J + 1] = orbColor.g;
+            rainbowColor[3 * J + 2] = orbColor.b;
+
+            fixedColor[3 * J] = 1;
+            fixedColor[3 * J + 1] = 0;
+            fixedColor[3 * J + 2] = 0;
             J++
         }
         x++;
@@ -583,9 +614,26 @@ function CalcVertices(){
 
 function UpdateGeometry(){
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-    // console.log(geometry.attributes.position.count + " " + vertices.length);
+    if(EnableColors == true) {
+        particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
+    } else {
+        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.needsUpdate = true;
+    }
 }
+
+function UpdateColor(){
+
+    if(EnableColors == true) {
+        particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/ } );
+        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
+    } else {
+        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.needsUpdate = true;
+    }
+
+};
 
 
 // function spawnOrbsR() {
@@ -630,19 +678,23 @@ function UpdateGeometry(){
 
 function spawnOrbsRParticles() {
     geometry = new THREE.BufferGeometry();
-    const texture = new THREE.TextureLoader().load( '/ball.png' );
+    texture = new THREE.TextureLoader().load( '/ball.png' );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    let material 
     
-    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {vertexColors: true,alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clippingPlanes: clipPlanes,clipIntersection: false } );}
-    else {material = new THREE.PointsMaterial( {vertexColors: true,alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false } );}
-    const particles = new THREE.Points( geometry, material );
+    if (clipPlanes!=null) {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clippingPlanes: clipPlanes,clipIntersection: false } );}
+    else {material = new THREE.PointsMaterial( {alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false } );}
+    particles = new THREE.Points( geometry, material );
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-    geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+    if(EnableColors == true) {
+        particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
+    } else {
+        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        geometry.needsUpdate = true;
+    }
     scene.add( particles );
-
     // let bohrRadius=0.529177210903;
 
 
@@ -795,9 +847,12 @@ function OnModelCalculationEnd(){
     console.log("Textures in Memory", renderer.info.memory.textures)
     console.log("Geometries in Memory", renderer.info.memory.geometries)
 
+
+    // vertices.splice(3 * J);
+    // rainbowColor.splice(3 * J);
+    // fixedColor.splice(3 * J);
     debug.log("vertices: "+ vertices.length)
-    debug.log("colors: "+ colors.length)
-    vertices.splice(J);
-    colors.splice(J);
+    debug.log("rainbow colors: "+ rainbowColor.length)
+    debug.log("fixed colors: "+ fixedColor.length)
 }
 
