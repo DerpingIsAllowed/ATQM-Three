@@ -74,34 +74,34 @@
                 
                 <div class="divSpacer"></div>
                 <div class="divSpacer">
-                    <h6 class="h1">User Input</h6>
+                    <h6 class="h1">Invoer</h6>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>n = </p>
-                        <p class="Pslider PNsliderAmount">3</p>
+                        <pre class=Pslider>n = </pre>
+                        <p class="Pslider PNsliderAmount"></p>
                     </div>
-                    <input type="range" min="1" max="7" value="3" class="slider" id="myRangeN" oninput="updateTextN();">
+                    <input type="range" min="1" max="7" value="1" class="slider" id="myRangeN" oninput="updateTextN();"> 
                     <br>
                 </div>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>l = </p>
-                        <p class="Pslider PLsliderAmount">2</p>
+                        <pre class=Pslider>l = </pre>
+                        <p class="Pslider PLsliderAmount"></p>
                     </div>
-                    <input type="range" min="0" max="10" value="2" class="slider" id="myRangeL" oninput="updateTextL();">
+                    <input type="range" min="0" max="10" value="0" class="slider" id="myRangeL" oninput="updateTextL();">
                     <br>
                 </div>
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>m = </p>
-                        <p class="Pslider PMsliderAmount">1</p>
+                        <pre class=Pslider>m = </pre>
+                        <p class="Pslider PMsliderAmount"></p>
                     </div>
-                    <input type="range" min="0" max="10" value="1" class="slider" id="myRangeM" oninput="updateTextM();">
+                    <input type="range" min="-10" max="10" value="0" class="slider" id="myRangeM" oninput="updateTextM();">
                     <br>
                 </div>
                 <div class=sliderParent> 
                     <div class=textSliderParent>
-                        <p class=Pslider>Enable Colors </p>
+                        <p class=Pslider>Vaste kleur / Complexe kleur</p>
                     </div>
                     <input type="range" min="0" max="1" value="0" class="checkbox" id="enableColors" oninput="updateColors();">
                     <br>
@@ -109,16 +109,24 @@
                 
                 <div class=sliderParent>
                     <div class=textSliderParent>
-                        <p class=Pslider>color</p>
+                        <p class=Pslider>Kies kleur</p>
                     </div>
-                    <input type="color" class="html5colorpicker" value="#ff0000">
+                    <input type="color" class="html5colorpicker" value="#943838">
                 </div>
 
                 <div class=sliderParent> 
                     <div class=textSliderParent>
-                        <p class=Pslider>Enable Complex/Real wave </p>
+                        <p class=Pslider>Complexe golf / Reële golf</p>
                     </div>
                     <input type="range" min="0" max="1" value="0" class="checkbox" id="enableComplexWave" oninput="updateWave();">
+                    <br>
+                </div>
+
+                <div class=sliderParent> 
+                    <div class=textSliderParent>
+                        <p class=Pslider>3D / 2D </p>
+                    </div>
+                    <input type="range" min="0" max="1" value="0" class="checkbox" id="enableTwoDView" oninput="updateTwoD();">
                     <br>
                 </div>
                     <!-- <button class="buttonSt SubmitQuantumValuesButton">Submit</button> -->

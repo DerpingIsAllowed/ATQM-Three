@@ -10,16 +10,19 @@ const PMenu                           =document.querySelectorAll('.PMenu');
 const mQuantumWaardes                 =document.querySelector('.mQuantumWaardes');
 let root = document.documentElement;
 
-let Nslider,Lslider,Mslider,colorSlider,complexWaveSlider;
+let Nslider,Lslider,Mslider,colorSlider,complexWaveSlider,TwoDViewSlider;
 
 init();
 
 function init(){
+  updateTextN();
+
   Nslider = document.getElementById('myRangeN');
   Lslider = document.getElementById('myRangeL');
   Mslider = document.getElementById('myRangeM');
   colorSlider = document.getElementById('enableColors');
   complexWaveSlider = document.getElementById('enableComplexWave');
+  TwoDViewSlider = document.getElementById('enableTwoDView');
 }
 
 //Open and close Navmenu with the burger
@@ -131,21 +134,22 @@ function updateTextN(){
 function updateTextL(){
 
   // Lslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value
-  document.getElementsByClassName('PLsliderAmount')[0].innerHTML=Lslider.valuenerHTML=Lslider.value;
+  Lslider = document.getElementById('myRangeL')
+  document.getElementsByClassName('PLsliderAmount')[0].innerHTML=/*Lslider.valuenerHTML=*/Lslider.value;
   updateTextM();
 }
 
-Lslider.addEventListener('change', () => {
-  Lslider.previousElementSibling.lastElementChild.innerHTML=Lslider.value;
-})
+// Lslider.addEventListener('change', () => {
+//   Lslider.previousElementSibling.lastElementChild.innerHTML=Lslider.value;
+// })
 
-Mslider.addEventListener('change', () => {
-  Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
-})
+// Mslider.addEventListener('change', () => {
+//   Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
+// })
 
 function updateTextM(){
   Mslider = document.getElementById('myRangeM');
-  document.getElementsByClassName('PMsliderAmount')[0].innerHTML=Mslider.valuenerHTML=Mslider.value;
+  document.getElementsByClassName('PMsliderAmount')[0].innerHTML=/*Mslider.valuenerHTML=*/Mslider.value;
   // Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
 }
 
@@ -155,4 +159,8 @@ function updateColors(){
 
 function updateWave(){
   complexWaveSlider = document.getElementById('enableComplexWave');
+}
+
+function updateTwoD(){
+  TwoDViewSlider = document.getElementById('enableComplexWave');
 }

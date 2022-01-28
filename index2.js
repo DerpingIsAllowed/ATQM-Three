@@ -9,9 +9,9 @@ import { color, GUI } from './three.js/examples/jsm/libs/dat.gui.module.js';
 let scene, camera, renderer, controls;
 
 //initiate custom variables
-let yAngle=0.25*Math.PI, xAngle=0,newAngle=0,campos=0,transpos=0,J=0,Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, TwoDView, WaveType, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0x943838, placeholderColor, complexAngle, IsTransitioning;
+let yAngle=0.25*Math.PI, xAngle=0,newAngle=0,campos=0,transpos=0,J=0,Frame, camerazoom, ComputationallyLesExpensiveTrials, EnableLightHelpers, EnableClippingHelpers, EnableClipping, clipPlanes, ClippingPlaneOfset, WaveType, PerformanceMode, Div, meshIndex = [], RadiusOfDistribution, RadialMax, AngularMax, x, Trials,quantumL,quantumM,quantumN, bohrRadius, nucleusCharge, UpdateOnFrames, orbColor = 0x943838, fixedColor, complexAngle, scalar, IsTransitioning;
 //bufferentities
-let particles, geometry, material, texture, vertices = [], rainbowColor = [], fixedColor = [];
+let particles, geometry, material, texture, vertices = [], rainbowColor = [];
 //debug geometry
 let DevGeometry,DevMaterial,DevMesh
 //slider
@@ -19,6 +19,7 @@ let Nslider = document.getElementById("myRangeN");
 let Lslider = document.getElementById("myRangeL");
 let EnableColors = document.getElementById("enableColors").value;
 let ShowProbability = document.getElementById("enableComplexWave").value;
+let TwoDView = document.getElementById("enableTwoDView").value;
 //#region ill Defined Functions
 var debug=[]
 debug.log=function log(string){
@@ -37,7 +38,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.2")
+    console.warn("Version : 1.3.3")
 
     /* READ ME
     De docs zijn kapot handig \/
@@ -54,18 +55,23 @@ function init() {
     PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
     Div="canvas";
 
-    TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om z-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
                              // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    placeholderColor=window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
-    debug.log(placeholderColor);
+    fixedColor=document.getElementsByClassName("html5colorpicker")[0].value;
+    debug.log(fixedColor);
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
-    quantumN = 3;
-    quantumL = 2;
-    quantumM = 1;
 
+    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+
+    quantumN = parseInt(NLM[0]);
+    quantumL = parseInt(NLM[1]);
+    quantumM = parseInt(NLM[2]);
+
+    document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
+
+    TwoDView = document.getElementById("enableTwoDView").value;
     //de maximale radius(niet aan zitten)
     RadiusOfDistribution = AtomicRadius(0, 0.05, quantumN, quantumL, bohrRadius, nucleusCharge);
     RadialMax = RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius, nucleusCharge);
@@ -73,11 +79,8 @@ function init() {
     // console.log(RadialWave(3, 0, 1, bohrRadius))
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    if (TwoDView == 0) {
-        Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
-    }else{
-        Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
-    }
+    Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
+    
     
     if (WaveType == 1) {
         Trials = 5000 * RadiusOfDistribution;
@@ -126,12 +129,10 @@ function init() {
     //inintialize camera
     camera = new THREE.PerspectiveCamera(20, 2 / 1, 1, 1000); 
     if (TwoDView == 0) {
-        camera.position.set( 3 * camerazoom, 2.25 * camerazoom, 3 * camerazoom );
+        camera.position.set( 5 / Math.sqrt(3) * camerazoom, 5 / Math.sqrt(3) * camerazoom, 5 / Math.sqrt(3) * camerazoom );
     } else if (TwoDView == 1){
-        camera.position.set( 6 * camerazoom, 0, 0 )
-    } else if (TwoDView == 2){
-        camera.position.set( 0, 6 * camerazoom, 0 );
-    }
+        camera.position.set( 5 * camerazoom, 0, 0 )
+    } 
     camera.lookAt( scene.position );
 
 
@@ -225,10 +226,15 @@ function init() {
     //enablepan
     controls.enablePan=false;
     //automagically rotate
-    if (TwoDView == 0) {
-    controls.autoRotate=true;
-    controls.autoRotateSpeed=0.3;
+    if(TwoDView == false) {
+        controls.autoRotate = true;
+        controls.enabled = true;
+    } else {
+        controls.autoRotate = false;
+        controls.enabled = false;
+        camera.position.set( 5 * camerazoom, 0, 0 );
     }
+    controls.autoRotateSpeed=0.3;
     //#endregion
 
     //#region lighting
@@ -336,8 +342,16 @@ complexWaveSlider.addEventListener('change' ,()=>{
     UpdateModel(NLM)
 })
 
+TwoDViewSlider.addEventListener('change' ,()=>{
+    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    TwoDView = document.getElementById("enableTwoDView").value;
+    //camera.position.set( 5 * camerazoom, 0, 0 );
+    UpdateTwoDView()
+    UpdateModel(NLM)
+})
+
 document.getElementsByClassName("html5colorpicker")[0].addEventListener('change' , ()=>{
-    placeholderColor=document.getElementsByClassName("html5colorpicker")[0].value;
+    fixedColor=document.getElementsByClassName("html5colorpicker")[0].value;
     UpdateColor()
 })
 
@@ -379,11 +393,9 @@ function UpdateModel(NLM){
     AngularMax = AngularWaveMax(quantumM, quantumL);
 
     //aantal keer dat je een random punt kiest en de berekening uitvoert
-    if (TwoDView == 0) {
-        Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
-    }else{
-        Trials = 5000 * RadiusOfDistribution ** 2;
-    }
+
+    Trials = 1000000 * RadiusOfDistribution * RadialMax * AngularMax * PerformanceMode;
+    
     
     if (WaveType == 1) {
         Trials = 5000 * RadiusOfDistribution;
@@ -419,7 +431,7 @@ function UpdateModel(NLM){
         particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
     } else {
-        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        particles.material = new THREE.PointsMaterial( {color: fixedColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.needsUpdate = true;
     }
     
@@ -486,9 +498,11 @@ function animate() {
         campos=camera.position
         transpos=lerptarget
         
-    }
-    else{controls.enabled=true;
-        controls.autoRotate=true;
+    } else {
+        if(TwoDView == false) {
+            controls.autoRotate = true;
+            controls.enabled = true;
+        }
     }
     
     var rounderror=0.5;
@@ -510,9 +524,8 @@ function animate() {
         UpdateGeometry();
     }
     else if (Trials <= x && 3 * J < vertices.length){
-        vertices.splice(-3000);
-        rainbowColor.splice(-3000);
-        fixedColor.splice(-3000);
+        vertices.splice(-7500);
+        rainbowColor.splice(-7500);
         UpdateGeometry();
     }
     else if (Trials <= x && x < Trials + 100000000){
@@ -534,11 +547,6 @@ function CalcVertices(){
         if (TwoDView == 1) {
             var sphericalPhi  = Math.round(Math.random()) * Math.PI;
             var sphericalTheta = Math.random() * Math.PI;
-            var sphericalRadius = Math.random() * RadiusOfDistribution;
-        }
-        else if (TwoDView == 2) {
-            var sphericalPhi  = Math.random() * 2 * Math.PI;
-            var sphericalTheta = 0.5 * Math.PI;
             var sphericalRadius = Math.random() * RadiusOfDistribution;
         }
         else{
@@ -575,8 +583,14 @@ function CalcVertices(){
                 Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.sin(sphericalPhi * quantumM)) ** 2;
             }
         }
+        if (TwoDView == 0) {
+            scalar = RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta);
+        } else {
+            scalar = RadialMax * AngularMax / sphericalRadius;
+        }
         
-        if (Math.random() * RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta) < Wave) {
+        
+        if (Math.random() * scalar < Wave) {
             if (Math.sign(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge)) == -1 && ShowProbability == 0) {
                 complexAngle = ((sphericalPhi * quantumM + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             }   else if (ShowProbability == 0){
@@ -587,24 +601,18 @@ function CalcVertices(){
             
 
             orbColor = HueToRGB(complexAngle);
-            
-
             //colors.push(orbColor.r,orbColor.g,orbColor.b);
 
             const v= new Vector3()
             v.setFromSpherical(new Spherical(sphericalRadius, sphericalTheta, sphericalPhi));
 
-            vertices[3 * J] = v.x;
+            vertices[3 * J] = v.x; 
             vertices[3 * J + 1] = v.y;
             vertices[3 * J + 2] = v.z;
 
             rainbowColor[3 * J] = orbColor.r;
             rainbowColor[3 * J + 1] = orbColor.g;
             rainbowColor[3 * J + 2] = orbColor.b;
-
-            fixedColor[3 * J] = 1;
-            fixedColor[3 * J + 1] = 0;
-            fixedColor[3 * J + 2] = 0;
             J++
         }
         x++;
@@ -618,7 +626,7 @@ function UpdateGeometry(){
         particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
     } else {
-        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        particles.material = new THREE.PointsMaterial( {color: fixedColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.needsUpdate = true;
     }
 }
@@ -629,11 +637,23 @@ function UpdateColor(){
         particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/ } );
         geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
     } else {
-        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        particles.material = new THREE.PointsMaterial( {color: fixedColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.needsUpdate = true;
     }
 
-};
+}
+
+function UpdateTwoDView() {
+
+    if(TwoDView == false) {
+        controls.autoRotate = true;
+        controls.enabled = true;
+    } else {
+        controls.autoRotate = false;
+        controls.enabled = false;
+        camera.position.set( 5 * camerazoom, 0, 0 );
+    }
+}
 
 
 // function spawnOrbsR() {
@@ -691,7 +711,7 @@ function spawnOrbsRParticles() {
         particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
     } else {
-        particles.material = new THREE.PointsMaterial( {color: placeholderColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
+        particles.material = new THREE.PointsMaterial( {color: fixedColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
         geometry.needsUpdate = true;
     }
     scene.add( particles );
@@ -736,14 +756,19 @@ function doubleFactorial(n) {
 
 function AtomicRadius(sum, r, quantumN, quantumL, bohrRadius, nucleusCharge) {
     if (sum > 0.9999) return r;
-    return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2, r + 0.1, quantumN, quantumL, bohrRadius, nucleusCharge);
+    return AtomicRadius(sum + 0.1 * r ** 2 * RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2, r + 0.1, quantumN, quantumL, bohrRadius, nucleusCharge); 
 }
 
 function RadialWaveMax(RadiusOfDistribution, quantumN, quantumL, bohrRadius, nucleusCharge) {
     let rMax = [0, 0];
 
     for (let r = 0; r < RadiusOfDistribution; r += 0.1) {
-        rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2 * r ** 2;
+        if (TwoDView == 0) {
+            rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2 * r ** 2;
+        } else {
+            rMax[1] = RadialWave(quantumN, quantumL, r, bohrRadius, nucleusCharge) ** 2 * r;
+        }
+        
         if (rMax[1] > rMax[0]) {
             rMax[0] = rMax[1];
         }
@@ -755,7 +780,12 @@ function AngularWaveMax(quantumM, quantumL) {
     let thetaMax = [0, 0];
 
     for (let theta = 0; theta < 2 * Math.PI; theta += 1 / 30 * Math.PI) {
-        thetaMax[1] = SphericalHarmonics(Math.abs(quantumM), quantumL, theta) ** 2 * Math.sin(theta);
+        if (TwoDView == 0) {
+            thetaMax[1] = SphericalHarmonics(Math.abs(quantumM), quantumL, theta) ** 2 * Math.sin(theta);
+        } else {
+            thetaMax[1] = SphericalHarmonics(Math.abs(quantumM), quantumL, theta) ** 2;
+        }
+        
         if (thetaMax[1] > thetaMax[0]) {
             thetaMax[0] = thetaMax[1];
         }
@@ -848,11 +878,7 @@ function OnModelCalculationEnd(){
     console.log("Geometries in Memory", renderer.info.memory.geometries)
 
 
-    // vertices.splice(3 * J);
-    // rainbowColor.splice(3 * J);
-    // fixedColor.splice(3 * J);
     debug.log("vertices: "+ vertices.length)
     debug.log("rainbow colors: "+ rainbowColor.length)
-    debug.log("fixed colors: "+ fixedColor.length)
 }
 
