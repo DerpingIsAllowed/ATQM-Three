@@ -38,7 +38,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.3")
+    console.warn("Version : 1.3.5")
 
     /* READ ME
     De docs zijn kapot handig \/
@@ -61,13 +61,13 @@ function init() {
     debug.log(fixedColor);
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
-    nucleusCharge = 1; 
 
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
 
     quantumN = parseInt(NLM[0]);
     quantumL = parseInt(NLM[1]);
     quantumM = parseInt(NLM[2]);
+    nucleusCharge = parseInt(NLM[3]);
 
     document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
 
@@ -313,7 +313,7 @@ Nslider.addEventListener('change', () => {
     document.getElementById("myRangeM").min = -(Lslider.value);
     document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
     document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     UpdateModel(NLM)
 })
 
@@ -322,12 +322,17 @@ Lslider.addEventListener('change', () => {
     document.getElementById("myRangeM").min = -(Lslider.value);
     document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
     document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     UpdateModel(NLM)
 })
 
 Mslider.addEventListener('change',()=>{
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
+    UpdateModel(NLM)
+})
+
+Zslider.addEventListener('change',()=>{
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     UpdateModel(NLM)
 })
 
@@ -337,13 +342,13 @@ colorSlider.addEventListener('change' ,()=>{
 })
 
 complexWaveSlider.addEventListener('change' ,()=>{
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     ShowProbability = document.getElementById("enableComplexWave").value;
     UpdateModel(NLM)
 })
 
 TwoDViewSlider.addEventListener('change' ,()=>{
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     TwoDView = document.getElementById("enableTwoDView").value;
     //camera.position.set( 5 * camerazoom, 0, 0 );
     UpdateTwoDView()
@@ -359,7 +364,7 @@ const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButt
 
 if(SubmitSliderValueButton!=null){
 SubmitSliderValueButton.addEventListener('click', () => {
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
     UpdateModel(NLM)
 });}
 
@@ -381,6 +386,7 @@ function UpdateModel(NLM){
     quantumN = parseInt(NLM[0]);
     quantumL = parseInt(NLM[1]);
     quantumM = parseInt(NLM[2]);
+    nucleusCharge = parseInt(NLM[3]);
 
     IsTransitioning=true;
     console.log("Quantum N: " + quantumN +" Quantum L: "+ quantumL + " Quantum M: " +quantumM)

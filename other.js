@@ -10,19 +10,19 @@ const PMenu                           =document.querySelectorAll('.PMenu');
 const mQuantumWaardes                 =document.querySelector('.mQuantumWaardes');
 let root = document.documentElement;
 
-let Nslider,Lslider,Mslider,colorSlider,complexWaveSlider,TwoDViewSlider;
+let Nslider, Lslider, Mslider, Zslider, colorSlider, complexWaveSlider, TwoDViewSlider;
 
 init();
 
 function init(){
+  if (document.getElementById('myRangeN')) {
   updateTextN();
+  updateTextZ();
 
-  Nslider = document.getElementById('myRangeN');
-  Lslider = document.getElementById('myRangeL');
-  Mslider = document.getElementById('myRangeM');
   colorSlider = document.getElementById('enableColors');
   complexWaveSlider = document.getElementById('enableComplexWave');
   TwoDViewSlider = document.getElementById('enableTwoDView');
+  }
 }
 
 //Open and close Navmenu with the burger
@@ -151,6 +151,11 @@ function updateTextM(){
   Mslider = document.getElementById('myRangeM');
   document.getElementsByClassName('PMsliderAmount')[0].innerHTML=/*Mslider.valuenerHTML=*/Mslider.value;
   // Mslider.previousElementSibling.lastElementChild.innerHTML=Mslider.value;
+}
+
+function updateTextZ(){
+  Zslider = document.getElementById('myRangeZ');
+  document.getElementsByClassName('PZsliderAmount')[0].innerHTML=Zslider.value;
 }
 
 function updateColors(){
