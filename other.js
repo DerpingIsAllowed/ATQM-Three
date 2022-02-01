@@ -15,6 +15,12 @@ let Nslider, Lslider, Mslider, Zslider, colorSlider, complexWaveSlider, TwoDView
 init();
 
 function init(){
+
+  if(localStorage['ATQM_SENDS_ABYTE']!=null){
+  var fixedColor = localStorage['ATQM_SENDS_ABYTE']
+  document.documentElement.style.setProperty('--accentcolor', fixedColor); 
+  }
+
   if (document.getElementById('myRangeN')) {
   updateTextN();
   updateTextZ();
@@ -23,6 +29,7 @@ function init(){
   complexWaveSlider = document.getElementById('enableComplexWave');
   TwoDViewSlider = document.getElementById('enableTwoDView');
   }
+
 }
 
 //Open and close Navmenu with the burger

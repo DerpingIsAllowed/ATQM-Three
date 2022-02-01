@@ -88,6 +88,10 @@ p{
   margin-left: 0px;
 }
 
+.p{
+  
+}
+
 .PMenu{
   color: var(--black);
   text-align: left;
@@ -571,6 +575,10 @@ section h1{
 @media screen and (max-width: 767px) {
 
   .slidercontainer{
+    zoom: 0.75;
+    -moz-transform: scale(0.75);
+  }
+  .scaler{
     zoom: 0.75;
     -moz-transform: scale(0.75);
   }

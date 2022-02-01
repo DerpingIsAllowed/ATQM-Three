@@ -57,7 +57,9 @@ function init() {
 
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
                              // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    fixedColor=document.getElementsByClassName("html5colorpicker")[0].value;
+    fixedColor=window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
+    document.getElementsByClassName("html5colorpicker")[0].value=fixedColor;
+
     debug.log(fixedColor);
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
@@ -356,7 +358,12 @@ TwoDViewSlider.addEventListener('change' ,()=>{
 })
 
 document.getElementsByClassName("html5colorpicker")[0].addEventListener('change' , ()=>{
+
     fixedColor=document.getElementsByClassName("html5colorpicker")[0].value;
+    document.documentElement.style.setProperty('--accentcolor', fixedColor); 
+    
+    localStorage['ATQM_SENDS_ABYTE'] = fixedColor
+    
     UpdateColor()
 })
 

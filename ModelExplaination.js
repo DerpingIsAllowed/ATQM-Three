@@ -295,7 +295,8 @@ for (let I = 0; I < modelbtns.length; I++) {
     const modelbutton = modelbtns[I];
     modelbutton.addEventListener("click",() => {
         var NLMValues=document.getElementsByClassName("UpdateModelBtn")[I].parentElement.parentElement.dataset.nlmValues;
-        UpdateModel(NLMValues);
+        var cwdValues=document.getElementsByClassName("UpdateModelBtn")[I].parentElement.parentElement.dataset.colorWaveDimension;
+        UpdateModel(NLMValues,cwdValues);
     })
 }
 
