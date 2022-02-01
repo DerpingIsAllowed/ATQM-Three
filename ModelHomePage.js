@@ -357,27 +357,27 @@ function init() {
 // }
 
 
-Nslider.addEventListener('change', () => {
-    document.getElementById("myRangeL").max = Nslider.value-1;
-    document.getElementById("myRangeM").max = Lslider.value;
-    document.getElementById("myRangeM").min = -(Lslider.value);
-    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
-    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-})
+// Nslider.addEventListener('change', () => {
+//     document.getElementById("myRangeL").max = Nslider.value-1;
+//     document.getElementById("myRangeM").max = Lslider.value;
+//     document.getElementById("myRangeM").min = -(Lslider.value);
+//     document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+//     document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
+// })
 
-Lslider.addEventListener('change', () => {
-    document.getElementById("myRangeM").max = Lslider.value;
-    document.getElementById("myRangeM").min = -(Lslider.value);
-    document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
-    document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
-})
+// Lslider.addEventListener('change', () => {
+//     document.getElementById("myRangeM").max = Lslider.value;
+//     document.getElementById("myRangeM").min = -(Lslider.value);
+//     document.getElementById("myRangeL").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeL").value;
+//     document.getElementById("myRangeM").previousElementSibling.lastElementChild.innerHTML=document.getElementById("myRangeM").value;
+// })
 
-const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
+// const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
 
-SubmitSliderValueButton.addEventListener('click', () => {
-    var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
-    UpdateModel(NLM)
-});
+// SubmitSliderValueButton.addEventListener('click', () => {
+//     var NLM= [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value];
+//     UpdateModel(NLM)
+// });
 
 function PickRandomModel(){
     var N= Math.round( Math.random() * 7 + 1) ;
