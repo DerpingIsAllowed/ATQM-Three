@@ -65,7 +65,7 @@ function init() {
     
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
-    nucleusCharge = 1; 
+    nucleusCharge = 4; 
     quantumN = 6;
     quantumL = 4;
     quantumM = 0;
@@ -303,6 +303,7 @@ for (let I = 0; I < modelbtns.length; I++) {
 var nlmValues;
 var nlmValuesPrev;
 var cwdValues;
+var cwdValuesPrev;
 
 var Progressdots = document.getElementsByClassName("dot")
 Progressdots[0].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentcolor');
@@ -335,9 +336,10 @@ function ModelAnimation(){
             Progressdots[I1].style.backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue('--accentgray');
         }
         
-        if(nlmValues!=nlmValuesPrev){
+        if(nlmValues!=nlmValuesPrev || cwdValues != cwdValuesPrev){
             UpdateModel(nlmValues, cwdValues);
             nlmValuesPrev=nlmValues;
+            cwdValuesPrev = cwdValues;
         }
     }
 }
@@ -387,16 +389,9 @@ function UpdateModel(NLM, CWD){
     yAngle = 2 * Math.atan(camera.position.z / ( camera.position.x + Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2)));
     xAngle = Math.atan(camera.position.y/Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2));
     
-    newAngle = yAngle + 1 / 4 * Math.PI
+    newAngle = yAngle //+ 1 / 4 * Math.PI
     
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute(vertices, 3));
-    if(EnableColors == true) {
-        particles.material = new THREE.PointsMaterial( {color: "white", vertexColors: true, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
-        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( rainbowColor, 3 ) );
-    } else {
-        particles.material = new THREE.PointsMaterial( {color: fixedColor, alphaTest :.5 ,map: texture , size: 0.2, sizeAttenuation: true, transparent: true, clipIntersection: false/*, clippingPlanes: clipPlanes*/  } );
-        geometry.needsUpdate = true;
-    }
+    UpdateGeometry();
     
     console.log("geometry updated ")
     if (DevMesh!=null){
@@ -558,15 +553,14 @@ function CalcVertices(){
         }
         
         if (ShowProbability == 0) {
-            Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge);
+                Wave = HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) ** 2;
         } 
         else if (ShowProbability == 1) {
-            Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.cos(sphericalPhi * quantumM));
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.cos(sphericalPhi * quantumM)) ** 2;
         } 
         else {
-            Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.sin(sphericalPhi * quantumM));
+                Wave = Math.abs(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.sin(sphericalPhi * quantumM)) ** 2;
         }
-
         if (TwoDView == 0) {
             scalar = RadialMax * AngularMax / sphericalRadius ** 2 / Math.sin(sphericalTheta);
         } else {
@@ -574,13 +568,13 @@ function CalcVertices(){
         }
         
         
-        if (Math.random() * scalar < Wave ** 2) {
-            if (Math.sign(Wave) == -1 && ShowProbability == 0) {
+        if (Math.random() * scalar < Wave) {
+            if (Math.sign(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge)) == -1 && ShowProbability == 0) {
                 complexAngle = ((sphericalPhi * quantumM + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             }   else if (ShowProbability == 0){
                 complexAngle = ((sphericalPhi * quantumM) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             }   else{
-                complexAngle = 0.5 * Math.PI * (1 - Math.sign(Wave * Math.cos(sphericalPhi * quantumM)));
+                complexAngle = 0.5 * Math.PI * (1 - Math.sign(HydrogenWave(quantumN, quantumL, quantumM, sphericalRadius, sphericalTheta, bohrRadius, nucleusCharge) * Math.cos(sphericalPhi * quantumM)));
             }
             
 
@@ -727,14 +721,12 @@ function spawnOrbsRParticles() {
 
 
 function factorial(n) {
-    if (n < 0) return;
     if (n < 2) return 1;
     return n * factorial(n - 1);
 }
 
 function doubleFactorial(n) {
-    if (n < 2)
-        return 1;            
+    if (n < 2) return 1;            
     return n * doubleFactorial(n - 2);
 }
 
