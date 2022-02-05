@@ -41,8 +41,6 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.4.0")
-
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -56,7 +54,13 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 1;
-    PerformanceMode = 1;    // 1 = lowest performance, 2 = medium, 4 = high 
+    
+    if(localStorage['ATQM_SENDS_ANOTHER_BYTE']!=null){
+        PerformanceMode = localStorage['ATQM_SENDS_ANOTHER_BYTE'];
+    }
+    else{
+        PerformanceMode = 1;    // 1 = lowest performance, 2 = medium, 4 = high 
+    }
 
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 1;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part

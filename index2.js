@@ -38,8 +38,6 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.6")
-
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -52,7 +50,15 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = true;
     ClippingPlaneOfset = 1;
-    PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
+
+    if(localStorage['ATQM_SENDS_ANOTHER_BYTE']!=null){
+        PerformanceMode = localStorage['ATQM_SENDS_ANOTHER_BYTE'];
+        document.getElementById("performanceRange").value =localStorage['ATQM_SENDS_ANOTHER_BYTE'] ;  
+    }
+    else{
+        PerformanceMode = document.getElementById("performanceRange").value;    // 1 = lowest performance, 2 = medium, 4 = high 
+    }
+
     Div="canvas";
 
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
@@ -366,6 +372,16 @@ document.getElementsByClassName("html5colorpicker")[0].addEventListener('change'
     
     UpdateColor()
 })
+
+document.getElementById("performanceRange").addEventListener('change',()=>{
+    PerformanceMode= document.getElementById("performanceRange").value;
+    localStorage['ATQM_SENDS_ANOTHER_BYTE']=PerformanceMode;
+    
+    var NLM=  [document.getElementById("myRangeN").value,document.getElementById("myRangeL").value,document.getElementById("myRangeM").value,document.getElementById("myRangeZ").value];
+
+    UpdateModel(NLM)
+})
+
 
 const SubmitSliderValueButton = document.querySelector('.SubmitQuantumValuesButton');
 

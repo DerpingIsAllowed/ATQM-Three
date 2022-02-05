@@ -36,9 +36,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.4.0")
-
-    
+   
     /* READ ME
     De docs zijn kapot handig \/
     https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
@@ -54,17 +52,30 @@ function init() {
     TwoDView = 0;           // 0 = 3d, 1 = 2d om x-as, 2 = 2d om y-as
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 0;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
-    PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
+    
+    if(localStorage['ATQM_SENDS_ANOTHER_BYTE']!=null){
+        PerformanceMode = localStorage['ATQM_SENDS_ANOTHER_BYTE'];
+    }
+    else{
+        PerformanceMode = 1;    // 1 = lowest performance, 2 = medium, 4 = high 
+    }
     Div="canvas";
 
     
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
     nucleusCharge = 1; 
-    quantumN = 6;
-    quantumL = 4;
-    quantumM = 0;
+    {
+        var N= Math.round( Math.random() * 4 + 1) ;
+        var L= Math.round( Math.abs(Math.random() * (N - 1))) ;
+        var M=  (Math.random() * L * 2);
+        M-=0.5*M;
+        M=Math.round(M);
 
+        quantumN = N;
+        quantumL = L;
+        quantumM = M;
+    }
 
     document.getElementsByClassName("NLMDisplay")[0].firstElementChild.innerHTML = "(n, l, m) = (" + quantumN + ", " + quantumL + ", " + quantumM + ")";
 

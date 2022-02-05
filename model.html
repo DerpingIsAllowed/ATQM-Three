@@ -17,7 +17,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="https://atqm.b-cdn.net/assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="https://atqm.b-cdn.net/assets/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://atqm.b-cdn.net/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="https://atqm.b-cdn.net/assets/favicon/manifest.json">
+    <link rel="manifest" href="/assets/favicon/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="https://atqm.b-cdn.net/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
@@ -74,6 +74,15 @@
                 <div class=collapsable>
                     <div class="scaler">
                         <h6 class="h1">Invoer</h6>
+                        <div class=sliderParent> 
+                            <div class=textSliderParent>
+                                <p class=Pslider>Performance Mode</p>
+                            </div>
+                            <input type="range" min="1" max="5" value="2" class="slider" id="performanceRange">
+                            <br>
+                        </div>
+                        <div class="divSpacer"></div>
+
                         <div class=sliderParent>
                             <div class=textSliderParent>
                                 <pre class=Pslider>n = </pre>
@@ -136,6 +145,8 @@
                             <input type="range" min="0" max="1" value="0" class="checkbox" id="enableTwoDView" oninput="updateTwoD();">
                             <br>
                         </div>
+
+                        
                         <!-- <button class="buttonSt SubmitQuantumValuesButton">Submit</button> -->
                     </div>
                 </div>

@@ -15,6 +15,7 @@ let Nslider, Lslider, Mslider, Zslider, colorSlider, complexWaveSlider, TwoDView
 init();
 
 function init(){
+  console.warn("Version : 1.4.1 " + "Moved to Other.js")
 
   if(localStorage['ATQM_SENDS_ABYTE']!=null){
   var fixedColor = localStorage['ATQM_SENDS_ABYTE']
@@ -67,28 +68,29 @@ function closeNavMenu(){
 
 //open and close MobileMenu
 let MMBopen =true
-MobileMenuButton.addEventListener('click', () => {
-  if (!MMBopen) {
-    MobileMenuButton.classList.add('open');
-    MobileMenuButton.classList.remove('closed');
-    aspilltext.classList.add('open');
-    aspilltext.classList.remove('closed');
-    collapsable.classList.add('open');
-    collapsable.classList.remove('closed');
-    root.style.setProperty('--MobileMenuText', 1)
-    MMBopen=true
-  }else{
-    MobileMenuButton.classList.add('closed');
-    MobileMenuButton.classList.remove('open');
-    aspilltext.classList.add('closed');
-    aspilltext.classList.remove('open');
-    collapsable.classList.add('closed');
-    collapsable.classList.remove('open');
-    root.style.setProperty('--MobileMenuText', 0)
-    MMBopen=false
-  }
-})
-
+if (MobileMenuButton!=null){
+  MobileMenuButton.addEventListener('click', () => {
+    if (!MMBopen) {
+      MobileMenuButton.classList.add('open');
+      MobileMenuButton.classList.remove('closed');
+      aspilltext.classList.add('open');
+      aspilltext.classList.remove('closed');
+      collapsable.classList.add('open');
+      collapsable.classList.remove('closed');
+      root.style.setProperty('--MobileMenuText', 1)
+      MMBopen=true
+    }else{
+      MobileMenuButton.classList.add('closed');
+      MobileMenuButton.classList.remove('open');
+      aspilltext.classList.add('closed');
+      aspilltext.classList.remove('open');
+      collapsable.classList.add('closed');
+      collapsable.classList.remove('open');
+      root.style.setProperty('--MobileMenuText', 0)
+      MMBopen=false
+    }
+  })
+}
 //open and close quantumUI
 let userinterfaceOpen=false
 if (mQuantumWaardes!=null){

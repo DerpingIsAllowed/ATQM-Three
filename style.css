@@ -448,6 +448,7 @@ p{
 }
 
 .collapsable{
+  scroll-behavior: smooth;
   height: calc( 100vh - 100px);
   scroll-snap-type: y mandatory;
   overflow-y:scroll;
@@ -942,7 +943,11 @@ section h1{
   margin-right: auto;
   margin-left: auto;
 }
+
 .dot{
+  user-select: none;
+  pointer-events: all;
+  cursor: pointer;
   align-self: center;
   height: 15px;
   width: 15px;

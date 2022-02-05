@@ -33,7 +33,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.1")
+    // console.warn("Version : 1.3.1")
 
     
     /* READ ME
