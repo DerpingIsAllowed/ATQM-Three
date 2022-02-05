@@ -41,7 +41,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.4")
+    console.warn("Version : 1.3.6")
 
     /* READ ME
     De docs zijn kapot handig \/
@@ -56,7 +56,7 @@ function init() {
     EnableClippingHelpers = false;
     EnableClipping = false;
     ClippingPlaneOfset = 1;
-    PerformanceMode = 3;    // 1 = lowest performance, 2 = medium, 4 = high 
+    PerformanceMode = 1;    // 1 = lowest performance, 2 = medium, 4 = high 
 
     WaveType = 0;           // 0 = Volledige golf, 1 = Radial, 2 = Angular
     ShowProbability = 1;    // 0 = Probability density, 1 = Real part, 2 =  Imaginary part
@@ -65,7 +65,7 @@ function init() {
     
     // quantummechanische waardes! 
     bohrRadius = 0.529177210903;
-    nucleusCharge = 4; 
+    nucleusCharge = 2; 
     quantumN = 6;
     quantumL = 4;
     quantumM = 0;

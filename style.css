@@ -848,7 +848,7 @@ section h1{
 }
 
 /* vanaf ipad */
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1024px)  {
   .aspilltext{
     padding-left: 40px;
     padding-right: 40px;
@@ -927,6 +927,8 @@ section h1{
   }
 }
 
+
+
 /* progressbar */
 
 .readerProgress{
@@ -949,6 +951,7 @@ section h1{
   border-radius: 50%;
   display:block ;
 }
+
 
 /* MenuBurger button code i might have stolen */
 .menu-btn {

@@ -38,7 +38,7 @@ animate();
 
 
 function init() {
-    console.warn("Version : 1.3.5")
+    console.warn("Version : 1.3.6")
 
     /* READ ME
     De docs zijn kapot handig \/
